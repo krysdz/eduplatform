@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -23,9 +24,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'phone',
+        'type'
     ];
 
     /**
@@ -57,4 +61,31 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::deleting(function (User $user) {
+            $user->admin()->delete();
+            $user->teacher()->delete();
+            $user->student()->delete();
+        });
+    }
+
+
+    public function admin(): Relation
+    {
+        return $this->hasOne(Admin::class);
+    }
+
+    public function student(): Relation
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    public function teacher(): Relation
+    {
+        return $this->hasOne(Teacher::class);
+    }
 }
