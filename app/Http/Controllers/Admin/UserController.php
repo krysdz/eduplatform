@@ -56,10 +56,12 @@ class UserController extends Controller
                     break;
                 case 'student':
                     $user->student()->create([
-//                        'code' => $validatedData['code'],
+                        'code' => $validatedData['code'],
                     ]);
                     break;
             }
+
+            DB::commit();
 
             return redirect()->route('admin.users');
 
@@ -67,6 +69,7 @@ class UserController extends Controller
             DB::rollback();
             return redirect()->route('admin.users');
         }
+
 
     }
 
@@ -113,6 +116,8 @@ class UserController extends Controller
                     ]);
                     break;
             }
+
+            DB::commit();
 
             return redirect()->route('admin.users');
 
