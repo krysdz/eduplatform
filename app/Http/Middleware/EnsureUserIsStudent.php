@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Admin;
+use App\Models\Student;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
-class EnsureUserIsAdmin
+class EnsureUserIsStudent
 {
     /**
      * Handle an incoming request.
@@ -20,7 +20,7 @@ class EnsureUserIsAdmin
     {
         $user = $request->user();
 
-        if (!$user || !Admin::where(['user_id' => $user->id])->exists()) {
+        if (!$user || !Student::where(['user_id' => $user->id])->exists()) {
             return Redirect::route('login');
         }
 

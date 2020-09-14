@@ -23,7 +23,7 @@ class UserController extends Controller
     {
         $type = $request->query('type');
         if (!in_array($type, ['administrator', 'nauczyciel', 'student'])) {
-            return redirect()->route('admin.users');
+            return redirect()->route('admin.users.index');
         }
         return view('admin.users.create', ['type' => $type]);
     }
@@ -35,7 +35,7 @@ class UserController extends Controller
         $validatedData = $this->validateData($type);
 
         if (!$validatedData) {
-            return redirect()->route('admin.users');
+            return redirect()->route('admin.users.index');
         }
 
         DB::beginTransaction();
@@ -63,12 +63,13 @@ class UserController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.users');
+            return redirect()->route('admin.users.index');
 
         } catch (Exception $e) {
             DB::rollback();
-            return redirect()->route('admin.users');
+            return redirect()->route('admin.users.index');
         }
+
 
 
     }
@@ -91,7 +92,7 @@ class UserController extends Controller
         $validatedData = $this->validateData($user->type, $user);
 
         if (!$validatedData) {
-            return redirect()->route('admin.users');
+            return redirect()->route('admin.users.index');
         }
 
         DB::beginTransaction();
@@ -119,11 +120,11 @@ class UserController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.users');
+            return redirect()->route('admin.users.index');
 
         } catch (Exception $e) {
             DB::rollback();
-            return redirect()->route('admin.users');
+            return redirect()->route('admin.users.index');
         }
     }
 
@@ -131,7 +132,7 @@ class UserController extends Controller
     {
         User::findOrFail($id)->delete();
 
-        return redirect()->route('admin.users');
+        return redirect()->route('admin.users.index');
     }
 
     private function validateData(string $type, ?User $updatedUser = null): ?array
