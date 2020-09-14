@@ -1,3 +1,5 @@
+@include('flash::message')
+
 <h1>Użytkownicy</h1>
 <table>
     <tr>

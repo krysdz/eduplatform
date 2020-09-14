@@ -46,32 +46,34 @@ class UserController extends Controller
 
             switch ($type) {
                 case 'administrator':
-                    $user->admin()->create();
+                    $user->admin()->create([
+                        'is_super_admin' => 0,
+                        'is_active' => 1
+                    ]);
                     break;
                 case 'nauczyciel':
                     $user->teacher()->create([
                         'website' => $validatedData['website'],
-                        'degree' => $validatedData['degree']
+                        'degree' => $validatedData['degree'],
+                        'is_active' => 1,
                     ]);
                     break;
                 case 'student':
                     $user->student()->create([
                         'code' => $validatedData['code'],
+                        'is_active' => 1,
                     ]);
                     break;
             }
 
             DB::commit();
-
+            flash('Dodano użytkownika')->success();
             return redirect()->route('admin.users.index');
 
         } catch (Exception $e) {
             DB::rollback();
             return redirect()->route('admin.users.index');
         }
-
-
-
     }
 
     public function show(Request $request, int $id)

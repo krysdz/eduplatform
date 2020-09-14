@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [IndexController::class, 'index'])->name('index');
-Route::get('/logout', function (){
+Route::get('/logout', function () {
     Auth::logout();
     return redirect()->route('index');
 });
@@ -33,6 +33,15 @@ Route::middleware(['auth:sanctum', 'administrator'])->prefix('admin')->name('adm
         Route::delete('/{id}/usun', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('semestry')->name('terms.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\TermController::class, 'index'])->name('index');
+        Route::get('/dodaj', [\App\Http\Controllers\Admin\TermController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\TermController::class, 'store'])->name('store');
+        Route::get('/{id}', [\App\Http\Controllers\Admin\TermController::class, 'show'])->name('show');
+        Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\TermController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Admin\TermController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\TermController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->group(function () {
