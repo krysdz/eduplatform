@@ -18,7 +18,7 @@ class CreateStudentsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
             $table->string('code')->unique();
-            $table->boolean('isActive')->default(1);
+            $table->boolean('is_active');
 
 
             $table->foreign('user_id')->references('id')->on('users');

@@ -19,7 +19,7 @@ class CreateTeachersTable extends Migration
             $table->timestamps();
             $table->string('website')->nullable();
             $table->string('degree');
-            $table->boolean('isActive')->default(1);
+            $table->boolean('is_active');
 
 
             $table->foreign('user_id')->references('id')->on('users');
