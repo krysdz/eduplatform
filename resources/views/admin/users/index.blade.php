@@ -1,6 +1,11 @@
-@include('flash::message')
+@extends('admin.index')
+
+@section('content')
 
 <h1>Użytkownicy</h1>
+<button><a href="{{route('admin.users.create')}}?type=administrator">Dodaj administratora</a></button>
+<button><a href="{{route('admin.users.create')}}?type=nauczyciel">Dodaj nauczyciela</a></button>
+<button><a href="{{route('admin.users.create')}}?type=student">Dodaj studenta</a></button>
 <table>
     <tr>
         <th>Id</th>
@@ -34,3 +39,4 @@
     @endforeach
 </table>
 
+@endsection

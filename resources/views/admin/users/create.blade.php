@@ -1,3 +1,6 @@
+@extends('admin.index')
+
+@section('content')
 <h1>Dodaj nowego {{$type}}a</h1>
 
 <form action="{{ route('admin.users.store') }}" method="POST">
@@ -28,3 +31,4 @@
     <button type="submit">Dodaj</button>
     <input type="hidden" name="type" value="{{$type}}" />
 </form>
+@endsection

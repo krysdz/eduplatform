@@ -1,6 +1,8 @@
-@include('flash::message')
+@extends('admin.index')
 
+@section('content')
 <h1>Semestry</h1>
+<button><a href="{{route('admin.terms.create')}}">Dodaj semestr</a></button>
 <table>
     <tr>
         <th>Id</th>
@@ -33,4 +35,4 @@
         </tr>
     @endforeach
 </table>
-
+@endsection

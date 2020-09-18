@@ -1,3 +1,6 @@
+@extends('admin.index')
+
+@section('content')
 <h1>Dodaj semestr</h1>
 <form action="{{route('admin.terms.store')}}" method="POST">
     @csrf
@@ -13,3 +16,4 @@
 
     <button type="submit">Dodaj</button>
 </form>
+@endsection

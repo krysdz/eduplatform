@@ -8,6 +8,6 @@ class IndexController extends Controller
 {
     public function index()
     {
-        return view('welcome');
+        return '<h1>Internetowa platforma wspomagania nauczania</h1><button><a href="/login">Zaloguj</a></button>';
     }
 }

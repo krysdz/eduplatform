@@ -1,3 +1,6 @@
+@extends('admin.index')
+
+@section('content')
 <h1>Edytuj użytkownika {{$user->id}}</h1>
 @if($user->type == 'student')
     <h2>student</h2>
@@ -34,3 +37,4 @@
     <button type="submit">Zapisz</button>
 
 </form>
+@endsection

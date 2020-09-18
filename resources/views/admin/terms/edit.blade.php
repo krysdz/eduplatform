@@ -1,3 +1,6 @@
+@extends('admin.index')
+
+@section('content')
 <h1>Edytuj semestr</h1>
 <form action="{{route('admin.terms.update', $term->id)}}" method="POST">
     @method('PUT')
@@ -17,3 +20,4 @@
 
     <button type="submit">Zapisz</button>
 </form>
+@endsection
