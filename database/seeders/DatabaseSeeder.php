@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
+use App\Models\Faculty;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Term;
@@ -20,7 +21,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Admin::factory()->create([
-            'is_super_admin' => 1
+            'is_super_admin' => 1,
+            'is_active' => 1
         ])->first()->user()->update([
             'first_name' => 'Krystian',
             'last_name' => 'Dziewa',
@@ -31,6 +33,7 @@ class DatabaseSeeder extends Seeder
         Student::factory(10)->create();
         Teacher::factory(10)->create();
         $this->createTerms();
+        $this->createFaculties();
     }
 
     private function createTerms()
@@ -52,6 +55,24 @@ class DatabaseSeeder extends Seeder
 
         foreach ($terms as $term) {
             Term::create($term);
+        }
+    }
+
+    private function createFaculties()
+    {
+        $faculties = [
+            [
+                'name' => 'Wydział Matematyki i Informatyki',
+                'code' => 'UJ.WMI'
+            ],
+            [
+                'name' => 'Wydział Fizyki, Astronomii i Informatyki Stosowanej',
+                'code' => 'UJ.WFAI'
+            ]
+        ];
+
+        foreach ($faculties as $faculty) {
+            Faculty::create($faculty);
         }
     }
 }

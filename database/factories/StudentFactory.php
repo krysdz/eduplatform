@@ -26,6 +26,7 @@ class StudentFactory extends Factory
         return [
             'user_id' => User::factory()->create(['type' => 'student']),
             'code' => $this->faker->numerify('#######'),
+            'is_active' => 1
         ];
     }
 }

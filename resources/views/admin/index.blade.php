@@ -7,6 +7,9 @@
     <li class="navbar-nav mr-auto">
         <a class="nav-link" href="{{route('admin.terms.index')}}">Semestry</a>
     </li>
+    <li class="navbar-nav mr-auto">
+        <a class="nav-link" href="{{route('admin.faculties.index')}}">Wydziały</a>
+    </li>
 @endsection
 @section('content')
 <h1>Sekcja administratora</h1>
