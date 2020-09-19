@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Enums\GroupTypeEnum;
 use App\Models\Admin;
 use App\Models\Course;
 use App\Models\Faculty;
+use App\Models\Group;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Term;
@@ -31,11 +33,12 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('qwerty'),
         ]);
 
-        Student::factory(10)->create();
+        Student::factory(30)->create();
         Teacher::factory(10)->create();
         $this->createTerms();
         $this->createFaculties();
         $this->createCourses();
+        $this->createGroups();
     }
 
     private function createTerms()
@@ -105,6 +108,24 @@ class DatabaseSeeder extends Seeder
 
         foreach ($courses as $course) {
             Course::create($course);
+        }
+    }
+
+    private function createGroups()
+    {
+        $groups = [
+            [
+                'number' => 1,
+                'type' => GroupTypeEnum::lecture()->value,
+                'teacher_id' => Teacher::first()->id,
+                'course_id' => Faculty::first()->id,
+                'term_id' => Term::where(['is_active' => true])->first()->id,
+            ],
+        ];
+
+        foreach ($groups as $group) {
+            $currentGroup = Group::create($group);
+            $currentGroup->students()->attach(Student::find([1,5,8,12,20]));
         }
     }
 }

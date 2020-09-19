@@ -15,4 +15,9 @@ class Term extends Model
         'is_active',
         'name'
     ];
+
+    public function groups()
+    {
+       return $this->hasMany(Group::class);
+    }
 }
