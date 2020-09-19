@@ -17,7 +17,8 @@
         "laravel/jetstream": "^1.1",
         "laravel/sanctum": "^2.6",
         "laravel/tinker": "^2.0",
-        "livewire/livewire": "^2.0"
+        "livewire/livewire": "^2.0",
+        "spatie/laravel-enum": "^2.0.0-rc.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
