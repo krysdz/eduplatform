@@ -7,16 +7,16 @@
     @csrf
 
     <label for="name">Nazwa: </label>
-    <input type="text" name="name" value="{{$term->name}}">
+    <input type="text" id="name" name="name" value="{{$term->name}}">
 
     <label for="start_date">Data rozpoczęcia: </label>
-    <input type="date" name="start_date" value="{{$term->start_date}}">
+    <input type="date" id="start_date" name="start_date" value="{{$term->start_date}}">
 
     <label for="end_date">Data zakończenia: </label>
-    <input type="date" name="end_date" value="{{$term->end_date}}">
+    <input type="date" id="end_date" name="end_date" value="{{$term->end_date}}">
 
     <label for="is_active">Aktywny? </label>
-    <input type="checkbox" name="is_active" value="is_active" @if($term->is_active) checked @endif">
+    <input type="checkbox" id="is_active" name="is_active" value="is_active" @if($term->is_active) checked @endif">
 
     <button type="submit">Zapisz</button>
 </form>

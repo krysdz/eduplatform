@@ -18,7 +18,7 @@ Route::get('/', [IndexController::class, 'index'])->name('index');
 Route::get('/logout', function () {
     Auth::logout();
     return redirect()->route('index');
-});
+})->name('logout');
 
 Route::middleware(['auth:sanctum', 'administrator'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\IndexController::class, 'index'])->name('index');
@@ -51,6 +51,16 @@ Route::middleware(['auth:sanctum', 'administrator'])->prefix('admin')->name('adm
         Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\FacultyController::class, 'edit'])->name('edit');
         Route::put('/{id}', [\App\Http\Controllers\Admin\FacultyController::class, 'update'])->name('update');
         Route::delete('/{id}', [\App\Http\Controllers\Admin\FacultyController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('kursy')->name('courses.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\CourseController::class, 'index'])->name('index');
+        Route::get('/dodaj', [\App\Http\Controllers\Admin\CourseController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('store');
+        Route::get('/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'show'])->name('show');
+        Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\CourseController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('destroy');
     });
 });
 

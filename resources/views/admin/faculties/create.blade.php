@@ -6,10 +6,10 @@
         @csrf
 
         <label for="name">Nazwa: </label>
-        <input type="text" name="name">
+        <input type="text" id="name" name="name">
 
         <label for="code">Kod: </label>
-        <input type="text" name="code">
+        <input type="text" id="code" name="code">
 
         <button type="submit">Dodaj</button>
     </form>

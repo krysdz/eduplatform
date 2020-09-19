@@ -7,10 +7,10 @@
         @method('PUT')
 
         <label for="name">Nazwa: </label>
-        <input type="text" name="name" value="{{$faculty->name}}">
+        <input type="text" id="name" name="name" value="{{$faculty->name}}">
 
         <label for="code">Kod: </label>
-        <input type="text" name="code" value="{{$faculty->code}}">
+        <input type="text" id="code" name="code" value="{{$faculty->code}}">
 
         <button type="submit">Zapisz</button>
     </form>

@@ -16,22 +16,26 @@
     @csrf
 
     <label for="first_name">Imię: </label>
-    <input type="text" name="first_name" value="{{$user->first_name}}">
+    <input type="text" id="first_name" name="first_name" value="{{$user->first_name}}">
+
     <label for="last_name">Nazwisko: </label>
-    <input type="text" name="last_name" value="{{$user->last_name}}">
+    <input type="text" id="last_name" name="last_name" value="{{$user->last_name}}">
+
     <label for="email">E-mail: </label>
-    <input type="email" name="email" value="{{$user->email}}">
+    <input type="email" id="email" name="email" value="{{$user->email}}">
+
     <label for="phone">Nr telefonu: </label>
-    <input type="text" name="phone" value="{{$user->phone}}">
+    <input type="text" id="phone" name="phone" value="{{$user->phone}}">
 
     @if($user->type == 'student')
         <label for="code">Nr albumu: </label>
-        <input type="number" name="code" value="{{$user->student->code}}">
+        <input type="text" id="code" name="code" value="{{$user->student->code}}">
     @elseif($user->type == 'teacher')
         <label for="degree">Stopień naukowy: </label>
-        <input type="text" name="degree" value="{{$user->teacher->degree}}">
+        <input type="text" id="degree" name="degree" value="{{$user->teacher->degree}}">
+
         <label for="website">Strona internetowa: </label>
-        <input type="text" name="website" value="{{$user->teacher->website}}">
+        <input type="text" id="website" name="website" value="{{$user->teacher->website}}">
     @endif
 
     <button type="submit">Zapisz</button>

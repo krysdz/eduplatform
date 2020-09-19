@@ -11,13 +11,13 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto">
-            <a class="navbar-brand" href="#">Eduplatform</a>
+            <a class="navbar-brand" href="{{route('index')}}">Eduplatform</a>
             @yield('menu')
         </ul>
 
         @auth
             <span class="navbar-text">Witaj {{Auth::user()->first_name}}</span>
-            <a class="nav-link" href="/logout">Wyloguj</a>
+            <a class="nav-link" href="{{route('logout')}}">Wyloguj</a>
         @endauth
 
         @guest
@@ -29,6 +29,7 @@
 <div class="container">
     @include('flash::message')
     @yield('content')
+
 </div>
 </body>
 </html>

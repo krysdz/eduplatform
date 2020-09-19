@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
+use App\Models\Course;
 use App\Models\Faculty;
 use App\Models\Student;
 use App\Models\Teacher;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
         Teacher::factory(10)->create();
         $this->createTerms();
         $this->createFaculties();
+        $this->createCourses();
     }
 
     private function createTerms()
@@ -73,6 +75,36 @@ class DatabaseSeeder extends Seeder
 
         foreach ($faculties as $faculty) {
             Faculty::create($faculty);
+        }
+    }
+
+    private function createCourses()
+    {
+        $courses = [
+            [
+                'name' => 'Interfejsy graficzne',
+                'code' => 'WFAIS.IF-X201.0',
+                'faculty_id' => Faculty::where(['code' => 'UJ.WFAI'])->first()->id,
+            ],
+            [
+                'name' => 'Bazy danych',
+                'code' => 'WFAIS.IF-K104.0',
+                'faculty_id' => Faculty::where(['code' => 'UJ.WFAI'])->first()->id,
+            ],
+            [
+                'name' => 'Algorytmy i struktury danych',
+                'code' =>  	'WMI.II-ASD-OL',
+                'faculty_id' => Faculty::where(['code' => 'UJ.wMi'])->first()->id,
+            ],
+            [
+                'name' => 'Logika i teoria mnogości',
+                'code' => 'WMI.II-LiTM-1SO',
+                'faculty_id' => Faculty::where(['code' => 'UJ.WMI'])->first()->id,
+            ]
+        ];
+
+        foreach ($courses as $course) {
+            Course::create($course);
         }
     }
 }

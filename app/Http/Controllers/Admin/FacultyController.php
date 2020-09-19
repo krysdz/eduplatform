@@ -55,7 +55,7 @@ class FacultyController extends Controller
         $validatedData = $request->validate(
             [
                 'name' => 'required|string',
-                'code' => 'required|string|unique:faculties,name,'.$currentFaculty->id
+                'code' => 'required|string|unique:faculties,code,'.$currentFaculty->id
             ]);
 
         if (!$validatedData) {
