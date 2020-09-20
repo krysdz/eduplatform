@@ -47,11 +47,6 @@ class GroupController extends Controller
             'term_id' => 'required|integer'
         ]);
 
-        if (!$validatedData) {
-            flash('Tworzenie grupy nie powiodło się')->error();
-            return redirect()->route('admin.groups.index');
-        }
-
         $validatedData['type'] = GroupTypeEnum::makeFromId($validatedData['type']);
         DB::beginTransaction();
 
@@ -101,11 +96,6 @@ class GroupController extends Controller
             'teacher_id' => 'required|integer',
             'term_id' => 'required|integer'
         ]);
-
-        if (!$validatedData) {
-            flash('Aktualizacja grupy nie powiodła się')->error();
-            return redirect()->route('admin.groups.index');
-        }
 
         $validatedData['type'] = GroupTypeEnum::makeFromId($validatedData['type']);
         DB::beginTransaction();

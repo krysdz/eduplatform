@@ -44,7 +44,7 @@ class TermController extends Controller
             return redirect()->route('admin.terms.index');
         }
 
-        if (!$validatedData || Term::where(['name' => $name])->exists()) {
+        if (Term::where(['name' => $name])->exists()) {
             flash('Tworzenie semestru nie powiodło się')->error();
             return redirect()->route('admin.terms.index');
         }
@@ -85,11 +85,6 @@ class TermController extends Controller
         $validatedData['is_active'] = (($validatedData['is_active'] ?? '') == 'is_active');
 
         if (!$validatedData) {
-            flash('Aktualizacja semestru nie powiodła się')->error();
-            return redirect()->route('admin.terms.index');
-        }
-
-        if (!$currentTerm->update($validatedData)) {
             flash('Aktualizacja semestru nie powiodła się')->error();
             return redirect()->route('admin.terms.index');
         }

@@ -34,11 +34,6 @@ class CourseController extends Controller
             'faculty_id' => 'required|integer'
         ]);
 
-        if (!$validatedData) {
-            flash('Tworzenie kursu nie powiodło się')->error();
-            return redirect()->back();
-        }
-
         Course::create($validatedData);
         flash('Tworzenie kursu powiodło się')->success();
         return redirect()->route('admin.courses.index');
@@ -71,11 +66,6 @@ class CourseController extends Controller
             'code' => 'required|string|unique:courses,code,'.$currentCourse->id,
             'faculty_id' => 'required|integer'
         ]);
-
-        if (!$validatedData) {
-            flash('Aktualizacja kursu nie powiodła się')->error();
-            return redirect()->route('admin.courses.index');
-        }
 
         $currentCourse->update($validatedData);
         flash('Aktualizacja kursu powiodła się')->success();

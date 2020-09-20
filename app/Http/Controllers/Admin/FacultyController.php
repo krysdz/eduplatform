@@ -27,11 +27,6 @@ class FacultyController extends Controller
                 'code' => 'required|string|unique:faculties'
             ]);
 
-        if (!$validatedData) {
-            flash('Tworzenie wydziału nie powiodło się')->error();
-            return redirect()->route('admin.faculties.index');
-        }
-
         Faculty::create($validatedData);
         flash('Tworzenie wydziału powiodło się')->success();
         return redirect()->route('admin.faculties.index');
@@ -57,11 +52,6 @@ class FacultyController extends Controller
                 'name' => 'required|string',
                 'code' => 'required|string|unique:faculties,code,'.$currentFaculty->id
             ]);
-
-        if (!$validatedData) {
-            flash('Aktualizacja wydziału nie powiodła się')->error();
-            return redirect()->route('admin.faculties.index');
-        }
 
         $currentFaculty->update($validatedData);
         flash('Aktualizacja wydziału powiodła się')->success();

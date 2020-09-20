@@ -34,10 +34,6 @@ class UserController extends Controller
 
         $validatedData = $this->validateData($type);
 
-        if (!$validatedData) {
-            return redirect()->route('admin.users.index');
-        }
-
         DB::beginTransaction();
 
         try {
@@ -92,10 +88,6 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $validatedData = $this->validateData($user->type, $user);
-
-        if (!$validatedData) {
-            return redirect()->route('admin.users.index');
-        }
 
         DB::beginTransaction();
 
