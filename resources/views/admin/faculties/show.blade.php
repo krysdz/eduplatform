@@ -4,7 +4,7 @@
     <h1>{{$faculty->name}} ({{$faculty->code}})</h1>
     <h2>Kursy:</h2>
 
-        <table>
+        <table class="table">
             <tr>
                 <th>Id</th>
                 <th>Nazwa</th>

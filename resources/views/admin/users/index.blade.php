@@ -6,7 +6,7 @@
 <button><a href="{{route('admin.users.create')}}?type=administrator">Dodaj administratora</a></button>
 <button><a href="{{route('admin.users.create')}}?type=nauczyciel">Dodaj nauczyciela</a></button>
 <button><a href="{{route('admin.users.create')}}?type=student">Dodaj studenta</a></button>
-<table>
+<table class="table">
     <tr>
         <th>Id</th>
         <th>Imię</th>

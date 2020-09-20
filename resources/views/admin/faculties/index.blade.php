@@ -3,7 +3,7 @@
 @section('content')
     <h1>Wydziały</h1>
     <button><a href="{{route('admin.faculties.create')}}">Dodaj wydział</a></button>
-    <table>
+    <table class="table">
         <tr>
             <th>Id</th>
             <th>Nazwa</th>

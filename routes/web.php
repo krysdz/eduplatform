@@ -62,6 +62,16 @@ Route::middleware(['auth:sanctum', 'administrator'])->prefix('admin')->name('adm
         Route::put('/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'update'])->name('update');
         Route::delete('/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('destroy');
     });
+
+    Route::prefix('grupy')->name('groups.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\GroupController::class, 'index'])->name('index');
+        Route::get('/dodaj', [\App\Http\Controllers\Admin\GroupController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\GroupController::class, 'store'])->name('store');
+        Route::get('/{id}', [\App\Http\Controllers\Admin\GroupController::class, 'show'])->name('show');
+        Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\GroupController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Admin\GroupController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\GroupController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->group(function () {

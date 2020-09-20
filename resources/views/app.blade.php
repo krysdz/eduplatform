@@ -24,12 +24,12 @@
             <a class="nav-link" href="/login">Zaloguj</a>
         @endguest
     </div>
-    </div>
 </nav>
 <div class="container">
     @include('flash::message')
-    @yield('content')
+    @include('include.app.errors')
 
+    @yield('content')
 </div>
 </body>
 </html>

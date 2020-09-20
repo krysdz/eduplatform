@@ -7,7 +7,7 @@
         <h2>Aktualny</h2>
     @endif
     <h2>Grupy:</h2>
-    <table>
+    <table class="table">
         <tr>
             <th>Id</th>
             <th>Nazwa</th>

@@ -36,7 +36,7 @@ class CourseController extends Controller
 
         if (!$validatedData) {
             flash('Tworzenie kursu nie powiodło się')->error();
-            return redirect()->route('admin.courses.index');
+            return redirect()->back();
         }
 
         Course::create($validatedData);

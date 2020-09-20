@@ -11,7 +11,7 @@
     <p>{{$user->student->code}}</p>
 
     <h2>Grupy:</h2>
-    <table>
+    <table class="table">
         <tr>
             <th>Id</th>
             <th>Nazwa</th>
@@ -36,7 +36,7 @@
     <p>{{$user->teacher->website}}</p>
 
     <h2>Grupy:</h2>
-    <table>
+    <table class="table">
         <tr>
             <th>Id</th>
             <th>Nazwa</th>

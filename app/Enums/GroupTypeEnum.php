@@ -20,6 +20,12 @@ use Spatie\Enum\Laravel\Enum;
  */
 final class GroupTypeEnum extends Enum
 {
+    public static function makeFromId(int $id)
+    {
+        $value = array_flip(self::values())[$id];
+        return self::make($value);
+    }
+
     protected static function values(): array
     {
         return [

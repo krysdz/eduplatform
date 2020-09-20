@@ -13,6 +13,9 @@
     <li class="navbar-nav mr-auto">
         <a class="nav-link" href="{{route('admin.courses.index')}}">Kursy</a>
     </li>
+    <li class="navbar-nav mr-auto">
+        <a class="nav-link" href="{{route('admin.groups.index')}}">Grupy</a>
+    </li>
 @endsection
 @section('content')
 <h1>Sekcja administratora</h1>
