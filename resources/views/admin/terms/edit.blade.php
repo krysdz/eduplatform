@@ -9,8 +9,14 @@
     <label for="name">Nazwa: </label>
     <input type="text" id="name" name="name" value="{{$term->name}}">
 
+    <label for="code">Kod: </label>
+    <input type="text" id="code" name="code" value="{{$term->code}}">
+
     <label for="start_date">Data rozpoczęcia: </label>
     <input type="date" id="start_date" name="start_date" value="{{$term->start_date}}">
+
+    <label for="end_classes_date">Ostani dzień zajęć dydaktycznych: </label>
+    <input type="date" id="end_classes_date" name="end_classes_date" value="{{$term->end_classes_date}}">
 
     <label for="end_date">Data zakończenia: </label>
     <input type="date" id="end_date" name="end_date" value="{{$term->end_date}}">

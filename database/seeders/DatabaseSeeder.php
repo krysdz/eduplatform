@@ -46,13 +46,17 @@ class DatabaseSeeder extends Seeder
         $terms = [
             [
                 'name' => 'Semestr zimowy 2019/2020',
+                'code' => '19/20Z',
                 'start_date' => Date::create(2019, 10, 1),
-                'end_date' => Date::create(2020, 1, 23),
+                'end_classes_date' => Date::create(2020, 1, 28),
+                'end_date' => Date::create(2020, 2, 23),
                 'is_active' => 0
             ],
             [
                 'name' => 'Semestr letni 2019/2020',
+                'code' => '19/20L',
                 'start_date' => Date::create(2020, 1, 24),
+                'end_classes_date' => Date::create(2020, 6, 14),
                 'end_date' => Date::create(2020, 9, 30),
                 'is_active' => 1
             ]

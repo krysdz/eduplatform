@@ -7,7 +7,9 @@
     <tr>
         <th>Id</th>
         <th>Nazwa</th>
+        <th>Kod</th>
         <th>Data rozpoczęcia</th>
+        <th>Ostani dzień zajęć</th>
         <th>Data zakończenia</th>
         <th>Aktywny?</th>
         <th>Data stworzenia</th>
@@ -17,7 +19,9 @@
         <tr>
             <td><a href="{{route('admin.terms.show', [$term->id])}}">{{$term->id}}</a></td>
             <td>{{$term->name}}</td>
+            <td>{{$term->code}}</td>
             <td>{{$term->start_date}}</td>
+            <td>{{$term->end_classes_date}}</td>
             <td>{{$term->end_date}}</td>
             <td>{{$term->is_active}}</td>
             <td>{{$term->created_at}}</td>

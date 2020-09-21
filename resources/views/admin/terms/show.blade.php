@@ -1,8 +1,9 @@
 @extends('admin.index')
 
 @section('content')
-    <h1>{{$term->name}}</h1>
+    <h1>{{$term->name}} {{$term->code}}</h1>
     <h2>{{$term->start_date}} - {{$term->end_date}}</h2>
+    <h2>Ostani dzień zajęć: {{$term->end_classes_date}} - {{$term->end_date}}</h2>
     @if($term->is_active)
         <h2>Aktualny</h2>
     @endif

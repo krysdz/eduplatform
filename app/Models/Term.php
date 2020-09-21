@@ -12,8 +12,10 @@ class Term extends Model
     protected $fillable = [
         'start_date',
         'end_date',
+        'end_classes_date',
         'is_active',
-        'name'
+        'name',
+        'code'
     ];
 
     public function groups()

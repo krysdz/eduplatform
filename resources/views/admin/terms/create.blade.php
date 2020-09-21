@@ -8,6 +8,9 @@
     <label for="start_date">Data rozpoczęcia: </label>
     <input type="date" id="start_date" name="start_date">
 
+    <label for="end_classes_date">Ostani dzień zajęć dydaktycznych: </label>
+    <input type="date" id="end_classes_date" name="end_classes_date">
+
     <label for="end_date">Data zakończenia: </label>
     <input type="date" id="end_date" name="end_date">
 

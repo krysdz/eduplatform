@@ -27,34 +27,28 @@ class TermController extends Controller
     {
         $validatedData = $request->validate([
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'end_classes_date' => 'required|date|after:start_date',
+            'end_date' => 'required|date|after_or_equal:end_classes_date',
             'is_active' => 'sometimes|string'
         ]);
         $validatedData['is_active'] = (($validatedData['is_active'] ?? '') == 'is_active');
 
-        $start_date = Carbon::createFromFormat('Y-m-d', $request->input('start_date'));
-        $end_date = Carbon::createFromFormat('Y-m-d', $request->input('end_date'));
+        $termInfo = $this->getTermNameAndCode();
 
-        if ($start_date->year < $end_date->year) {
-            $name = 'Semestr zimowy '.$start_date->year.'/'.$end_date->year;
-        } elseif ($start_date->year == $end_date->year) {
-            $name = 'Semestr letni '.($start_date->year - 1).'/'.$end_date->year;
-        } else {
+        if ($termInfo['name'] == null || $termInfo['code'] == null || Term::where(['code' => $termInfo['code']])->exists()) {
             flash('Tworzenie semestru nie powiodło się')->error();
             return redirect()->route('admin.terms.index');
         }
 
-        if (Term::where(['name' => $name])->exists()) {
+        if (!Term::create(array_merge($validatedData, $termInfo))) {
             flash('Tworzenie semestru nie powiodło się')->error();
             return redirect()->route('admin.terms.index');
         }
 
-        if (!Term::create(array_merge($validatedData, ['name' => $name]))) {
-            flash('Tworzenie semestru nie powiodło się')->error();
-            return redirect()->route('admin.terms.index');
+        if ($validatedData['is_active']) {
+            $this->setIsActiveFalseInOtherTerm();
         }
 
-        $this->setIsActiveFalseInOtherTerm($validatedData['is_active']);
         flash('Tworzenie semestru powiodło się')->success();
         return redirect()->route('admin.terms.index');
     }
@@ -76,20 +70,22 @@ class TermController extends Controller
         $currentTerm = Term::findOrFail($id);
 
         $validatedData = $request->validate([
-            'name' => 'required|unique:terms,name,'.$currentTerm->id,
+            'name' => 'required|unique:terms,name,'. $currentTerm->id,
+            'code' => 'required|unique:terms,code,'. $currentTerm->id,
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'end_classes_date' => 'required|date|after:start_date',
+            'end_date' => 'required|date|after_or_equal:end_classes_date',
             'is_active' => 'sometimes|string'
         ]);
 
         $validatedData['is_active'] = (($validatedData['is_active'] ?? '') == 'is_active');
 
-        if (!$validatedData) {
-            flash('Aktualizacja semestru nie powiodła się')->error();
-            return redirect()->route('admin.terms.index');
+        if ($validatedData['is_active']) {
+            $this->setIsActiveFalseInOtherTerm();
         }
 
-        $this->setIsActiveFalseInOtherTerm($validatedData['is_active']);
+        $currentTerm->update($validatedData);
+
         flash('Aktualizacja semestru powiodła się')->success();
         return redirect()->route('admin.terms.index');
     }
@@ -104,13 +100,33 @@ class TermController extends Controller
         return redirect()->route('admin.terms.index');
     }
 
-    private function setIsActiveFalseInOtherTerm($is_active): void
+    private function getTermNameAndCode(): array
     {
-        if ($is_active) {
-            $terms = Term::all();
-            foreach ($terms as $term) {
-                $term->update(['is_active' => false]);
-            }
+        $start_date = Carbon::createFromFormat('Y-m-d', request()->input('start_date'));
+        $end_date = Carbon::createFromFormat('Y-m-d', request()->input('end_date'));
+
+        $name = null;
+        $code = null;
+
+        if ($start_date->year == ($end_date->year - 1) && $start_date->month == 10 && $end_date->month == 2) {
+            $name = 'Semestr zimowy ' . $start_date->year . '/' . $end_date->year;
+            $code = $start_date->format('y') . '/' . $end_date->format('y') . 'Z';
+        } elseif (($start_date->year == $end_date->year) && $start_date->month == 2 && $end_date->month == 9) {
+            $name = 'Semestr letni ' . ($start_date->year - 1) . '/' . $end_date->year;
+            $code = ($start_date->format('y') - 1) . '/' . $end_date->format('y') . 'L';
+        } elseif (($start_date->year == ($end_date->year - 1)) && $start_date->month == 10 && $end_date->month == 9) {
+            $name = 'Rok akademicki ' . $start_date->year . '/' . $end_date->year;
+            $code = $start_date->format('y') . '/' . $end_date->format('y');
+        }
+        return ['name' => $name, 'code' => $code];
+    }
+
+    private function setIsActiveFalseInOtherTerm(): void
+    {
+        $terms = Term::all();
+        foreach ($terms as $term) {
+            $term->update(['is_active' => false]);
         }
     }
+
 }
