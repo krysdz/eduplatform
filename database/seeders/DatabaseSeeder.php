@@ -2,15 +2,19 @@
 
 namespace Database\Seeders;
 
+use App\Enums\DaysOfWeekEnum;
 use App\Enums\GroupTypeEnum;
+use App\Http\Controllers\Admin\GroupController;
 use App\Models\Admin;
 use App\Models\Course;
 use App\Models\Faculty;
 use App\Models\Group;
+use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Term;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 
@@ -55,7 +59,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Semestr letni 2019/2020',
                 'code' => '19/20L',
-                'start_date' => Date::create(2020, 1, 24),
+                'start_date' => Date::create(2020, 2, 24),
                 'end_classes_date' => Date::create(2020, 6, 14),
                 'end_date' => Date::create(2020, 9, 30),
                 'is_active' => 1
@@ -124,12 +128,25 @@ class DatabaseSeeder extends Seeder
                 'teacher_id' => Teacher::first()->id,
                 'course_id' => Faculty::first()->id,
                 'term_id' => Term::where(['is_active' => true])->first()->id,
+                'day_of_classes' => DaysOfWeekEnum::monday()->value
+            ],
+            [
+                'number' => 2,
+                'type' => GroupTypeEnum::class()->value,
+                'teacher_id' => Teacher::find(5)->id,
+                'course_id' => Faculty::first()->id,
+                'term_id' => Term::where(['is_active' => true])->first()->id,
+                'day_of_classes' => DaysOfWeekEnum::friday()->value
             ],
         ];
 
         foreach ($groups as $group) {
             $currentGroup = Group::create($group);
             $currentGroup->students()->attach(Student::find([1,5,8,12,20]));
+
+            (new \App\Http\Controllers\Admin\GroupController)->generateLessons($currentGroup);
         }
     }
+
+
 }

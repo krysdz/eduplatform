@@ -16,6 +16,14 @@
         <label for="number">Numer: </label>
         <input type="text" id="number" name="number">
 
+        <label for="day_of_classes">Dzień zajęć: </label>
+        <select id="day_of_classes" name="day_of_classes">
+            <option hidden selected></option>
+            @foreach($days as $value => $label)
+                <option value="{{$value}}">{{$label}}</option>
+            @endforeach
+        </select>
+
         <label for="type">Typ: </label>
         <select id="type" name="type">
             <option hidden selected></option>
@@ -35,7 +43,7 @@
         <label for="term_id">Semestr: </label>
         <select id="term_id" name="term_id">
             @foreach($terms as $term)
-                <option @if($term->isActive) selected @endif value="{{$term->id}}">{{$term->name}}</option>
+                <option @if($term->is_active) selected @endif value="{{$term->id}}">{{$term->name}}</option>
             @endforeach
         </select>
 

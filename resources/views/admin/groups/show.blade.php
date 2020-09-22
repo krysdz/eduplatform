@@ -12,4 +12,11 @@
         @endforeach
     </ul>
 
+    <h2>Lekcje:</h2>
+    <ul>
+        @foreach($group->lessons as $lesson)
+            <li>{{$lesson->number}} {{$lesson->date}}</li>
+        @endforeach
+    </ul>
+
 @endsection

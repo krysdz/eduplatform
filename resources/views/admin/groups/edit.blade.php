@@ -17,6 +17,17 @@
         <label for="number">Numer: </label>
         <input type="text" id="number" name="number" value="{{$group->number}}">
 
+        <label for="day_of_classes">Dzień zajęć: </label>
+        <select id="day_of_classes" name="day_of_classes">
+            <option hidden selected></option>
+            @foreach($days as $value => $label)
+                <option @if($group->day_of_classes->value === $value) selected @endif value="{{$value}}">{{$label}}</option>
+            @endforeach
+        </select>
+
+        <label for="start_update_date">Zmień dzień zajęć od: </label>
+        <input type="date" id="start_update_date" name="start_update_date">
+
         <label for="type">Typ: </label>
         <select id="type" name="type">
             <option hidden selected></option>

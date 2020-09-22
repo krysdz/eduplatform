@@ -10,6 +10,7 @@
             <th>Nr grupy</th>
             <th>Typ</th>
             <th>Semestr</th>
+            <th>Dzień tygodnia</th>
             <th>Wydział</th>
             <th>Nauczyciel prowadzący</th>
             <th>Ilość uczestników</th>
@@ -20,7 +21,8 @@
                 <td>{{$group->course->name}}</td>
                 <td>{{$group->number}}</td>
                 <td>{{$group->type->label}}</td>
-                <td>{{$group->term->name}}</td>
+                <td>{{$group->term->code}}</td>
+                <td>{{$group->day_of_classes->label}}</td>
                 <td>{{$group->course->faculty->code}}</td>
                 <td>{{$group->teacher->user->fullName}}</td>
                 <td>{{$group->students->count()}}</td>

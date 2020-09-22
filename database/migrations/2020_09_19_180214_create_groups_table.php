@@ -21,6 +21,8 @@ class CreateGroupsTable extends Migration
             $table->foreignId('course_id');
             $table->foreignId('teacher_id');
             $table->foreignId('term_id');
+            $table->unsignedSmallInteger('day_of_classes');
+            $table->date('start_update_date')->nullable();
 
             $table->foreign('course_id')->references('id')->on('courses');
             $table->foreign('teacher_id')->references('id')->on('teachers');
