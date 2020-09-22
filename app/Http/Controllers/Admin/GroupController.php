@@ -173,7 +173,7 @@ class GroupController extends Controller
     public function updateLessons(Group $group, string $startUpdateDate, $dayOfClasses)
     {
         $lessonsToUpdate = $group->lessons()->where('date', '>=', $startUpdateDate)->orderBy('date')->get();
-        $lessonsToUpdate = $lessonsToUpdate instanceof Collection ? $lessonsToUpdate : collect($lessonsToUpdate);
+//        $lessonsToUpdate = $lessonsToUpdate instanceof Collection ? $lessonsToUpdate : collect($lessonsToUpdate);
 
         $start_date = !empty($startUpdateDate) ? Carbon::createFromFormat('Y-m-d', $startUpdateDate) : Carbon::today();
         $end_date = Carbon::createFromFormat('Y-m-d', $group->term->end_classes_date);

@@ -74,12 +74,22 @@ Route::middleware(['auth:sanctum', 'administrator'])->prefix('admin')->name('adm
     });
 });
 
-Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Teacher\IndexController::class, 'index']);
+Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teacher.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Teacher\IndexController::class, 'index'])->name('index');
+
+    Route::prefix('grupy')->name('groups.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Teacher\GroupController::class, 'index'])->name('index');
+        Route::get('/{groupId}', [\App\Http\Controllers\Teacher\GroupController::class, 'show'])->name('show');
+        Route::get('/{groupId}/lekcje', [\App\Http\Controllers\Teacher\LessonController::class, 'index'])->name('lessons.index');
+    });
+
+    Route::prefix('lekcje')->name('lessons.')->group(function () {
+        Route::get('/{lessonId}', [\App\Http\Controllers\Teacher\LessonController::class, 'show'])->name('show');
+    });
 });
 
-Route::middleware(['auth:sanctum', 'student'])->prefix('student')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Student\IndexController::class, 'index']);
+Route::middleware(['auth:sanctum', 'student'])->prefix('student')->name('student.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Student\IndexController::class, 'index'])->name('index');
 });
 
 //Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {

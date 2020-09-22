@@ -16,7 +16,7 @@
         </ul>
 
         @auth
-            <span class="navbar-text">Witaj {{Auth::user()->first_name}}</span>
+            <span class="navbar-text">Witaj {{Auth::user()->fullName}}</span>
             <a class="nav-link" href="{{route('logout')}}">Wyloguj</a>
         @endauth
 
