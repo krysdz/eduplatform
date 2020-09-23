@@ -1,7 +1,7 @@
 @extends('teacher.layout')
 
 @section('content')
-    <h1>@if($action == 'plan') Zaplanuj @else Stwórz @endif lekcję</h1>
+    <h1>@if($action === 'plan') Zaplanuj @elseif($action === 'create') Stwórz @elseif($action === 'edit') Edytuj @endif lekcję</h1>
     <h2>{{$lesson->group->course->name}} gr.{{$lesson->group->number}} ({{$lesson->group->type->label}})</h2>
     <form action="{{route('teacher.lessons.update', $lesson->id)}}" method="POST">
         @method('PUT')
@@ -18,7 +18,9 @@
         <label for="description">Opis: </label>
         <input type="text" id="description" name="description" value="{{$lesson->description}}">
 
-        @if(!$action == 'plan')
+        @if($action === 'create')
+            <input type="hidden" id="is_active" name="is_active" value="is_active">
+        @elseif($action === 'edit' && $lesson->is_active)
             <input type="hidden" id="is_active" name="is_active" value="is_active">
         @endif
 

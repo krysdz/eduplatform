@@ -26,9 +26,16 @@ class LessonController extends Controller
 
     public function edit(Request $request, int $lessonId)
     {
+        $action = $request->input('action');
+
+        if (!in_array($action, ['edit', 'plan', 'create'])) {
+            flash('Nie możesz wykonać żądanej akcji')->error();
+            return redirect()->back();
+        }
+
         return view('teacher.lessons.edit', [
             'lesson' => Lesson::findOrFail($lessonId),
-            'action' => $request->input('action')
+            'action' => $action
         ]);
     }
 
