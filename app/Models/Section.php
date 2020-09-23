@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Lesson extends Model
+class Section extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'number',
         'title',
-        'date',
+        'position',
+        'lesson_id',
         'group_id',
+        'description',
         'is_active'
     ];
 
@@ -22,8 +23,8 @@ class Lesson extends Model
         return $this->belongsTo(Group::class);
     }
 
-    public function section()
+    public function lesson()
     {
-        return $this->hasOne(Section::class);
+        return $this->belongsTo(Lesson::class);
     }
 }

@@ -49,4 +49,9 @@ class Group extends Model
     {
         return $this->hasMany(Lesson::class);
     }
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class);
+    }
 }

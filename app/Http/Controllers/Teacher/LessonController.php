@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Models\Group;
 use App\Models\Lesson;
+use App\Models\Section;
 use Illuminate\Http\Request;
 
 class LessonController extends Controller
@@ -62,7 +63,6 @@ class LessonController extends Controller
                     'title' => 'required|string',
                     'date' => 'required|date',
                     'number' => 'required|integer',
-                    'description' => 'nullable|string',
                     'is_active' => 'sometimes|string'
                 ]);
                 $validatedData['is_active'] = (($validatedData['is_active'] ?? '') == 'is_active');
@@ -70,6 +70,17 @@ class LessonController extends Controller
         }
 
         $currentLesson->update($validatedData);
+
+        if($currentLesson->is_active && Section::where(['lesson_id' => $currentLesson->id])->doesntExist()) {
+            Section::create([
+                'title' => $currentLesson->title,
+                'lesson_id' => $currentLesson->id,
+                'group_id' => $currentLesson->group_id,
+                'is_active' => false,
+                'position' => $currentLesson->id * 10
+            ]);
+        }
+
         flash('Tworzenie lekcji powiodło się')->success();
         return redirect()->route('teacher.groups.lessons.index', $currentLesson->group_id);
     }

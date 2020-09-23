@@ -15,12 +15,7 @@
         <label for="number">Numer: </label>
         <input type="text" id="number" name="number" value="{{$lesson->number}}">
 
-        <label for="description">Opis: </label>
-        <input type="text" id="description" name="description" value="{{$lesson->description}}">
-
-        @if($action === 'create')
-            <input type="hidden" id="is_active" name="is_active" value="is_active">
-        @elseif($action === 'edit' && $lesson->is_active)
+        @if($action === 'create' || ($action === 'edit' && $lesson->is_active) )
             <input type="hidden" id="is_active" name="is_active" value="is_active">
         @endif
 

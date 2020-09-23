@@ -81,12 +81,22 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
         Route::get('/', [\App\Http\Controllers\Teacher\GroupController::class, 'index'])->name('index');
         Route::get('/{groupId}', [\App\Http\Controllers\Teacher\GroupController::class, 'show'])->name('show');
         Route::get('/{groupId}/lekcje', [\App\Http\Controllers\Teacher\LessonController::class, 'index'])->name('lessons.index');
+        Route::get('/{groupId}/sekcje', [\App\Http\Controllers\Teacher\SectionController::class, 'index'])->name('sections.index');
+        Route::get('/{groupId}/sekcje/dodaj', [\App\Http\Controllers\Teacher\SectionController::class, 'create'])->name('sections.create');
+        Route::post('/{groupId}/sekcje', [\App\Http\Controllers\Teacher\SectionController::class, 'store'])->name('sections.store');
     });
 
     Route::prefix('lekcje')->name('lessons.')->group(function () {
         Route::get('/{lessonId}', [\App\Http\Controllers\Teacher\LessonController::class, 'show'])->name('show');
         Route::get('/{lessonId}/edytuj', [\App\Http\Controllers\Teacher\LessonController::class, 'edit'])->name('edit');
         Route::put('/{lessonId}', [\App\Http\Controllers\Teacher\LessonController::class, 'update'])->name('update');
+    });
+
+    Route::prefix('sekcje')->name('sections.')->group(function () {
+        Route::get('/{sectionId}', [\App\Http\Controllers\Teacher\SectionController::class, 'show'])->name('show');
+        Route::get('/{sectionId}/edytuj', [\App\Http\Controllers\Teacher\SectionController::class, 'edit'])->name('edit');
+        Route::put('/{sectionId}', [\App\Http\Controllers\Teacher\SectionController::class, 'update'])->name('update');
+        Route::delete('/{sectionId}', [\App\Http\Controllers\Teacher\SectionController::class, 'destroy'])->name('destroy');
     });
 });
 

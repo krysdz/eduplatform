@@ -5,6 +5,7 @@
     <h2>{{$group->course->faculty->code}}</h2>
 
     <button><a href="{{route('teacher.groups.lessons.index', $group->id)}}">Lekcje</a></button>
+    <button><a href="{{route('teacher.groups.sections.index', $group->id)}}">Sekcje</a></button>
 
     <h2>Studenci:</h2>
     <ul>
