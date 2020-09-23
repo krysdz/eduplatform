@@ -85,6 +85,8 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
 
     Route::prefix('lekcje')->name('lessons.')->group(function () {
         Route::get('/{lessonId}', [\App\Http\Controllers\Teacher\LessonController::class, 'show'])->name('show');
+        Route::get('/{lessonId}/edytuj', [\App\Http\Controllers\Teacher\LessonController::class, 'edit'])->name('edit');
+        Route::put('/{lessonId}', [\App\Http\Controllers\Teacher\LessonController::class, 'update'])->name('update');
     });
 });
 

@@ -11,7 +11,7 @@ class GroupController extends Controller
 {
     public function index(Request $request)
     {
-        $archived = $request->query('archived') === "true";
+        $archived = $request->input('archived') === 'true';
 
         return view('teacher.groups.index', [
             'groups' => Group::whereHas('term', function (Builder $q) use ($archived) {

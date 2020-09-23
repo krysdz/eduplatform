@@ -1,11 +1,13 @@
 @extends('teacher.layout')
 
 @section('content')
+    <form action="{{route('teacher.groups.index')}}" method="GET">
     @if(!$archived)
-        <button><a href="{{route('teacher.groups.index')}}?archived=true">Archiwalne grupy</a></button>
+            <button name="archived" value="true" type="submit">Archiwalne grupy</button>
     @else
-        <button><a href="{{route('teacher.groups.index')}}">Aktualne grupy</a></button>
+            <button name="archived" value="false" type="submit">Aktualne grupy</button>
     @endif
+    </form>
     <h2>Grupy:</h2>
     <table class="table">
         <tr>

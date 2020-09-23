@@ -16,42 +16,54 @@ class LessonController extends Controller
         ]);
     }
 
-
-    public function create()
-    {
-//
-    }
-
-
-    public function store(Request $request)
-    {
-      //
-    }
-
-
     public function show(int $lessonId)
     {
-        // TODO: sprawdzenie grupy
         return view('teacher.lessons.show', [
             'lesson' => Lesson::findOrFail($lessonId)
         ]);
     }
 
 
-    public function edit(int $id)
+    public function edit(Request $request, int $lessonId)
     {
-        //
+        return view('teacher.lessons.edit', [
+            'lesson' => Lesson::findOrFail($lessonId),
+            'action' => $request->input('action')
+        ]);
     }
 
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $lessonId)
     {
-        //
+        $currentLesson = Lesson::findOrFail($lessonId);
+        $action = $request->input('action');
+        $validatedData = [];
 
-    }
+        switch ($action) {
+            case 'publish':
+                $validatedData['is_active'] = true;
+                break;
+            case 'clear':
+                $validatedData = [
+                    'title' => null,
+                    'description' => null,
+                    'is_active' => false
+                ];
+                break;
+            default:
+                $validatedData = $request->validate([
+                    'title' => 'required|string',
+                    'date' => 'required|date',
+                    'number' => 'required|integer',
+                    'description' => 'nullable|string',
+                    'is_active' => 'sometimes|string'
+                ]);
+                $validatedData['is_active'] = (($validatedData['is_active'] ?? '') == 'is_active');
+                break;
+        }
 
-    public function destroy($id)
-    {
-       //
+        $currentLesson->update($validatedData);
+        flash('Tworzenie lekcji powiodło się')->success();
+        return redirect()->route('teacher.groups.lessons.index', $currentLesson->group_id);
     }
 }

@@ -6,7 +6,7 @@
 
         @foreach($lessons as $lesson)
             <h3>
-                {{$loop->iteration}}. {{$lesson->group->course->name}} gr.{{$lesson->group->number}} ({{$lesson->group->type->label}})
+                <a href="{{route('teacher.lessons.show', $lesson->id)}}">{{$loop->iteration}}. {{$lesson->group->course->name}} gr.{{$lesson->group->number}} ({{$lesson->group->type->label}}</a>)
             </h3>
         @endforeach
 
