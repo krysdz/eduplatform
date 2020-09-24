@@ -97,6 +97,9 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
         Route::get('/{sectionId}/edytuj', [\App\Http\Controllers\Teacher\SectionController::class, 'edit'])->name('edit');
         Route::put('/{sectionId}', [\App\Http\Controllers\Teacher\SectionController::class, 'update'])->name('update');
         Route::delete('/{sectionId}', [\App\Http\Controllers\Teacher\SectionController::class, 'destroy'])->name('destroy');
+
+        Route::get('/{sectionId}/pliki/{fileName}', [\App\Http\Controllers\SectionFileController::class, 'show'])->name('files.show');
+        Route::delete('/{sectionId}/pliki/{fileName}', [\App\Http\Controllers\SectionFileController::class, 'destroy'])->name('files.destroy');
     });
 });
 
