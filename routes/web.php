@@ -80,10 +80,16 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
     Route::prefix('grupy')->name('groups.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Teacher\GroupController::class, 'index'])->name('index');
         Route::get('/{groupId}', [\App\Http\Controllers\Teacher\GroupController::class, 'show'])->name('show');
+
         Route::get('/{groupId}/lekcje', [\App\Http\Controllers\Teacher\LessonController::class, 'index'])->name('lessons.index');
+
         Route::get('/{groupId}/sekcje', [\App\Http\Controllers\Teacher\SectionController::class, 'index'])->name('sections.index');
         Route::get('/{groupId}/sekcje/dodaj', [\App\Http\Controllers\Teacher\SectionController::class, 'create'])->name('sections.create');
         Route::post('/{groupId}/sekcje', [\App\Http\Controllers\Teacher\SectionController::class, 'store'])->name('sections.store');
+
+        Route::get('/{groupId}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'index'])->name('announcements.index');
+        Route::get('/{groupId}/ogloszenia/dodaj', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'create'])->name('announcements.create');
+        Route::post('/{groupId}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'store'])->name('announcements.store');
     });
 
     Route::prefix('lekcje')->name('lessons.')->group(function () {
@@ -100,6 +106,13 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
 
         Route::get('/{sectionId}/pliki/{fileId}/{fileName}', [\App\Http\Controllers\SectionFileController::class, 'show'])->name('files.show');
         Route::delete('/{sectionId}/pliki/{fileId}', [\App\Http\Controllers\SectionFileController::class, 'destroy'])->name('files.destroy');
+    });
+
+    Route::prefix('ogloszenia')->name('announcements.')->group(function () {
+        Route::get('/{announcementId}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'show'])->name('show');
+        Route::get('/{announcementId}/edytuj', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'edit'])->name('edit');
+        Route::put('/{announcementId}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'update'])->name('update');
+        Route::delete('/{announcementId}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'destroy'])->name('destroy');
     });
 });
 
