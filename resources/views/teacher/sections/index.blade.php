@@ -8,7 +8,6 @@
             <th>Id</th>
             <th>Pozycja</th>
             <th>Tytuł</th>
-            <th>Opis</th>
             <th>Ma lekcję</th>
             <th>Obublikowana</th>
         </tr>
@@ -17,7 +16,6 @@
                 <td><a href="{{route('teacher.sections.show', $section->id)}}">{{$section->id}}</a></td>
                 <td>{{$section->position}}</td>
                 <td>{{$section->title}}</td>
-                <td>{{$section->description}}</td>
                 <td>@if($section->lesson_id)tak @else nie @endif</td>
                 <td>@if($section->is_active)tak @else nie @endif</td>
                 <td>@include('teacher.sections.buttons')</td>

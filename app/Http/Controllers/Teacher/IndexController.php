@@ -14,8 +14,8 @@ class IndexController extends Controller
 {
     public function index()
     {
-//        $today = Carbon::today()->toDateString();
-        $today = Carbon::createFromDate(2020,02,28)->toDateString();
+        $today = Carbon::today()->toDateString();
+//        $today = Carbon::createFromDate(2020,02,28)->toDateString();
         $lessons = Lesson::whereHas('group', function (Builder $q) {
             $q->where(['teacher_id' => request()->user()->teacher->id]);
         })->where(['date' => $today])->get();

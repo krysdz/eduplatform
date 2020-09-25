@@ -3,7 +3,7 @@
 @section('content')
     <h1>Edytuj sekcję</h1>
     <h2>{{$section->group->course->name}} gr.{{$section->group->number}} ({{$section->group->type->label}})</h2>
-    <form action="{{route('teacher.sections.update', $section->id)}}" method="POST">
+    <form action="{{route('teacher.sections.update', $section->id)}}" enctype="multipart/form-data" method="POST">
         @method('PUT')
         @csrf
         <label for="title">Tytuł: </label>
@@ -12,10 +12,28 @@
         <label for="position">Pozycja: </label>
         <input type="number" id="position" name="position" value="{{$section->position}}" }}>
 
-        <label for="description">Opis: </label>
-        <textarea name="description" id="description" >{{$section->description}}</textarea>
+        <label for="textarea">Opis: </label>
+        <textarea name="description" id="textarea" >{{$section->description}}</textarea>
+
+        <label for="section_files">Dodaj nowe pliki: </label>
+        <input type="file" id="section_files" name="section_files[]" multiple>
 
         <button type="submit">Zapisz</button>
-        <button type="submit" @if($section->is_active)>Zapisz i ukryj @else name="is_active" value="is_active"> Zapisz i udostępnij @endif</button>
+        <button type="submit" name="is_active" @if($section->is_active) value="is_not_active"> Zapisz i ukryj @else value="is_active"> Zapisz i udostępnij @endif</button>
     </form>
+
+    <h2>Aktualne pliki w sekcji</h2>
+    <ul>
+        @foreach($files as $file)
+            <li>
+                <a href="{{route('teacher.sections.files.show', ['sectionId' => $section->id, 'fileName' => $file])}}">{{$file}}</a>
+                <form action="{{route('teacher.sections.files.destroy', ['sectionId' => $section->id, 'fileName' => $file])}}" method="POST">
+                    @method('DELETE')
+                    @csrf
+                    <button class="btn btn-danger" type="submit">Usuń</button>
+                </form>
+            </li>
+        @endforeach
+    </ul>
+
 @endsection

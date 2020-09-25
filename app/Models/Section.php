@@ -27,4 +27,9 @@ class Section extends Model
     {
         return $this->belongsTo(Lesson::class);
     }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
 }

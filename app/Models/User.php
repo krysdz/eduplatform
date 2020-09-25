@@ -92,4 +92,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Teacher::class);
     }
+
+    public function files(): Relation
+    {
+        return $this->hasMany(File::class);
+    }
 }
