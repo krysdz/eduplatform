@@ -13,27 +13,33 @@
         <input type="number" id="position" name="position" value="{{$section->position}}" }}>
 
         <label for="textarea">Opis: </label>
-        <textarea name="description" id="textarea" >{{$section->description}}</textarea>
+        <textarea name="description" id="textarea">{{$section->description}}</textarea>
 
         <label for="section_files">Dodaj nowe pliki: </label>
         <input type="file" id="section_files" name="section_files[]" multiple>
 
         <button type="submit">Zapisz</button>
-        <button type="submit" name="is_active" @if($section->is_active) value="is_not_active"> Zapisz i ukryj @else value="is_active"> Zapisz i udostępnij @endif</button>
+        <button type="submit" name="is_active" @if($section->is_active) value="is_not_active"> Zapisz i ukryj @else
+                value="is_active"> Zapisz i udostępnij @endif</button>
     </form>
 
     <h2>Aktualne pliki w sekcji</h2>
     <ul>
-        @foreach($files as $file)
+
+        @foreach($section->sectionFiles as $sectionFile)
             <li>
-                <a href="{{route('teacher.sections.files.show', ['sectionId' => $section->id, 'fileName' => $file])}}">{{$file}}</a>
-                <form action="{{route('teacher.sections.files.destroy', ['sectionId' => $section->id, 'fileName' => $file])}}" method="POST">
+                <a href="{{route('teacher.sections.files.show', ['sectionId' => $section->id, 'fileId' => $sectionFile->file->id, 'fileName' => $sectionFile->file->name])}}">{{$sectionFile->file->name}}</a>
+                <form
+                    action="{{route('teacher.sections.files.destroy', ['sectionId' => $section->id, 'fileId' => $sectionFile->file->id])}}"
+                    method="POST">
                     @method('DELETE')
                     @csrf
                     <button class="btn btn-danger" type="submit">Usuń</button>
                 </form>
             </li>
         @endforeach
+
+
     </ul>
 
 @endsection

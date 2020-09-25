@@ -55,7 +55,7 @@ class SectionController extends Controller
                         'name' => $filename,
                         'extension' => $sectionFile->getClientOriginalExtension(),
                         'path' =>  $sectionFile->storeAs('files/group_' . $groupId . '/section_' . $section->id, $filename, 'local'),
-                        'mine_type' => $sectionFile->getClientMimeType(),
+                        'mime_type' => $sectionFile->getClientMimeType(),
                         'size' => $sectionFile->getSize(),
                         'user_id' => $request->user()->id,
                     ]);
@@ -82,32 +82,18 @@ class SectionController extends Controller
     public function show(int $sectionId)
     {
         $section = Section::findOrFail($sectionId);
-        $files = Storage::disk('local')->allFiles('files/group_' . $section->group_id . '/section_' . $sectionId);
-        $fileNames = [];
-
-        foreach ($files as $file) {
-            array_push($fileNames, basename($file));
-        }
 
         return view('teacher.sections.show', [
             'section' => $section,
-            'files' => $fileNames,
         ]);
     }
 
     public function edit(int $sectionId)
     {
         $section = Section::findOrFail($sectionId);
-        $files = Storage::disk('local')->allFiles('files/group_' . $section->group_id . '/section_' . $sectionId);
-        $fileNames = [];
-
-        foreach ($files as $file) {
-            array_push($fileNames, basename($file));
-        }
 
         return view('teacher.sections.edit', [
             'section' => $section,
-            'files' => $fileNames,
         ]);
     }
 
@@ -149,7 +135,7 @@ class SectionController extends Controller
                         'name' => $filename,
                         'extension' => $sectionFile->getClientOriginalExtension(),
                         'path' =>  $sectionFile->storeAs('files/group_' . $currentSection->group_id . '/section_' . $sectionId, $filename, 'local'),
-                        'mine_type' => $sectionFile->getClientMimeType(),
+                        'mime_type' => $sectionFile->getClientMimeType(),
                         'size' => $sectionFile->getSize(),
                         'user_id' => $request->user()->id,
                     ]);
@@ -180,6 +166,14 @@ class SectionController extends Controller
             flash('Nie możesz usunąć sekcji stworzonej na podstawie lekcji')->error();
             return redirect()->route('teacher.groups.sections.index', $section->group_id);
         }
+
+        foreach ($section->sectionFiles as $sectionFile) {
+            if(Storage::delete($sectionFile->file->path)) {
+                $sectionFile->file()->delete();
+            }
+            Storage::deleteDirectory('files/group_' . $section->group_id . '/section_' . $sectionId);
+        }
+
         if (!$section->delete()) {
             flash('Usuwanie sekcji nie powiodło się')->error();
         }

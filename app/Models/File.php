@@ -13,7 +13,7 @@ class File extends Model
         'name',
         'extension',
         'path',
-        'mine_type',
+        'mime_type',
         'size',
         'user_id',
     ];

@@ -23,7 +23,7 @@ class CreateLessonsTable extends Migration
             $table->boolean('is_active');
 
             $table->foreign('group_id')->references('id')->on('groups')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
         });
     }
 

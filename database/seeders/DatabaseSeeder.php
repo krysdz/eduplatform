@@ -17,6 +17,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -43,6 +44,8 @@ class DatabaseSeeder extends Seeder
         $this->createFaculties();
         $this->createCourses();
         $this->createGroups();
+
+        Storage::deleteDirectory('files');
     }
 
     private function createTerms()

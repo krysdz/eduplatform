@@ -28,8 +28,8 @@ class Section extends Model
         return $this->belongsTo(Lesson::class);
     }
 
-    public function files()
+    public function sectionFiles()
     {
-        return $this->hasMany(File::class);
+        return $this->hasMany(SectionFile::class);
     }
 }

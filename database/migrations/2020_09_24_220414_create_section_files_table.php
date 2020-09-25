@@ -19,8 +19,8 @@ class CreateSectionFilesTable extends Migration
             $table->foreignId('file_id');
             $table->foreignId('section_id');
 
-            $table->foreign('file_id')->on('files')->references('id');
-            $table->foreign('section_id')->on('sections')->references('id');
+            $table->foreign('file_id')->on('files')->references('id')->onDelete('cascade');
+            $table->foreign('section_id')->on('sections')->references('id')->onDelete('cascade');
         });
     }
 

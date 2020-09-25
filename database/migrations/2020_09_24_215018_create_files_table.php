@@ -19,7 +19,7 @@ class CreateFilesTable extends Migration
             $table->string('name');
             $table->string('extension');
             $table->string('path');
-            $table->string('mine_type');
+            $table->string('mime_type');
             $table->string('size');
             $table->foreignId('user_id');
 

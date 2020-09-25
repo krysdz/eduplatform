@@ -8,22 +8,19 @@ use Illuminate\Database\Eloquent\Builder;
 
 class SectionFileController extends Controller
 {
-    public function show($sectionId, $fileName)
+    public function show($sectionId, $fileId, $fileName)
     {
-        $file = File::whereHas('sectionFiles', function (Builder $q) use ($sectionId) {
-            $q->where(['section_id' => $sectionId]);
-        })->where(['name' => $fileName])->first();
+        $file = File::findOrFail($fileId);
 
-        return Storage::download($file->path, null, [
-            'Content-Type' => 'application/octet-stream',
-        ]);
+        return response()->download(storage_path('app/'.$file->path), $fileName, [
+            'Content-Type' => $file->mime_type,
+//            'Content-Disposition' => 'filename="'.$file->name.'"',
+        ], 'inline');
     }
 
-    public function destroy($sectionId, $fileName)
+    public function destroy($sectionId, $fileId)
     {
-        $file = File::whereHas('sectionFiles', function (Builder $q) use ($sectionId) {
-            $q->where(['section_id' => $sectionId]);
-        })->where(['name' => $fileName])->first();
+        $file = File::findOrFail($fileId);
 
         Storage::delete($file->path);
         $file->delete();

@@ -11,10 +11,10 @@
     <h2>Lekcja: @if($section->lesson_id) {{$section->lesson->number}} @else brak @endif</h2>
     <h2>Aktywna? {{$section->is_active}}</h2>
 
-    <h2>Pliki</h2>
+    <h2>Pliki:</h2>
     <ul>
-        @foreach($files as $file)
-            <li><a href="{{route('teacher.sections.files.show', ['sectionId' => $section->id, 'fileName' => $file])}}">{{$file}}</a></li>
+        @foreach($section->sectionFiles as $sectionFile)
+            <li><a href="{{route('teacher.sections.files.show', ['sectionId' => $section->id, 'fileId' => $sectionFile->file->id, 'fileName' => $sectionFile->file->name])}}">{{$sectionFile->file->name}}</a></li>
         @endforeach
     </ul>
 
