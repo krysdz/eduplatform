@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('menu')
+@section('navbar')
     <li class="navbar-nav mr-auto">
         <a class="nav-link" href="{{route('admin.users.index')}}">Użytkownicy</a>
     </li>

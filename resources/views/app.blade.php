@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
           integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 </head>
-<body>
+
+<body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav mr-auto">
                 <a class="navbar-brand" href="{{route('index')}}">Eduplatform</a>
-                @yield('menu')
+                @yield('navbar')
             </ul>
 
             @auth
@@ -26,19 +27,24 @@
         </div>
     </nav>
 
-{{--    <div class="container">--}}
-    <div>
-        @include('flash::message')
-        @include('include.app.errors')
+    <div class="flex-fill d-flex">
+        @yield('vertical_nav')
 
-        @yield('content')
+        <div class="flex-fill">
+            <div class="container-fluid">
+                @include('flash::message')
+                @include('include.app.errors')
+
+                @yield('content')
+            </div>
+        </div>
     </div>
 
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('node_modules/tinymce/tinymce.min.js') }}"></script>
     <script>
         tinymce.init({
-            selector:'#textarea',
+            selector: '#textarea',
             language: 'pl',
             plugins: [
                 'advlist autolink link lists charmap hr anchor pagebreak',
