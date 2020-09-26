@@ -26,4 +26,9 @@ class Lesson extends Model
     {
         return $this->hasOne(Section::class);
     }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 }

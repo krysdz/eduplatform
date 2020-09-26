@@ -44,7 +44,7 @@ class SectionController extends Controller
         try {
             $section = Section::create(array_merge($validatedData, ['group_id' => $groupId]));
 
-            if ($request->file('section_files')) {
+            if ($request->hasFile('section_files')) {
                 $validatedFiles = $request->validate([
                     'section_files.*' => 'nullable|file|mimes:jpeg,png,gif,webp,doc,docx,pdf,txt,odt,pptx,ppt,odp|max:5120'
                 ]);
@@ -124,7 +124,7 @@ class SectionController extends Controller
         DB::beginTransaction();
         try {
             $currentSection->update($validatedData);
-            if ($request->file('section_files')) {
+            if ($request->hasFile('section_files')) {
                 $validatedFiles = $request->validate([
                     'section_files.*' => 'nullable|file|mimes:jpeg,png,gif,webp,doc,docx,pdf,txt,odt,pptx,ppt,odp|max:5120'
                 ]);

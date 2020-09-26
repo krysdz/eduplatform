@@ -90,6 +90,10 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
         Route::get('/{groupId}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'index'])->name('announcements.index');
         Route::get('/{groupId}/ogloszenia/dodaj', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'create'])->name('announcements.create');
         Route::post('/{groupId}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'store'])->name('announcements.store');
+
+        Route::get('/{groupId}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('attendances.index');
+        Route::get('/{groupId}/frekwencja/edytuj', [\App\Http\Controllers\Teacher\AttendanceController::class, 'edit'])->name('attendances.edit');
+        Route::put('/{groupId}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'update'])->name('attendances.update');
     });
 
     Route::prefix('lekcje')->name('lessons.')->group(function () {

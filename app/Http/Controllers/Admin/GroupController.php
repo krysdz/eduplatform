@@ -108,7 +108,7 @@ class GroupController extends Controller
             'teacher_id' => 'required|integer|exists:teachers,id',
             'term_id' => 'required|integer|exists:terms,id',
             'day_of_classes' => 'required|integer',
-            'start_update_date' => 'sometimes|date'
+            'start_update_date' => 'nullable|date'
         ]);
 
         $validatedData['type'] = GroupTypeEnum::makeFromId($validatedData['type']);

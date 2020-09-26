@@ -26,7 +26,8 @@
         </div>
     </nav>
 
-    <div class="container">
+{{--    <div class="container">--}}
+    <div>
         @include('flash::message')
         @include('include.app.errors')
 
