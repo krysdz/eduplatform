@@ -92,8 +92,12 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
         Route::post('/{groupId}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'store'])->name('announcements.store');
 
         Route::get('/{groupId}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('attendances.index');
-        Route::get('/{groupId}/frekwencja/edytuj', [\App\Http\Controllers\Teacher\AttendanceController::class, 'edit'])->name('attendances.edit');
+        Route::get('/{groupId}/frekwencja/dodaj', [\App\Http\Controllers\Teacher\AttendanceController::class, 'create'])->name('attendances.create');
         Route::put('/{groupId}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'update'])->name('attendances.update');
+
+        Route::get('/{groupId}/oceny', [\App\Http\Controllers\Teacher\GradeController::class, 'index'])->name('grades.index');
+        Route::get('/{groupId}/oceny/dodaj', [\App\Http\Controllers\Teacher\GradeController::class, 'create'])->name('grades.create');
+        Route::post('/{groupId}/oceny', [\App\Http\Controllers\Teacher\GradeController::class, 'store'])->name('grades.store');
     });
 
     Route::prefix('lekcje')->name('lessons.')->group(function () {

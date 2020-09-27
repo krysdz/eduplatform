@@ -16,8 +16,9 @@
                 <li><a class="nav-link {{ Request::is(['*/ogloszenia', '*/ogloszenia/*']) ? 'is-active' : '' }}"
                        href="{{route('teacher.groups.announcements.index', $group->id)}}">Ogłoszenia</a></li>
                 <li><a class="nav-link {{ Request::is(['*/frekwencja', '*/frekwencja/*']) ? 'is-active' : '' }}"
-                       href="{{route('teacher.groups.attendances.index', $group->id)}}">Frekwencja</a>
-                </li>
+                       href="{{route('teacher.groups.attendances.index', $group->id)}}">Frekwencja</a></li>
+                <li><a class="nav-link {{ Request::is(['*/oceny', '*/oceny/*']) ? 'is-active' : '' }}"
+                       href="{{route('teacher.groups.grades.index', $group->id)}}">Oceny</a></li>
             </ul>
         </aside>
     </div>

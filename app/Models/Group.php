@@ -59,4 +59,9 @@ class Group extends Model
     {
         return $this->hasMany(Announcement::class);
     }
+
+    public function gradeItems()
+    {
+        return $this->hasMany(GradeItem::class);
+    }
 }

@@ -1,8 +1,9 @@
 @extends('teacher.layout')
 
 @section('content')
-    <h1>Sekcja nauczyciela</h1>
-    <h2>Zajęcia ({{$today}})</h2>
+    <div>
+    <h2 class="title is-2">Sekcja nauczyciela</h2>
+    <h3 class="title is-3">Zajęcia ({{$today}})</h3>
 
         @foreach($lessons as $lesson)
             <h3>
@@ -10,5 +11,5 @@
             </h3>
         @endforeach
 
-    <div>
+    </div>
 @endsection

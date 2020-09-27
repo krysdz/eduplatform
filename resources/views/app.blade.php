@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 </head>
 
-<body class="is-flex" style="flex-direction: column; height: 100%">
+<body class="is-flex" style="flex-direction: column; min-height: 100vh;">
 
 <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
@@ -60,7 +60,7 @@
     </div>
 </div>
 
-<footer class="footer" style="flex-shrink: 0;">
+<footer class="footer">
     <div class="content has-text-centered">
         <p>
             <strong>Eduplatform</strong> by Krystian Dziewa.

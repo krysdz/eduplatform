@@ -19,7 +19,7 @@
                     <span class="icon">
                        <i class="fas fa-undo-alt"></i>
                     </span>
-                    <span>Zapisz zmiany</span>
+                    <span>Cofnij</span>
                 </a>
             </div>
 
@@ -28,7 +28,7 @@
                         <thead>
                         <tr>
                             <th></th>
-                            <th style="min-width: 220px">Lista Studentów</th>
+                            <th style="min-width: 220px">Lista studentów</th>
                             @foreach($lessons as $lesson)
                                 <th style="min-width: 120px">{{$lesson->date}}</th>
                             @endforeach
@@ -53,7 +53,6 @@
                                                 @endforeach
                                             </select>
                                         </div>
-
                                     </td>
                                 @endforeach
                             </tr>
@@ -63,6 +62,4 @@
                 </div>
         </form>
     </div>
-
-
 @endsection
