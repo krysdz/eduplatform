@@ -13,20 +13,24 @@ class LessonController extends Controller
     public function index(int $groupId)
     {
         return view('teacher.lessons.index', [
+            'group' => Group::findOrFail($groupId),
             'lessons' => Lesson::where(['group_id' => $groupId])->get(),
         ]);
     }
 
     public function show(int $lessonId)
     {
+        $lesson = Lesson::findOrFail($lessonId);
         return view('teacher.lessons.show', [
-            'lesson' => Lesson::findOrFail($lessonId)
+            'group' => $lesson->group,
+            'lesson' => $lesson
         ]);
     }
 
 
     public function edit(Request $request, int $lessonId)
     {
+        $lesson = Lesson::findOrFail($lessonId);
         $action = $request->input('action');
 
         if (!in_array($action, ['edit', 'plan', 'create'])) {
@@ -35,7 +39,8 @@ class LessonController extends Controller
         }
 
         return view('teacher.lessons.edit', [
-            'lesson' => Lesson::findOrFail($lessonId),
+            'group' => $lesson->group,
+            'lesson' => $lesson,
             'action' => $action
         ]);
     }

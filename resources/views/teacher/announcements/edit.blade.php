@@ -1,8 +1,7 @@
-@extends('teacher.layout')
+@extends('teacher.group_layout')
 
 @section('content')
     <h1>Edytuj ogłoszenie</h1>
-    <h2>{{$announcement->group->course->name}} gr.{{$announcement->group->number}} ({{$announcement->group->type->label}})</h2>
     <form action="{{route('teacher.announcements.update', $announcement->id)}}" method="POST">
         @method('PUT')
         @csrf

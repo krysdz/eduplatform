@@ -1,63 +1,77 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" style="height: 100%">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav mr-auto">
-                <a class="navbar-brand" href="{{route('index')}}">Eduplatform</a>
-                @yield('navbar')
-            </ul>
+<body class="is-flex" style="flex-direction: column; height: 100%">
 
-            @auth
-                <span class="navbar-text">Witaj {{Auth::user()->fullName}}</span>
-                <a class="nav-link" href="{{route('logout')}}">Wyloguj</a>
-            @endauth
+<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="{{route('index')}}">
+            Eduplatform
+        </a>
 
-            @guest
-                <a class="nav-link" href="/login">Zaloguj</a>
-            @endguest
-        </div>
-    </nav>
-
-    <div class="flex-fill d-flex">
-        @yield('vertical_nav')
-
-        <div class="flex-fill">
-            <div class="container-fluid">
-                @include('flash::message')
-                @include('include.app.errors')
-
-                @yield('content')
-            </div>
-        </div>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="mainNavbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
     </div>
 
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('node_modules/tinymce/tinymce.min.js') }}"></script>
-    <script>
-        tinymce.init({
-            selector: '#textarea',
-            language: 'pl',
-            plugins: [
-                'advlist autolink link lists charmap hr anchor pagebreak',
-                'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime nonbreaking',
-                'table emoticons paste help'
-            ],
-            toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | ' +
-                'bullist numlist outdent indent | link | ' +
-                'forecolor backcolor emoticons | help',
-            menubar: 'edit view insert format tools table help',
-            width: 900,
-            height: 300
-        });
-    </script>
+    @yield('navbar')
+
+    <div class="navbar-end">
+        @guest
+            <div class="navbar-item">
+                <a href="/login" class="button is-primary">
+                    <strong>Zaloguj</strong>
+                </a>
+            </div>
+        @endguest
+        @auth
+            <a href=# class="navbar-item">
+                Witaj {{Auth::user()->fullName}}
+            </a>
+            <div class="navbar-item">
+                <a href="{{route('logout')}}" class="button is-light">
+                    Wyloguj
+                </a>
+            </div>
+
+        @endauth
+    </div>
+</nav>
+
+
+<div class="is-flex" style="flex: 1 0 auto">
+    @yield('vertical_nav')
+
+    <div class="container">
+        @include('flesh_messages')
+{{--        @include('flash::message')--}}
+        @include('include.app.errors')
+        <div class="section">
+            @yield('content')
+        </div>
+    </div>
+</div>
+
+<footer class="footer" style="flex-shrink: 0;">
+    <div class="content has-text-centered">
+        <p>
+            <strong>Eduplatform</strong> by Krystian Dziewa.
+        </p>
+        <p>
+            Internetowa platforma wspomagania nauczania
+        </p>
+    </div>
+</footer>
+
+<script src="{{ asset('node_modules/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>

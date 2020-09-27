@@ -46,15 +46,19 @@ class AnnouncementController extends Controller
 
     public function show(int $announcementId)
     {
+        $announcement = Announcement::findOrFail($announcementId);
         return view('teacher.announcements.show', [
-            'announcement' => Announcement::findOrFail($announcementId)
+            'group' => $announcement->group,
+            'announcement' => $announcement,
         ]);
     }
 
     public function edit(int $announcementId)
     {
+        $announcement = Announcement::findOrFail($announcementId);
         return view('teacher.announcements.edit', [
-            'announcement' => Announcement::findOrFail($announcementId),
+            'group' => $announcement->group,
+            'announcement' => $announcement,
             'types' => AnnouncementTypeEnum::toArray()
         ]);
     }

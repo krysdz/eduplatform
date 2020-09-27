@@ -85,6 +85,7 @@ class SectionController extends Controller
 
         return view('teacher.sections.show', [
             'section' => $section,
+            'group' => $section->group,
         ]);
     }
 
@@ -94,6 +95,7 @@ class SectionController extends Controller
 
         return view('teacher.sections.edit', [
             'section' => $section,
+            'group' => $section->group,
         ]);
     }
 

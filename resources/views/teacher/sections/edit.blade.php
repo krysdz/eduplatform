@@ -1,8 +1,7 @@
-@extends('teacher.layout')
+@extends('teacher.group_layout')
 
 @section('content')
     <h1>Edytuj sekcję</h1>
-    <h2>{{$section->group->course->name}} gr.{{$section->group->number}} ({{$section->group->type->label}})</h2>
     <form action="{{route('teacher.sections.update', $section->id)}}" enctype="multipart/form-data" method="POST">
         @method('PUT')
         @csrf

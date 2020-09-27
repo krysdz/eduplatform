@@ -1,8 +1,6 @@
-@extends('teacher.layout')
+@extends('teacher.group_layout')
 
 @section('content')
-    <h2>{{$announcement->group->course->name}} gr.{{$announcement->group->number}} ({{$announcement->group->type->label}})</h2>
-
     <h3>Id: {{$announcement->id}}</h3>
     <h3>Tytuł: {{$announcement->title}}</h3>
     <h3>Opis</h3>

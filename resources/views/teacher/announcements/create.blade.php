@@ -1,8 +1,7 @@
-@extends('teacher.layout')
+@extends('teacher.group_layout')
 
 @section('content')
     <h1>Dodaj ogłoszenie</h1>
-    <h2>{{$group->course->name}} gr.{{$group->number}} ({{$group->type->label}})</h2>
     <form action="{{route('teacher.groups.announcements.store', $group->id)}}" method="POST">
         @csrf
         <label for="title">Tytuł: </label>

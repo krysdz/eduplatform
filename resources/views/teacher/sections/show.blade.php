@@ -1,8 +1,6 @@
-@extends('teacher.layout')
+@extends('teacher.group_layout')
 
 @section('content')
-    <h2>{{$section->group->course->name}} gr.{{$section->group->number}} ({{$section->group->type->label}})</h2>
-
     @include('teacher.sections.buttons')
 
     <h2>Tytuł: {{$section->title}}</h2>

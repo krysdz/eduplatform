@@ -31,10 +31,10 @@ final class AttendanceTypeEnum extends Enum
     protected static function labels(): array
     {
         return [
-            'presence' => 'Obecność',
-            'absence' => 'Nieobecność',
-            'excusedAbsence' => 'Usprawiedliwiona nieobecność',
-            'tardy' => 'Spóźnienie',
+            'presence' => 'O',
+            'absence' => 'N',
+            'excusedAbsence' => 'U',
+            'tardy' => 'S',
         ];
     }
 }

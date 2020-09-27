@@ -68,8 +68,8 @@ class AttendanceController extends Controller
                 }
             }
             DB::commit();
-            flash('Edycja frekwencji powiodła się')->success();
-            return redirect()->route('teacher.groups.attendances.index', $groupId);
+//            flash('Edycja frekwencji powiodła się')->success();
+            return redirect()->route('teacher.groups.attendances.index', $groupId)->with('success', 'Edycja frekwencji powiodła się');
         } catch (Exception $e) {
             DB::rollback();
             flash('Edycja frekwencji nie powiodła się')->error();

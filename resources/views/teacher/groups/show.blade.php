@@ -1,8 +1,6 @@
 @extends('teacher.group_layout')
 
 @section('content')
-    <h1>{{$group->course->name}} {{$group->number}} {{$group->type->label}}</h1>
-    <h2>{{$group->course->faculty->code}}</h2>
 
     <h2>Studenci:</h2>
     <ul>

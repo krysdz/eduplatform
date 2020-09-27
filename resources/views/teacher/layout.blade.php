@@ -1,9 +1,14 @@
 @extends('app')
 
 @section('navbar')
-    <li class="navbar-nav mr-auto">
-        <a class="nav-link" href="{{route('teacher.groups.index')}}">Grupy</a>
-    </li>
+
+    <div id="mainNavbar" class="navbar-menu">
+        <div class="navbar-start">
+            <a href="{{route('teacher.groups.index')}}" class="navbar-item">
+                Grupy
+            </a>
+        </div>
+    </div>
 @endsection
 @section('content')
 

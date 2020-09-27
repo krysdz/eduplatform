@@ -1,8 +1,7 @@
-@extends('teacher.layout')
+@extends('teacher.group_layout')
 
 @section('content')
     <button><a href="{{route('teacher.groups.sections.create', $group->id)}}">Dodaj sekcję</a></button>
-    <h2>Sekcje {{$group->course->name}} gr.{{$group->number}} ({{$group->type->label}})</h2>
     <table class="table">
         <tr>
             <th>Id</th>
