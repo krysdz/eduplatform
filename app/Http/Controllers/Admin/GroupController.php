@@ -124,8 +124,8 @@ class GroupController extends Controller
 
         try {
             $currentGroup->update($validatedData);
-            $currentGroup->students()->detach();
-            $currentGroup->students()->attach(Student::find($request->input('students')));
+//            $currentGroup->students()->detach();
+            $currentGroup->students()->sync(Student::find($request->input('students')));
             DB::commit();
             flash('Aktualizacja grupy powiodła się')->success();
             return redirect()->route('admin.groups.index');
