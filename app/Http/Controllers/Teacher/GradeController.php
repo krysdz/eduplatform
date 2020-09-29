@@ -42,7 +42,7 @@ class GradeController extends Controller
         $gradeValues = ['5.0', '4.5', '4.0', '3.5', '3.0', '2.0', 'NZAL'];
 
         $validatedGradeItemData = $request->validate([
-            'code' => 'required|string|size:3',
+            'code' => 'required|string|max:3',
             'name' => 'required|string',
             'color' => 'required|string',
             'mark_weight' => 'required|integer',
@@ -67,14 +67,14 @@ class GradeController extends Controller
                     $studentCommentFieldName => 'nullable|string'
                 ]);
 
-                if ($validatedGradeData) {
-                    Grade::create(array_merge($validatedGradeData, [
+                if ($validatedGradeData[$studentGradeFieldName]) {
+                    Grade::create([
                         'grade_value' => $validatedGradeData[$studentGradeFieldName],
                         'score' => $validatedGradeData[$studentScoreFieldName],
                         'comment' => $validatedGradeData[$studentCommentFieldName],
                         'student_id' => $student->id,
                         'grade_item_id' => $gradeItem->id
-                    ]));
+                    ]);
                 }
             }
 
@@ -82,8 +82,87 @@ class GradeController extends Controller
             return redirect()->route('teacher.groups.grades.index', $groupId)->with('success', 'Dodawanie oceny powiodło się');
         } catch (Exception $e) {
             DB::rollBack();
-            throw $e;
             return redirect()->route('teacher.groups.grades.index', $groupId)->with('errorr', 'Dodawanie oceny nie powiodło się');
+        }
+    }
+
+    public function edit(Request $request, int $gradeItemId)
+    {
+        $gradeValues = ['5.0', '4.5', '4.0', '3.5', '3.0', '2.0', 'NZAL'];
+        $gradeItem = GradeItem::findOrFail($gradeItemId);
+
+
+        return view('teacher.grades.edit', [
+            'gradeItem' => $gradeItem,
+            'studentsGradeList' => $this->getStudentsGradeByGradeItemId($gradeItem->group_id, $gradeItemId)['studentsGradeList'],
+            'group' => $this->getStudentsGrades($gradeItem->group_id)['group'],
+            'students' => $this->getStudentsGrades($gradeItem->group_id)['students'],
+            'gradeValues' => $gradeValues,
+        ]);
+    }
+
+//    public function edit(Request $request, int $gradeItemId)
+//    {
+//        $gradeItem = GradeItem::findOrFail($gradeItemId);
+//
+//        return view('teacher.grades.edit', [
+//            'gradeItem' => $gradeItem,
+//            'group' => $this->getStudentsGrades($gradeItem->group_id)['group'],
+//            'students' => $this->getStudentsGrades($gradeItem->group_id)['students'],
+//        ]);
+//    }
+
+    public function update(Request $request, int $gradeItemId)
+    {
+        $currentGradeItem = GradeItem::findOrFail($gradeItemId);
+        $groupId = $currentGradeItem->group_id;
+        $students = $this->getStudentsGrades($groupId)['students'];
+
+        $gradeValues = ['5.0', '4.5', '4.0', '3.5', '3.0', '2.0', 'NZAL'];
+
+        $validatedGradeItemData = $request->validate([
+            'code' => 'required|string|max:3',
+            'name' => 'required|string',
+            'color' => 'required|string',
+            'mark_weight' => 'required|integer',
+            'max_score' => 'nullable|integer'
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $currentGradeItem->update($validatedGradeItemData);
+
+            foreach ($students as $student) {
+                    $studentGradeFieldName = $student->id . '-grade_value';
+                    $studentScoreFieldName = $student->id . '-score';
+                    $studentCommentFieldName = $student->id . '-comment';
+
+                    $validatedGradeData = $request->validate([
+                        $studentGradeFieldName => [
+                            'nullable',
+                            Rule::in($gradeValues),
+                        ],
+                        $studentScoreFieldName => 'nullable|integer',
+                        $studentCommentFieldName => 'nullable|string'
+                    ]);
+
+                    if ($validatedGradeData[$studentGradeFieldName]) {
+                        Grade::updateOrCreate([
+                            'student_id' => $student->id,
+                            'grade_item_id' => $currentGradeItem->id], [
+                            'grade_value' => $validatedGradeData[$studentGradeFieldName],
+                            'score' => $validatedGradeData[$studentScoreFieldName],
+                            'comment' => $validatedGradeData[$studentCommentFieldName],
+                        ]);
+                    }
+                }
+
+            DB::commit();
+            return redirect()->route('teacher.groups.grades.index', $groupId)->with('success', 'Aktualizacja oceny powiodła się');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->route('teacher.groups.grades.index', $groupId)->with('errorr', 'Aktualizacja oceny nie powiodła się');
         }
     }
 
@@ -109,5 +188,21 @@ class GradeController extends Controller
             $studentsGradeList[$student->id] = $gradesList;
         }
         return ['group' => $group, 'students' => $students, 'gradeItems' => $gradeItems, 'studentsGradeList' => $studentsGradeList];
+    }
+
+    function getStudentsGradeByGradeItemId(int $groupId, $gradeItemId): array
+    {
+        $group = Group::findOrFail($groupId);
+        $students = $group->students()->select(['students.id', 'user_id', 'users.first_name', 'users.last_name'])
+            ->join('users', 'user_id', '=', 'users.id')
+            ->orderBy('users.last_name')->orderBy('users.first_name')->get();
+        $groupGrades = Grade::where('grade_item_id', '=', $gradeItemId)->get();
+
+        $studentsGradeList = [];
+        foreach ($students as $student) {
+            $grade = $groupGrades->where('student_id', '=', $student->id)->first();
+            $studentsGradeList[$student->id] = $grade;
+        }
+        return ['group' => $group, 'students' => $students, 'studentsGradeList' => $studentsGradeList];
     }
 }

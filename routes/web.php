@@ -92,7 +92,7 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
         Route::post('/{groupId}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'store'])->name('announcements.store');
 
         Route::get('/{groupId}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('attendances.index');
-        Route::get('/{groupId}/frekwencja/dodaj', [\App\Http\Controllers\Teacher\AttendanceController::class, 'create'])->name('attendances.create');
+        Route::get('/{groupId}/frekwencja/edytuj', [\App\Http\Controllers\Teacher\AttendanceController::class, 'edit'])->name('attendances.edit');
         Route::put('/{groupId}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'update'])->name('attendances.update');
 
         Route::get('/{groupId}/oceny', [\App\Http\Controllers\Teacher\GradeController::class, 'index'])->name('grades.index');
@@ -121,6 +121,12 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
         Route::get('/{announcementId}/edytuj', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'edit'])->name('edit');
         Route::put('/{announcementId}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'update'])->name('update');
         Route::delete('/{announcementId}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('oceny')->name('grades.')->group(function () {
+        Route::get('/{gradeItemId}/edytuj', [\App\Http\Controllers\Teacher\GradeController::class, 'edit'])->name('edit');
+        Route::put('/{gradeItemId}', [\App\Http\Controllers\Teacher\GradeController::class, 'update'])->name('update');
+        Route::delete('/{gradeItemId}', [\App\Http\Controllers\Teacher\GradeController::class, 'destroy'])->name('destroy');
     });
 });
 

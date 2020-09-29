@@ -18,7 +18,7 @@
                 <th></th>
                 <th style="min-width: 220px">Lista studentów</th>
                 @foreach($gradeItems as $gradeItem)
-                    <th style="min-width: 120px">{{$gradeItem->code}}</th>
+                    <th style="min-width: 120px"><a href="{{route('teacher.grades.edit', $gradeItem->id)}}">{{$gradeItem->code}}</a></th>
                 @endforeach
             </tr>
             </thead>
@@ -31,7 +31,7 @@
                     </td>
                     @foreach($gradesList as $gradeItemsId => $grade)
                         @if($grade)
-                            <td @if($grade->updated_at > $grade->created_at) class="table-warning" @endif> {{$grade->grade_value}} </td>
+                            <td @if($grade->updated_at > $grade->created_at) class="has-background-warning-light" @endif> {{$grade->grade_value}} </td>
                         @else
                             <td>?</td>
                         @endif
