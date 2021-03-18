@@ -56,7 +56,7 @@
     @yield('vertical_nav')
 
     <div class="container">
-        @include('flesh_messages')
+        @include('include.app.flash_messages')
 {{--        @include('flash::message')--}}
         @include('include.app.errors')
         <div class="section">

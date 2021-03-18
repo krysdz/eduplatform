@@ -16,11 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index'])->name('index');
 Route::get('/logout', function () {
-    Auth::logout();
     return redirect()->route('index');
 })->name('logout');
 
-Route::middleware(['auth:sanctum', 'administrator'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'administrator'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\IndexController::class, 'index'])->name('index');
 
     Route::prefix('uzytkownicy')->name('users.')->group(function () {
@@ -74,7 +73,7 @@ Route::middleware(['auth:sanctum', 'administrator'])->prefix('admin')->name('adm
     });
 });
 
-Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teacher.')->group(function () {
+Route::middleware(['auth', 'teacher'])->prefix('nauczyciel')->name('teacher.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Teacher\IndexController::class, 'index'])->name('index');
 
     Route::prefix('grupy')->name('groups.')->group(function () {
@@ -130,14 +129,6 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('nauczyciel')->name('teac
     });
 });
 
-Route::middleware(['auth:sanctum', 'student'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Student\IndexController::class, 'index'])->name('index');
 });
-
-//Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-//    return view('dashboard');
-//})->name('dashboard');
-
-//Route::fallback(function () {
-//    return '404';
-//});

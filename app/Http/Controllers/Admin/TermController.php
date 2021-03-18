@@ -36,12 +36,12 @@ class TermController extends Controller
         $termInfo = $this->getTermNameAndCode();
 
         if ($termInfo['name'] == null || $termInfo['code'] == null || Term::where(['code' => $termInfo['code']])->exists()) {
-            flash('Tworzenie semestru nie powiodło się')->error();
+            flash('Tworzenie semestru nie powiodło się 1')->error();
             return redirect()->route('admin.terms.index');
         }
 
         if (!Term::create(array_merge($validatedData, $termInfo))) {
-            flash('Tworzenie semestru nie powiodło się')->error();
+            flash('Tworzenie semestru nie powiodło się 2')->error();
             return redirect()->route('admin.terms.index');
         }
 
@@ -118,6 +118,7 @@ class TermController extends Controller
             $name = 'Rok akademicki ' . $start_date->year . '/' . $end_date->year;
             $code = $start_date->format('y') . '/' . $end_date->format('y');
         }
+
         return ['name' => $name, 'code' => $code];
     }
 
