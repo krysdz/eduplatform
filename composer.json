@@ -1,24 +1,26 @@
 {
     "name": "krysdz/eduplatform",
+    "description": "",
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^7.4",
         "ext-fileinfo": "*",
         "fideloper/proxy": "^4.4",
-        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/guzzle": "^7.3",
         "laracasts/flash": "^3.2",
         "laravel/fortify": "^1.7",
-        "laravel/framework": "^8.27",
+        "laravel/framework": "^8.40",
         "laravel/tinker": "^2.6",
-        "spatie/laravel-enum": "^2.3"
+        "spatie/laravel-enum": "^2.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
-        "facade/ignition": "^2.5",
-        "fakerphp/faker": "^1.13",
+        "facade/ignition": "^2.8",
+        "fakerphp/faker": "^1.14",
+        "laravel/sail": "^1.5",
         "mockery/mockery": "^1.4",
-        "nunomaduro/collision": "^5.3",
+        "nunomaduro/collision": "^5.4",
         "phpunit/phpunit": "^9.5"
     },
     "config": {

@@ -1,4 +1,18 @@
 @charset "utf-8";
-@import "~bulma/bulma";
 
+$primary: #1976D2;
+
+@import "~bulma/bulma";
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
+
+.is-flex-full {
+    flex: 1 0 auto;
+}
+
+.is-content-box {
+    box-sizing: content-box;
+}
+
+.min-vh-100 {
+    min-height: 100vh;
+}
