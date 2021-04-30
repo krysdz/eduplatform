@@ -2,31 +2,30 @@
 
 namespace Database\Factories;
 
-use App\Models\Student;
+use App\Enums\UserRoleType;
 use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
-class StudentFactory extends Factory
+class UserRoleFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Student::class;
+    protected $model = UserRole::class;
 
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'user_id' => User::factory()->create(['type' => 'student']),
-            'code' => $this->faker->numerify('#######'),
-            'is_active' => 1
+            'user_id' => User::factory(),
+            'role_type' => UserRoleType::Student,
         ];
     }
 }

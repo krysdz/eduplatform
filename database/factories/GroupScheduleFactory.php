@@ -2,20 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Admin;
-use App\Models\User;
+use App\Models\GroupSchedule;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
-class AdminFactory extends Factory
+class GroupScheduleFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Admin::class;
+    protected $model = GroupSchedule::class;
 
     /**
      * Define the model's default state.
@@ -25,7 +22,7 @@ class AdminFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::factory(),
+            //
         ];
     }
 }
