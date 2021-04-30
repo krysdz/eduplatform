@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 class User extends Authenticatable
 {
     use HasFactory;
+    use SoftDeletes;
     use Notifiable;
 
     /**
@@ -17,12 +20,16 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
         'email',
         'password',
+
+        'first_name',
+        'last_name',
+        'code',
+        'degree',
+
         'phone',
-        'type'
+        'website',
     ];
 
     /**
@@ -49,34 +56,42 @@ class User extends Authenticatable
         parent::boot();
 
         self::deleting(function (User $user) {
-            $user->admin()->delete();
-            $user->teacher()->delete();
-            $user->student()->delete();
+            $user->roles()->delete();
         });
     }
 
-    public function getFullNameAttribute()
+    public function __toString()
+    {
+        return $this->getFullNameAttribute();
+    }
+
+    public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
     }
 
-    public function admin(): Relation
+    public function roles(): Relation
     {
-        return $this->hasOne(Admin::class);
-    }
-
-    public function student(): Relation
-    {
-        return $this->hasOne(Student::class);
-    }
-
-    public function teacher(): Relation
-    {
-        return $this->hasOne(Teacher::class);
+        return $this->hasMany(UserRole::class);
     }
 
     public function files(): Relation
     {
         return $this->hasMany(File::class);
+    }
+
+    public function groups(): Relation
+    {
+        return $this->belongsToMany(Group::class);
+    }
+
+    public function attendances(): Relation
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function grades(): Relation
+    {
+        return $this->hasMany(Grade::class);
     }
 }

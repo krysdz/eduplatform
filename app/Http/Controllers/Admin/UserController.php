@@ -152,19 +152,16 @@ class UserController extends Controller
         switch ($type) {
             case 'administrator':
             case 'admin':
-                request()->merge(['type' => 'admin']);
                 $validators = array_merge($validators, []);
                 break;
             case 'nauczyciel':
             case 'teacher':
-                request()->merge(['type' => 'teacher']);
                 $validators = array_merge($validators, [
                     'website' => 'nullable',
                     'degree' => 'required'
                 ]);
                 break;
             case 'student':
-                request()->merge(['type' => 'student']);
                 $validators = array_merge($validators, [
                     'code' => 'required|unique:students'
                 ]);

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Faculty;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,12 +17,15 @@ class CreateCoursesTable extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('faculty_id');
-            $table->timestamps();
-            $table->string('name');
-            $table->string('code')->unique();
+            $table->foreignIdFor(Faculty::class)->constrained();
+            $table->foreignIdFor(User::class, 'coordinator_id')->constrained('users');
 
-            $table->foreign('faculty_id')->references('id')->on('faculties');
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->text('description')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

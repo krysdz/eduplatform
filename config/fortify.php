@@ -57,6 +57,8 @@ return [
 
     'home' => RouteServiceProvider::HOME,
 
+    'views' => false,
+
     /*
     |--------------------------------------------------------------------------
     | Rate Limiting
@@ -69,7 +71,7 @@ return [
     */
 
     'limiters' => [
-        'login' => null,
+        'login' => 5,
     ],
 
     /*
@@ -84,10 +86,9 @@ return [
     */
 
     'features' => [
-        Features::registration(),
-        Features::resetPasswords(),
-        Features::updateProfileInformation(),
-        Features::updatePasswords(),
+//        Features::resetPasswords(),
+//        Features::updateProfileInformation(),
+//        Features::updatePasswords(),
     ],
 
 ];

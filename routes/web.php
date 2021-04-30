@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,12 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [IndexController::class, 'index'])->name('index');
-Route::get('/logout', function () {
-    return redirect()->route('index');
-})->name('logout');
+Route::get('/', [\App\Http\Controllers\IndexController::class, 'index'])->name('index');
+Route::get('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
+Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', 'administrator'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'can:beAdministrator'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\IndexController::class, 'index'])->name('index');
 
     Route::prefix('uzytkownicy')->name('users.')->group(function () {
@@ -73,7 +71,7 @@ Route::middleware(['auth', 'administrator'])->prefix('admin')->name('admin.')->g
     });
 });
 
-Route::middleware(['auth', 'teacher'])->prefix('nauczyciel')->name('teacher.')->group(function () {
+Route::middleware(['auth', 'can:beTeacher'])->prefix('nauczyciel')->name('teacher.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Teacher\IndexController::class, 'index'])->name('index');
 
     Route::prefix('grupy')->name('groups.')->group(function () {
@@ -129,6 +127,6 @@ Route::middleware(['auth', 'teacher'])->prefix('nauczyciel')->name('teacher.')->
     });
 });
 
-Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'can:beStudent'])->prefix('student')->name('student.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Student\IndexController::class, 'index'])->name('index');
 });

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\DaysOfWeekEnum;
+use App\Enums\DayOfWeekType;
 use App\Enums\GroupTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
@@ -35,7 +35,7 @@ class GroupController extends Controller
         return view('admin.groups.create', [
             'courses' => Course::all(),
             'types' => GroupTypeEnum::toArray(),
-            'days' => DaysOfWeekEnum::toArray(),
+            'days' => DayOfWeekType::toArray(),
             'teachers' => Teacher::all(),
             'terms' => Term::all(),
             'students' => Student::all()
@@ -55,7 +55,7 @@ class GroupController extends Controller
         ]);
 
         $validatedData['type'] = GroupTypeEnum::makeFromId($validatedData['type']);
-        $validatedData['day_of_classes'] = DaysOfWeekEnum::makeFromId($validatedData['day_of_classes']);
+        $validatedData['day_of_classes'] = DayOfWeekType::makeFromId($validatedData['day_of_classes']);
         DB::beginTransaction();
 
         try {
@@ -89,7 +89,7 @@ class GroupController extends Controller
             'group' => Group::findOrFail($id),
             'courses' => Course::all(),
             'types' => GroupTypeEnum::toArray(),
-            'days' => DaysOfWeekEnum::toArray(),
+            'days' => DayOfWeekType::toArray(),
             'teachers' => Teacher::all(),
             'terms' => Term::all(),
             'students' => Student::all()
@@ -112,7 +112,7 @@ class GroupController extends Controller
         ]);
 
         $validatedData['type'] = GroupTypeEnum::makeFromId($validatedData['type']);
-        $validatedData['day_of_classes'] = DaysOfWeekEnum::makeFromId($validatedData['day_of_classes']);
+        $validatedData['day_of_classes'] = DayOfWeekType::makeFromId($validatedData['day_of_classes']);
 
         if ($validatedData['day_of_classes']->value != $currentGroup->day_of_classes->value) {
             $startUpdateDate = $validatedData['start_update_date'];

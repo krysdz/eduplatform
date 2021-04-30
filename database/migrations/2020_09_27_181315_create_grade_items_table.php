@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Group;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,16 +16,16 @@ class CreateGradeItemsTable extends Migration
     {
         Schema::create('grade_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Group::class)->constrained();
+
+            $table->string('code');
+            $table->string('name');
+            $table->unsignedTinyInteger('color_type');
+            $table->unsignedInteger('weight');
+            $table->unsignedInteger('maxscore')->nullable();
+
             $table->timestamps();
-
-            $table->string('code')->nullable();
-            $table->string('name')->nullable();
-            $table->string('color')->nullable();
-            $table->unsignedInteger('mark_weight')->nullable();
-            $table->unsignedInteger('max_score')->nullable();
-            $table->foreignId('group_id');
-
-            $table->foreign('group_id')->on('groups')->references('id');
+            $table->softDeletes();
         });
     }
 

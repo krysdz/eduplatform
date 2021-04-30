@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Teacher;
 
-use App\Enums\AnnouncementTypeEnum;
+use App\Enums\AnnouncementType;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\Group;
@@ -23,7 +23,7 @@ class AnnouncementController extends Controller
     {
         return view('teacher.announcements.create', [
             'group' => Group::findOrFail($groupId),
-            'types' => AnnouncementTypeEnum::toArray()
+            'types' => AnnouncementType::toArray()
         ]);
     }
 
@@ -37,7 +37,7 @@ class AnnouncementController extends Controller
             'type' => 'required|integer'
         ]);
         $deadline = $validatedData['date'].' '.$validatedData['time'];
-        $validatedData['type'] = AnnouncementTypeEnum::makeFromId($validatedData['type']);
+        $validatedData['type'] = AnnouncementType::makeFromId($validatedData['type']);
 
         Announcement::create(array_merge($validatedData, ['group_id' => $groupId, 'deadline' => $deadline]));
         flash('Tworzenie ogloszenia powiodło się')->success();
@@ -59,7 +59,7 @@ class AnnouncementController extends Controller
         return view('teacher.announcements.edit', [
             'group' => $announcement->group,
             'announcement' => $announcement,
-            'types' => AnnouncementTypeEnum::toArray()
+            'types' => AnnouncementType::toArray()
         ]);
     }
 
@@ -75,7 +75,7 @@ class AnnouncementController extends Controller
             'type' => 'required|integer'
         ]);
         $deadline = $validatedData['date'].' '.$validatedData['time'];
-        $validatedData['type'] = AnnouncementTypeEnum::makeFromId($validatedData['type']);
+        $validatedData['type'] = AnnouncementType::makeFromId($validatedData['type']);
 
         $currentAnnouncement->update(array_merge($validatedData, ['deadline' => $deadline]));
         flash('Aktualizacja ogłoszenia powiodła się')->success();

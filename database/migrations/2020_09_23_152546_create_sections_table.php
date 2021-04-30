@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Group;
+use App\Models\Lesson;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,16 +17,17 @@ class CreateSectionsTable extends Migration
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->string('title')->nullable();
-            $table->smallInteger('position')->nullable();
-            $table->foreignId('lesson_id')->nullable();
-            $table->foreignId('group_id');
-            $table->text('description')->nullable();
-            $table->boolean('is_active');
+            $table->foreignIdFor(Group::class)->constrained();
+            $table->foreignIdFor(Lesson::class)->nullable()->constrained();
 
-            $table->foreign('lesson_id')->on('lessons')->references('id');
-            $table->foreign('group_id')->on('groups')->references('id');
+            $table->unsignedSmallInteger('order');
+            $table->unsignedTinyInteger('state_type');
+
+            $table->string('name')->nullable();
+            $table->text('description')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

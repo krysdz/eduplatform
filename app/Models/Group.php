@@ -2,65 +2,84 @@
 
 namespace App\Models;
 
-use App\Enums\DaysOfWeekEnum;
+use App\Enums\GroupMemberType;
+use App\Enums\GroupType;
 use App\Enums\GroupTypeEnum;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Group extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
-        'number',
-        'type',
-        'teacher_id',
         'term_id',
         'course_id',
-        'day_of_classes'
+        'type',
+        'number',
     ];
 
     protected $casts = [
-        'type' => GroupTypeEnum::class,
-        'day_of_classes' => DaysOfWeekEnum::class,
+        'type' => GroupType::class,
     ];
 
-    public function teacher()
+    public function __toString()
     {
-        return $this->belongsTo(Teacher::class);
+        return $this->type->description;
     }
 
-    public function term()
+    public function term(): Relation
     {
         return $this->belongsTo(Term::class);
     }
 
-    public function course()
+    public function course(): Relation
     {
         return $this->belongsTo(Course::class);
     }
 
-    public function students()
+    public function groupMembers(): Relation
     {
-        return $this->belongsToMany(Student::class)->withTimestamps();
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
 
-    public function lessons()
+    public function teachers(): Collection
+    {
+        return $this->belongsToMany(User::class, 'group_members')->withTimestamps()
+            ->whereIn('type', GroupMemberType::Teacher)->get();
+    }
+
+    public function students(): Collection
+    {
+        return $this->belongsToMany(User::class, 'group_members')->withTimestamps()
+            ->whereIn('type', GroupMemberType::Student)->get();
+    }
+
+    public function groupSchedules(): Relation
+    {
+        return $this->hasMany(GroupSchedule::class);
+    }
+
+    public function lessons(): Relation
     {
         return $this->hasMany(Lesson::class);
     }
 
-    public function sections()
+    public function sections(): Relation
     {
         return $this->hasMany(Section::class);
     }
 
-    public function announcements()
+    public function announcements(): Relation
     {
         return $this->hasMany(Announcement::class);
     }
 
-    public function gradeItems()
+    public function gradeItems(): Relation
     {
         return $this->hasMany(GradeItem::class);
     }

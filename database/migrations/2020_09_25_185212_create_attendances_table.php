@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Lesson;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,13 +17,13 @@ class CreateAttendancesTable extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->foreignId('lesson_id');
-            $table->unsignedSmallInteger('type');
-            $table->foreignId('student_id');
+            $table->foreignIdFor(User::class, 'student_id')->constrained('users');
+            $table->foreignIdFor(Lesson::class);
 
-            $table->foreign('lesson_id')->on('lessons')->references('id');
-            $table->foreign('student_id')->on('students')->references('id');
+            $table->unsignedSmallInteger('type');
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

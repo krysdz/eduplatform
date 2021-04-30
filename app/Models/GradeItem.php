@@ -4,26 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GradeItem extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
+        'group_id',
         'code',
         'name',
-        'color',
-        'mark_weight',
-        'max_score',
-        'group_id'
+        'color_type',
+        'weight',
+        'maxscore',
     ];
 
-    public function group()
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+    public function group(): Relation
     {
         return $this->belongsTo(Group::class);
     }
 
-    public function grades()
+    public function grades(): Relation
     {
         return $this->hasMany(Grade::class);
     }

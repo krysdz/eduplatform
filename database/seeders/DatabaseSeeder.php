@@ -2,50 +2,70 @@
 
 namespace Database\Seeders;
 
-use App\Enums\DaysOfWeekEnum;
+use App\Enums\DayOfWeekType;
 use App\Enums\GroupTypeEnum;
-use App\Http\Controllers\Admin\GroupController;
-use App\Models\Admin;
+use App\Enums\UserRoleType;
 use App\Models\Course;
 use App\Models\Faculty;
 use App\Models\Group;
-use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Term;
+use App\Models\UserRole;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        Admin::factory()->create([
-            'is_super_admin' => 1,
-            'is_active' => 1
+        Storage::deleteDirectory('files');
+
+        $this->createSuperAdministrator();
+        $this->createAdministrators();
+        $this->createTeachers();
+        $this->createStudents();
+
+//        $this->createTerms();
+//        $this->createFaculties();
+//        $this->createCourses();
+//        $this->createGroups();
+    }
+
+    private function createSuperAdministrator(): void
+    {
+        UserRole::factory()->create([
+            'role_type' => UserRoleType::SuperAdministrator,
         ])->first()->user()->update([
             'first_name' => 'Krystian',
             'last_name' => 'Dziewa',
-            'email' => 'admin@eduplatform.pl',
-            'password' => Hash::make('qwerty'),
+            'email' => 'admin@example.com',
         ]);
+    }
 
-        Student::factory(30)->create();
-        Teacher::factory(10)->create();
-        $this->createTerms();
-        $this->createFaculties();
-        $this->createCourses();
-        $this->createGroups();
+    private function createAdministrators(): void
+    {
+        UserRole::factory(2)->create([
+            'role_type' => UserRoleType::Administrator,
+        ]);
+    }
 
-        Storage::deleteDirectory('files');
+    private function createTeachers(): void
+    {
+        UserRole::factory(10)->create([
+            'role_type' => UserRoleType::Teacher,
+        ]);
+    }
+
+    private function createStudents(): void
+    {
+        UserRole::factory(30)->create([
+            'role_type' => UserRoleType::Student,
+        ]);
     }
 
     private function createTerms()
@@ -131,7 +151,7 @@ class DatabaseSeeder extends Seeder
                 'teacher_id' => Teacher::first()->id,
                 'course_id' => Faculty::first()->id,
                 'term_id' => Term::where(['is_active' => true])->first()->id,
-                'day_of_classes' => DaysOfWeekEnum::monday()->value
+                'day_of_classes' => DayOfWeekType::monday()->value
             ],
             [
                 'number' => 2,
@@ -139,7 +159,7 @@ class DatabaseSeeder extends Seeder
                 'teacher_id' => Teacher::find(5)->id,
                 'course_id' => Faculty::first()->id,
                 'term_id' => Term::where(['is_active' => true])->first()->id,
-                'day_of_classes' => DaysOfWeekEnum::friday()->value
+                'day_of_classes' => DayOfWeekType::friday()->value
             ],
         ];
 

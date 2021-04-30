@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\File;
+use App\Models\Section;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,12 +17,13 @@ class CreateSectionFilesTable extends Migration
     {
         Schema::create('section_files', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->foreignId('file_id');
-            $table->foreignId('section_id');
+            $table->foreignIdFor(Section::class)->constrained();
+            $table->foreignIdFor(File::class)->constrained();
 
-            $table->foreign('file_id')->on('files')->references('id')->onDelete('cascade');
-            $table->foreign('section_id')->on('sections')->references('id')->onDelete('cascade');
+            $table->string('title');
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

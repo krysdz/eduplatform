@@ -15,9 +15,13 @@ class CreateFacultiesTable extends Migration
     {
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->string('name');
+
             $table->string('code')->unique();
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

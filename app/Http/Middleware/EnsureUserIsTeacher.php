@@ -24,14 +24,6 @@ class EnsureUserIsTeacher
         /** @var User $user */
         $user = $request->user();
 
-        if (!$user) {
-            return Redirect::route('login');
-        }
-
-        if (!$user->teacher()->exists()) {
-            return Redirect::route('login');
-        }
-
         if (($groupId = $request->route()->parameter('groupId')) != null) {
             $group = Group::find($groupId);
 

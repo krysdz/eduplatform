@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Teacher;
 
-use App\Enums\AttendanceTypeEnum;
+use App\Enums\AttendanceType;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\Group;
@@ -35,7 +35,7 @@ class AttendanceController extends Controller
             'students' => $students,
             'lessons' => $lessons,
             'studentsAttendanceList' => $studentsAttendanceList,
-            'types' => AttendanceTypeEnum::toArray(),
+            'types' => AttendanceType::toArray(),
         ]);
     }
 
@@ -58,7 +58,7 @@ class AttendanceController extends Controller
                     ]);
 
                     if ($validatedData[$fieldInputName]) {
-                        $validatedData[$fieldInputName] = AttendanceTypeEnum::makeFromId($validatedData[$fieldInputName]);
+                        $validatedData[$fieldInputName] = AttendanceType::makeFromId($validatedData[$fieldInputName]);
 
                         Attendance::updateOrCreate([
                             'lesson_id' => $lesson->id,

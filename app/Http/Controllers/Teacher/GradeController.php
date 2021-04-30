@@ -7,10 +7,12 @@ use App\Models\Attendance;
 use App\Models\Grade;
 use App\Models\GradeItem;
 use App\Models\Group;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 
 class GradeController extends Controller
@@ -54,6 +56,8 @@ class GradeController extends Controller
             $gradeItem = GradeItem::create(array_merge($validatedGradeItemData, ['group_id' => $groupId]));
 
             foreach ($students as $student) {
+//                $user = User::find($student->user->id);
+
                 $studentGradeFieldName = $student->id . '-grade_value';
                 $studentScoreFieldName = $student->id . '-score';
                 $studentCommentFieldName = $student->id . '-comment';
@@ -75,14 +79,19 @@ class GradeController extends Controller
                         'student_id' => $student->id,
                         'grade_item_id' => $gradeItem->id
                     ]);
+//                    dd($student->user);
+                    $student->user->notify(new \App\Notifications\Grade($gradeItem->id, $validatedGradeData[$studentGradeFieldName]));
                 }
+
+
+
             }
 
             DB::commit();
             return redirect()->route('teacher.groups.grades.index', $groupId)->with('success', 'Dodawanie oceny powiodło się');
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->route('teacher.groups.grades.index', $groupId)->with('errorr', 'Dodawanie oceny nie powiodło się');
+            return redirect()->route('teacher.groups.grades.index', $groupId)->with('error', 'Dodawanie oceny nie powiodło się');
         }
     }
 

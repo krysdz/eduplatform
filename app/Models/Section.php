@@ -2,33 +2,46 @@
 
 namespace App\Models;
 
+use App\Enums\LessonStateType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Section extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
-        'title',
-        'position',
-        'lesson_id',
         'group_id',
+        'lesson_id',
+        'order',
+        'state_type',
+        'name',
         'description',
-        'is_active'
     ];
 
-    public function group()
+    protected $casts = [
+        'state_type' => LessonStateType::class,
+    ];
+
+    public function __toString()
+    {
+        return parent::__toString();
+    }
+
+    public function group(): Relation
     {
         return $this->belongsTo(Group::class);
     }
 
-    public function lesson()
+    public function lesson(): Relation
     {
         return $this->belongsTo(Lesson::class);
     }
 
-    public function sectionFiles()
+    public function sectionFiles(): Relation
     {
         return $this->hasMany(SectionFile::class);
     }

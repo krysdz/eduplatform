@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Group;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,14 +16,15 @@ class CreateAnnouncementsTable extends Migration
     {
         Schema::create('announcements', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->dateTime('deadline');
+            $table->foreignIdFor(Group::class)->constrained();
+
+            $table->unsignedSmallInteger('type');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->unsignedSmallInteger('type');
-            $table->foreignId('group_id');
+            $table->dateTime('mark_at')->nullable();
 
-            $table->foreign('group_id')->on('groups')->references('id');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

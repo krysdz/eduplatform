@@ -15,13 +15,15 @@ class CreateTermsTable extends Migration
     {
         Schema::create('terms', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->string('name')->unique();
+
             $table->string('code')->unique();
+            $table->string('name')->unique();
             $table->date('start_date');
             $table->date('end_classes_date');
             $table->date('end_date');
-            $table->boolean('is_active');
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

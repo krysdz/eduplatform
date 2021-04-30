@@ -4,22 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Term extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
-        'start_date',
-        'end_date',
-        'end_classes_date',
-        'is_active',
+        'code',
         'name',
-        'code'
+        'start_date',
+        'end_classes_date',
+        'end_date',
     ];
 
-    public function groups()
+    public function __toString()
     {
-       return $this->hasMany(Group::class);
+        return $this->name;
+    }
+
+    public function groups(): Relation
+    {
+        return $this->hasMany(Group::class);
     }
 }

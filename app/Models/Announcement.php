@@ -2,28 +2,38 @@
 
 namespace App\Models;
 
-use App\Enums\AnnouncementTypeEnum;
+use App\Enums\AnnouncementType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Announcement extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
-        'deadline',
+        'group_id',
         'title',
-        'description',
         'type',
-        'group_id'
+        'description',
+        'mark_at',
     ];
 
     protected $casts = [
-        'type' => AnnouncementTypeEnum::class,
+        'type' => AnnouncementType::class,
     ];
 
-    public function group()
+    public function __toString()
+    {
+        return $this->title;
+    }
+
+    public function group(): Relation
     {
         return $this->belongsTo(Group::class);
     }
+
+
 }

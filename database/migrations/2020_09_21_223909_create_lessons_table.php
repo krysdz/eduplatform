@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Group;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,15 +17,19 @@ class CreateLessonsTable extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
-            $table->foreignId('group_id');
-            $table->string('title')->nullable();
-            $table->unsignedSmallInteger('number');
-            $table->date('date');
-            $table->boolean('is_active');
+            $table->foreignIdFor(Group::class)->constrained();
+            $table->foreignIdFor(User::class, 'start_by')->constrained('users');
 
-            $table->foreign('group_id')->references('id')->on('groups')
-                ->onDelete('cascade');
+            $table->unsignedTinyInteger('state_type');
+            $table->datetime('proposed_at');
+            $table->unsignedSmallInteger('duration_minutes');
+
+            $table->unsignedTinyInteger('number');
+            $table->string('name')->nullable();
+            $table->datetime('start_at');
+
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
