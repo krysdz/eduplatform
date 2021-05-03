@@ -44,19 +44,19 @@ class Group extends Model
 
     public function groupMembers(): Relation
     {
-        return $this->belongsToMany(User::class)->withTimestamps();
+        return $this->belongsToMany(User::class, 'group_members')->withTimestamps();
     }
 
     public function teachers(): Collection
     {
         return $this->belongsToMany(User::class, 'group_members')->withTimestamps()
-            ->whereIn('type', GroupMemberType::Teacher)->get();
+            ->where('type', '=', GroupMemberType::Teacher)->get();
     }
 
     public function students(): Collection
     {
         return $this->belongsToMany(User::class, 'group_members')->withTimestamps()
-            ->whereIn('type', GroupMemberType::Student)->get();
+            ->where('type', '=',GroupMemberType::Student)->get();
     }
 
     public function groupSchedules(): Relation

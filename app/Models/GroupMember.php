@@ -31,13 +31,13 @@ class GroupMember extends Model
 
     public function teachers(): Collection
     {
-        return $this->belongsToMany(User::class, 'users')->withTimestamps()
-            ->whereIn('type', GroupMemberType::Teacher)->get();
+        return $this->belongsToMany(User::class, 'group_members', 'user_id')->withTimestamps()
+            ->where('type', '=', GroupMemberType::Teacher)->get();
     }
 
     public function students(): Collection
     {
-        return $this->belongsToMany(User::class, 'users')->withTimestamps()
-            ->whereIn('type', GroupMemberType::Student)->get();
+        return $this->belongsToMany(User::class, 'group_members', 'user_id')->withTimestamps()
+            ->where('type', '=', GroupMemberType::Student)->get();
     }
 }

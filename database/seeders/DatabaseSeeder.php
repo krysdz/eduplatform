@@ -3,43 +3,55 @@
 namespace Database\Seeders;
 
 use App\Enums\DayOfWeekType;
+use App\Enums\GroupMemberType;
+use App\Enums\GroupType;
 use App\Enums\GroupTypeEnum;
 use App\Enums\UserRoleType;
 use App\Models\Course;
 use App\Models\Faculty;
 use App\Models\Group;
+use App\Models\GroupMember;
+use App\Models\GroupSchedule;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Term;
+use App\Models\User;
 use App\Models\UserRole;
+use Faker\Generator;
+use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
+    public Generator $faker;
+
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
+        $this->faker = Container::getInstance()->make(Generator::class);
+
         Storage::deleteDirectory('files');
 
         $this->createSuperAdministrator();
         $this->createAdministrators();
-        $this->createTeachers();
-        $this->createStudents();
+        $teachers = $this->createTeachers();
+        $students = $this->createStudents();
 
-//        $this->createTerms();
-//        $this->createFaculties();
-//        $this->createCourses();
-//        $this->createGroups();
+        $this->createTerms();
+        $this->createFaculties();
+        $this->createCourses($teachers);
+        $this->createGroups($teachers, $students);
     }
 
     private function createSuperAdministrator(): void
     {
         UserRole::factory()->create([
-            'role_type' => UserRoleType::SuperAdministrator,
+            'type' => UserRoleType::SuperAdministrator,
         ])->first()->user()->update([
             'first_name' => 'Krystian',
             'last_name' => 'Dziewa',
@@ -50,21 +62,21 @@ class DatabaseSeeder extends Seeder
     private function createAdministrators(): void
     {
         UserRole::factory(2)->create([
-            'role_type' => UserRoleType::Administrator,
+            'type' => UserRoleType::Administrator,
         ]);
     }
 
-    private function createTeachers(): void
+    private function createTeachers(): Collection
     {
-        UserRole::factory(10)->create([
-            'role_type' => UserRoleType::Teacher,
+        return UserRole::factory(10)->create([
+            'type' => UserRoleType::Teacher,
         ]);
     }
 
-    private function createStudents(): void
+    private function createStudents(): Collection
     {
-        UserRole::factory(30)->create([
-            'role_type' => UserRoleType::Student,
+        return UserRole::factory(30)->create([
+            'type' => UserRoleType::Student,
         ]);
     }
 
@@ -72,20 +84,18 @@ class DatabaseSeeder extends Seeder
     {
         $terms = [
             [
-                'name' => 'Semestr zimowy 2019/2020',
-                'code' => '19/20Z',
-                'start_date' => Date::create(2019, 10, 1),
-                'end_classes_date' => Date::create(2020, 1, 28),
-                'end_date' => Date::create(2020, 2, 23),
-                'is_active' => 0
+                'name' => 'Semestr zimowy 2020/2021',
+                'code' => '20/21Z',
+                'start_date' => Date::create(2020, 10, 1),
+                'end_classes_date' => Date::create(2021, 1, 28),
+                'end_date' => Date::create(2021, 2, 24),
             ],
             [
-                'name' => 'Semestr letni 2019/2020',
-                'code' => '19/20L',
-                'start_date' => Date::create(2020, 2, 24),
-                'end_classes_date' => Date::create(2020, 6, 14),
+                'name' => 'Semestr letni 2020/2021',
+                'code' => '20/21L',
+                'start_date' => Date::create(2021, 2, 25),
+                'end_classes_date' => Date::create(2020, 6, 15),
                 'end_date' => Date::create(2020, 9, 30),
-                'is_active' => 1
             ]
         ];
 
@@ -112,7 +122,7 @@ class DatabaseSeeder extends Seeder
         }
     }
 
-    private function createCourses()
+    private function createCourses($teachers)
     {
         $courses = [
             [
@@ -128,7 +138,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Algorytmy i struktury danych',
                 'code' =>  	'WMI.II-ASD-OL',
-                'faculty_id' => Faculty::where(['code' => 'UJ.wMi'])->first()->id,
+                'faculty_id' => Faculty::where(['code' => 'UJ.WMi'])->first()->id,
             ],
             [
                 'name' => 'Logika i teoria mnogości',
@@ -138,36 +148,40 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($courses as $course) {
-            Course::create($course);
+            Course::create(array_merge(['coordinator_id' => $teachers->random()->id], $course));
         }
     }
 
-    private function createGroups()
+    private function createGroups($teachers, $students)
     {
         $groups = [
             [
                 'number' => 1,
-                'type' => GroupTypeEnum::lecture()->value,
-                'teacher_id' => Teacher::first()->id,
+                'type' => GroupType::Lecture,
                 'course_id' => Faculty::first()->id,
-                'term_id' => Term::where(['is_active' => true])->first()->id,
-                'day_of_classes' => DayOfWeekType::monday()->value
+                'term_id' => Term::where(['code' => '20/21L'])->first()->id,
             ],
             [
                 'number' => 2,
-                'type' => GroupTypeEnum::class()->value,
-                'teacher_id' => Teacher::find(5)->id,
+                'type' => GroupType::Practical,
                 'course_id' => Faculty::first()->id,
-                'term_id' => Term::where(['is_active' => true])->first()->id,
-                'day_of_classes' => DayOfWeekType::friday()->value
+                'term_id' => Term::where(['code' => '20/21L'])->first()->id,
             ],
         ];
 
         foreach ($groups as $group) {
             $currentGroup = Group::create($group);
-            $currentGroup->students()->attach(Student::find([1,5,8,12,20]));
+            $currentGroup->groupMembers()->attach($students->random(7), ['type' => GroupMemberType::Student]);
+            $currentGroup->groupMembers()->attach($teachers->random(2), ['type' => GroupMemberType::Teacher]);
 
-            (new \App\Http\Controllers\Admin\GroupController)->generateLessons($currentGroup);
+            GroupSchedule::factory(rand(1,3))->create([
+                'group_id' => $currentGroup,
+                'first_date' => $this->faker->dateTimeInInterval($currentGroup->term->start_date, '+'.rand(0,30).'days'),
+                'last_date' => $this->faker->dateTimeInInterval($currentGroup->term->end_classes_date, '-'.rand(0,30).'days'),
+            ]);
+
+
+//            (new \App\Http\Controllers\Admin\GroupController)->generateLessons($currentGroup);
         }
     }
 

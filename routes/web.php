@@ -17,7 +17,7 @@ Route::get('/', [\App\Http\Controllers\IndexController::class, 'index'])->name('
 Route::get('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
 Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', 'can:beAdministrator'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'can:beAdmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\IndexController::class, 'index'])->name('index');
 
     Route::prefix('uzytkownicy')->name('users.')->group(function () {

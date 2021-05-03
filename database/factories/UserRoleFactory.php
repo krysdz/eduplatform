@@ -25,7 +25,7 @@ class UserRoleFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'role_type' => UserRoleType::Student,
+            'type' => UserRoleType::Student,
         ];
     }
 }

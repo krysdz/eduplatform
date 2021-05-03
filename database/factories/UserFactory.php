@@ -25,7 +25,7 @@ class UserFactory extends Factory
     {
         $firstName = $this->faker->firstName;
         $lastName = $this->faker->lastName;
-        $email = strtolower($firstName . '.' . $lastName . '@example.com');
+        $email = mb_strtolower($firstName . '.' . $lastName . '@example.com');
         $password = 'qwerty';
 
         return [
