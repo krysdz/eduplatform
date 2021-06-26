@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Enums\UserRoleType;
 use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller
 {
     public function index()
     {
-        $roles = [];
+        if (!auth()->user()) {
+            return view('index');
+        }
 
-        if (Auth::user()) {
-            $roles = Auth::user()->roles->pluck('type.value')->all();
+        $roles = Auth::user()->roles->pluck('type.value')->all();
+        $hasOnlyOneRole = 1 === count($roles);
+
+        if ($hasOnlyOneRole) {
+            $routePrefix = strtolower(UserRoleType::fromValue($roles[0])->key);
+            return redirect()->route($routePrefix . '.index');
         }
 
         return view('index', [
