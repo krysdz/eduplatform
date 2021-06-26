@@ -1,36 +1,44 @@
-@extends('admin.index')
+@extends('admin.layout')
+@section('title', "Kursy - Eduplatform.pl")
 
 @section('content')
-    <h1>Kursy</h1>
-    <button><a href="{{route('admin.courses.create')}}">Dodaj kurs</a></button>
-    <table class="table">
+
+    <div class="is-flex mt-4">
+        <h1 class="title">Kursy</h1>
+        <a class="button is-normal ml-5" href="{{route('admin.courses.create')}}">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-plus"></i>
+              </span>
+              <span>Dodaj kurs</span>
+            </span>
+        </a>
+    </div>
+
+    <table class="table is-hoverable is-fullwidth">
+        <thead>
         <tr>
             <th>Id</th>
             <th>Nazwa</th>
-            <th>Code</th>
+            <th>Kod</th>
             <th>Wydział</th>
-            <th>Data stworzenia</th>
-            <th>Data aktualizacji</th>
+            <th>Kordynator</th>
+            <th>Opis</th>
+
         </tr>
+        </thead>
+        <tbody>
         @foreach($courses as $course)
             <tr>
-                <td><a href="{{route('admin.courses.show', [$course->id])}}">{{$course->id}}</a></td>
+                <td><a href="{{route('admin.courses.show', $course)}}">{{$course->id}}</a></td>
                 <td>{{$course->name}}</td>
                 <td>{{$course->code}}</td>
-                <td>{{$course->faculty->name}}</td>
-                <td>{{$course->created_at}}</td>
-                <td>{{$course->updated_at}}</td>
-                <td>
-                    <button><a href="{{route('admin.courses.edit', $course->id)}}">Edytuj</a></button>
-                </td>
-                <td>
-                    <form action="{{route('admin.courses.destroy', $course->id)}}" method="POST">
-                        @method('DELETE')
-                        @csrf
-                        <button type="submit">Usuń</button>
-                    </form>
-                </td>
+                <td>{{$course->faculty->code}}</td>
+                <td>{{$course->coordinator}}</td>
+                <td>{!! \Illuminate\Support\Str::limit($course->description) !!}</td>
             </tr>
         @endforeach
+        </tbody>
+
     </table>
 @endsection

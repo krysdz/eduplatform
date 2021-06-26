@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
+use App\Models\Group;
+use App\Models\Section;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 
 class SectionFileController extends Controller
 {
-    public function show($sectionId, $fileId, $fileName)
+    public function show(Group $group, Section $section, $fileId, $fileName)
     {
         $file = File::findOrFail($fileId);
 
@@ -18,7 +20,7 @@ class SectionFileController extends Controller
         ], 'inline');
     }
 
-    public function destroy($sectionId, $fileId)
+    public function destroy(Group $group, Section $section, $fileId)
     {
         $file = File::findOrFail($fileId);
 
@@ -26,6 +28,6 @@ class SectionFileController extends Controller
         $file->delete();
         flash('Usuwanie pliku zakończone powodzeniem')->error();
 
-        return redirect()->back();
+//        return redirect()->back();
     }
 }

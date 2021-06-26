@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Faculty;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Throwable;
 
 class CourseController extends Controller
 {
@@ -21,7 +24,8 @@ class CourseController extends Controller
     public function create()
     {
         return view('admin.courses.create', [
-            'faculties' => Faculty::all()
+            'faculties' => Faculty::all(),
+            'teachers' => User::getTeachers()
         ]);
     }
 
@@ -31,55 +35,74 @@ class CourseController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string',
             'code' => 'required|string|unique:courses',
-            'faculty_id' => 'required|integer'
+            'faculty_id' => 'required|integer|exists:faculties,id',
+            'coordinator_id' => 'required|integer|exists:users,id',
+            'description' => 'nullable|string'
         ]);
 
-        Course::create($validatedData);
-        flash('Tworzenie kursu powiodło się')->success();
-        return redirect()->route('admin.courses.index');
-    }
+        try {
+            Course::create($validatedData);
+        } catch (Throwable $e) {
+            report($e);
 
-
-    public function show(int $id)
-    {
-        return view('admin.courses.show', [
-            'course' => Course::findOrFail($id)
-        ]);
-    }
-
-
-    public function edit(int $id)
-    {
-        return view('admin.courses.edit', [
-            'course' => Course::findOrFail($id),
-            'faculties' => Faculty::all()
-        ]);
-    }
-
-
-    public function update(Request $request, $id)
-    {
-        $currentCourse = Course::findOrFail($id);
-
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'code' => 'required|string|unique:courses,code,'.$currentCourse->id,
-            'faculty_id' => 'required|integer'
-        ]);
-
-        $currentCourse->update($validatedData);
-        flash('Aktualizacja kursu powiodła się')->success();
-        return redirect()->route('admin.courses.index');
-
-    }
-
-    public function destroy($id)
-    {
-        if (!Course::findOrFail($id)->delete()) {
-            flash('Usuwanie kursu nie powiodło się')->error();
+            return back()->with('error', $e->getMessage())->withInput();
         }
 
-        flash('Usuwanie kursu powiodło się')->success();
-        return redirect()->route('admin.courses.index');
+        return redirect()->route('admin.courses.index')->with('success', 'Tworzenie kursu powiodło się.');
+    }
+
+
+    public function show(Course $course)
+    {
+        return view('admin.courses.show', [
+            'course' => $course
+        ]);
+    }
+
+
+    public function edit(Course $course)
+    {
+        return view('admin.courses.edit', [
+            'course' => $course,
+            'faculties' => Faculty::all(),
+            'teachers' => User::getTeachers()
+        ]);
+    }
+
+
+    public function update(Request $request, Course $course)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'code' => 'required|string|unique:courses,code,' . $course->id,
+            'faculty_id' => 'required|integer|exists:faculties,id',
+            'coordinator_id' => 'required|integer|exists:users,id',
+            'description' => 'nullable|string'
+        ]);
+
+        try {
+            $course->update($validatedData);
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+
+        return redirect()->route('admin.courses.index')->with('success', 'Aktualizacja kursu powiodło się.');
+    }
+
+    public function destroy(Course $course)
+    {
+        try {
+            if (!$course->delete()) {
+                throw new Exception("Usuwanie kursu $course nie powiodło się");
+            }
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+
+        return redirect()->route('admin.courses.index')->with('success', "Usuwanie kursu $course powiodło się");
     }
 }

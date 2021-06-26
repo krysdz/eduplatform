@@ -27,7 +27,7 @@ class GroupScheduleFactory extends Factory
         return [
             'group_id' => Group::factory(),
             'day_of_week_type' => DayOfWeekType::getRandomInstance(),
-            'interval_days' => $this->faker->numberBetween(1,4),
+            'interval_days' => $this->faker->numberBetween(1,4) * 7,
             'start_time' => $hour.':00:00',
             'end_time' => $hour + $this->faker->numberBetween(1,4).':00:00',
             'room_name' => $this->faker->bothify('?-##-##'),

@@ -4,13 +4,17 @@ namespace App\Models;
 
 use App\Enums\GroupMemberType;
 use App\Enums\GroupType;
-use App\Enums\GroupTypeEnum;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
+/**
+ * @mixin IdeHelperGroup
+ */
 class Group extends Model
 {
     use HasFactory;
@@ -27,9 +31,21 @@ class Group extends Model
         'type' => GroupType::class,
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::deleting(function (Group $group) {
+            $group->groupMembers()->updateExistingPivot(
+                $group->groupMembers()->allRelatedIds(),
+                ['deleted_at' => Carbon::now()]
+            );
+        });
+    }
+
     public function __toString()
     {
-        return $this->type->description;
+        return $this->course.' - gr. nr '.$this->number.' ('.$this->type->description.')';
     }
 
     public function term(): Relation
@@ -42,7 +58,7 @@ class Group extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function groupMembers(): Relation
+    public function groupMembers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'group_members')->withTimestamps();
     }
@@ -62,6 +78,11 @@ class Group extends Model
     public function groupSchedules(): Relation
     {
         return $this->hasMany(GroupSchedule::class);
+    }
+
+    public function scheduledLessons(): Relation
+    {
+        return $this->hasMany(ScheduledLesson::class);
     }
 
     public function lessons(): Relation

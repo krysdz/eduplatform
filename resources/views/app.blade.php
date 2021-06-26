@@ -37,6 +37,13 @@
                     <a href=# class="navbar-item">
                         Witaj {{ auth()->user() }}
                     </a>
+
+                    <div class="navbar-item">
+                        <a style="color: white" href="{{ route('messenger.index') }}">
+                            <i class="far fa-comments"></i>
+                        </a>
+                    </div>
+
                     <div class="navbar-item">
                         <a href="{{ route('logout') }}" class="button is-light">
                             Wyloguj
@@ -48,21 +55,21 @@
     </nav>
 
     <div class="is-flex-full">
+        @include('include.app.flash_messages')
+        @include('include.app.form_errors')
+
         @yield('vertical_nav')
 
         <main>
             @yield('upper_content')
 
-            <div class="container is-content-box px-5">
-                @include('include.app.flash_messages')
-                @include('include.app.form_errors')
-
+            <div class="container">
                 @yield('content')
             </div>
         </main>
     </div>
 
-    <footer class="footer">
+    <footer class="footer mt-5">
         <div class="content has-text-centered">
             <p><strong>Eduplatform</strong> by Krystian Dziewa.</p>
             <p>Internetowa platforma wspomagania nauczania</p>

@@ -24,109 +24,119 @@ Route::middleware(['auth', 'can:beAdmin'])->prefix('admin')->name('admin.')->gro
         Route::get('/', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('index');
         Route::get('/dodaj', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('store');
-        Route::get('/{id}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('show');
-        Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('edit');
-        Route::put('/{id}/', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
-        Route::delete('/{id}/usun', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
+        Route::get('/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('show');
+        Route::get('/{user}/edytuj', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}/', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
+        Route::delete('/{user}/usun', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('semestry')->name('terms.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\TermController::class, 'index'])->name('index');
         Route::get('/dodaj', [\App\Http\Controllers\Admin\TermController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\TermController::class, 'store'])->name('store');
-        Route::get('/{id}', [\App\Http\Controllers\Admin\TermController::class, 'show'])->name('show');
-        Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\TermController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [\App\Http\Controllers\Admin\TermController::class, 'update'])->name('update');
-        Route::delete('/{id}', [\App\Http\Controllers\Admin\TermController::class, 'destroy'])->name('destroy');
+        Route::get('/{term}', [\App\Http\Controllers\Admin\TermController::class, 'show'])->name('show');
+        Route::get('/{term}/edytuj', [\App\Http\Controllers\Admin\TermController::class, 'edit'])->name('edit');
+        Route::put('/{term}', [\App\Http\Controllers\Admin\TermController::class, 'update'])->name('update');
+        Route::delete('/{term}', [\App\Http\Controllers\Admin\TermController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('wydziały')->name('faculties.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\FacultyController::class, 'index'])->name('index');
         Route::get('/dodaj', [\App\Http\Controllers\Admin\FacultyController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\FacultyController::class, 'store'])->name('store');
-        Route::get('/{id}', [\App\Http\Controllers\Admin\FacultyController::class, 'show'])->name('show');
-        Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\FacultyController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [\App\Http\Controllers\Admin\FacultyController::class, 'update'])->name('update');
-        Route::delete('/{id}', [\App\Http\Controllers\Admin\FacultyController::class, 'destroy'])->name('destroy');
+        Route::get('/{faculty}', [\App\Http\Controllers\Admin\FacultyController::class, 'show'])->name('show');
+        Route::get('/{faculty}/edytuj', [\App\Http\Controllers\Admin\FacultyController::class, 'edit'])->name('edit');
+        Route::put('/{faculty}', [\App\Http\Controllers\Admin\FacultyController::class, 'update'])->name('update');
+        Route::delete('/{faculty}', [\App\Http\Controllers\Admin\FacultyController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('kursy')->name('courses.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\CourseController::class, 'index'])->name('index');
         Route::get('/dodaj', [\App\Http\Controllers\Admin\CourseController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\CourseController::class, 'store'])->name('store');
-        Route::get('/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'show'])->name('show');
-        Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\CourseController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'update'])->name('update');
-        Route::delete('/{id}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('destroy');
+        Route::get('/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'show'])->name('show');
+        Route::get('/{course}/edytuj', [\App\Http\Controllers\Admin\CourseController::class, 'edit'])->name('edit');
+        Route::put('/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'update'])->name('update');
+        Route::delete('/{course}', [\App\Http\Controllers\Admin\CourseController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('grupy')->name('groups.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\GroupController::class, 'index'])->name('index');
         Route::get('/dodaj', [\App\Http\Controllers\Admin\GroupController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\GroupController::class, 'store'])->name('store');
-        Route::get('/{id}', [\App\Http\Controllers\Admin\GroupController::class, 'show'])->name('show');
-        Route::get('/{id}/edytuj', [\App\Http\Controllers\Admin\GroupController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [\App\Http\Controllers\Admin\GroupController::class, 'update'])->name('update');
-        Route::delete('/{id}', [\App\Http\Controllers\Admin\GroupController::class, 'destroy'])->name('destroy');
+        Route::get('/{group}', [\App\Http\Controllers\Admin\GroupController::class, 'show'])->name('show');
+        Route::get('/{group}/edytuj', [\App\Http\Controllers\Admin\GroupController::class, 'edit'])->name('edit');
+        Route::put('/{group}', [\App\Http\Controllers\Admin\GroupController::class, 'update'])->name('update');
+        Route::delete('/{group}', [\App\Http\Controllers\Admin\GroupController::class, 'destroy'])->name('destroy');
+
+        Route::get('/{group}/harmonogramy', [\App\Http\Controllers\Admin\GroupScheduleController::class, 'index'])->name('group_schedules.index');
+        Route::get('/{group}/harmonogramy/dodaj', [\App\Http\Controllers\Admin\GroupScheduleController::class, 'create'])->name('group_schedules.create');
+        Route::post('/{group}/harmonogramy', [\App\Http\Controllers\Admin\GroupScheduleController::class, 'store'])->name('group_schedules.store');
+        Route::get('/{group}/harmonogramy/{groupSchedule}', [\App\Http\Controllers\Admin\GroupScheduleController::class, 'show'])->name('group_schedules.show');
+        Route::get('/{group}/harmonogramy/{groupSchedule}/edytuj', [\App\Http\Controllers\Admin\GroupScheduleController::class, 'edit'])->name('group_schedules.edit');
+        Route::put('/{group}/harmonogramy/{groupSchedule}', [\App\Http\Controllers\Admin\GroupScheduleController::class, 'update'])->name('group_schedules.update');
+        Route::delete('/{group}/harmonogramy/{groupSchedule}', [\App\Http\Controllers\Admin\GroupScheduleController::class, 'destroy'])->name('group_schedules.destroy');
+
+        Route::get('/{group}/planowaneLekcje/', [\App\Http\Controllers\Admin\ScheduledLessonController::class, 'index'])->name('scheduled_lessons.index');
+        Route::post('/{group}/planowaneLekcje/generuj', [\App\Http\Controllers\Admin\ScheduledLessonController::class, 'generate'])->name('scheduled_lessons.generate');
     });
 });
 
 Route::middleware(['auth', 'can:beTeacher'])->prefix('nauczyciel')->name('teacher.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Teacher\IndexController::class, 'index'])->name('index');
+    Route::get('/planZajec', [\App\Http\Controllers\Teacher\TimetableController::class, 'index'])->name('timetable.index');
 
     Route::prefix('grupy')->name('groups.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Teacher\GroupController::class, 'index'])->name('index');
-        Route::get('/{groupId}', [\App\Http\Controllers\Teacher\GroupController::class, 'show'])->name('show');
+        Route::get('/{group}', [\App\Http\Controllers\Teacher\GroupController::class, 'show'])->name('show');
 
-        Route::get('/{groupId}/lekcje', [\App\Http\Controllers\Teacher\LessonController::class, 'index'])->name('lessons.index');
+        Route::get('/{group}/lekcje', [\App\Http\Controllers\Teacher\LessonController::class, 'index'])->name('lessons.index');
+        Route::get('/{group}/lekcje/dodaj', [\App\Http\Controllers\Teacher\LessonController::class, 'create'])->name('lessons.create');
+        Route::post('/{group}/lekcje', [\App\Http\Controllers\Teacher\LessonController::class, 'store'])->name('lessons.store');
+        Route::get('/{group}/lekcje/{lesson}', [\App\Http\Controllers\Teacher\LessonController::class, 'show'])->name('lessons.show');
+        Route::get('/{group}/lekcje/{lesson}/edytuj', [\App\Http\Controllers\Teacher\LessonController::class, 'edit'])->name('lessons.edit');
+        Route::put('/{group}/lekcje/{lesson}', [\App\Http\Controllers\Teacher\LessonController::class, 'update'])->name('lessons.update');
 
-        Route::get('/{groupId}/sekcje', [\App\Http\Controllers\Teacher\SectionController::class, 'index'])->name('sections.index');
-        Route::get('/{groupId}/sekcje/dodaj', [\App\Http\Controllers\Teacher\SectionController::class, 'create'])->name('sections.create');
-        Route::post('/{groupId}/sekcje', [\App\Http\Controllers\Teacher\SectionController::class, 'store'])->name('sections.store');
+        Route::get('/{group}/sekcje', [\App\Http\Controllers\Teacher\SectionController::class, 'index'])->name('sections.index');
+        Route::get('/{group}/sekcje/dodaj', [\App\Http\Controllers\Teacher\SectionController::class, 'create'])->name('sections.create');
+        Route::post('/{group}/sekcje', [\App\Http\Controllers\Teacher\SectionController::class, 'store'])->name('sections.store');
+        Route::get('/{group}/sekcje/{section}', [\App\Http\Controllers\Teacher\SectionController::class, 'show'])->name('sections.show');
+        Route::get('/{group}/sekcje/{section}/edytuj', [\App\Http\Controllers\Teacher\SectionController::class, 'edit'])->name('sections.edit');
+        Route::put('/{group}/sekcje/{section}', [\App\Http\Controllers\Teacher\SectionController::class, 'update'])->name('sections.update');
+        Route::delete('/{group}/sekcje/{section}', [\App\Http\Controllers\Teacher\SectionController::class, 'destroy'])->name('sections.destroy');
 
-        Route::get('/{groupId}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'index'])->name('announcements.index');
-        Route::get('/{groupId}/ogloszenia/dodaj', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'create'])->name('announcements.create');
-        Route::post('/{groupId}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'store'])->name('announcements.store');
+        Route::get('/{group}/sekcje/{section}/pliki/{fileId}/{fileName}', [\App\Http\Controllers\SectionFileController::class, 'show'])->name('sections.files.show');
+        Route::delete('/{group}/sekcje/{section}/pliki/{fileId}', [\App\Http\Controllers\SectionFileController::class, 'destroy'])->name('sections.files.destroy');
 
-        Route::get('/{groupId}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('attendances.index');
-        Route::get('/{groupId}/frekwencja/edytuj', [\App\Http\Controllers\Teacher\AttendanceController::class, 'edit'])->name('attendances.edit');
-        Route::put('/{groupId}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'update'])->name('attendances.update');
+        Route::get('/{group}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'index'])->name('announcements.index');
+        Route::get('/{group}/ogloszenia/dodaj', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'create'])->name('announcements.create');
+        Route::post('/{group}/ogloszenia', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'store'])->name('announcements.store');
+        Route::get('/{group}/ogloszenia/{announcement}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'show'])->name('announcements.show');
+        Route::get('/{group}/ogloszenia/{announcement}/edytuj', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'edit'])->name('announcements.edit');
+        Route::put('/{group}/ogloszenia/{announcement}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'update'])->name('announcements.update');
+        Route::delete('/{group}/ogloszenia/{announcement}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
-        Route::get('/{groupId}/oceny', [\App\Http\Controllers\Teacher\GradeController::class, 'index'])->name('grades.index');
-        Route::get('/{groupId}/oceny/dodaj', [\App\Http\Controllers\Teacher\GradeController::class, 'create'])->name('grades.create');
-        Route::post('/{groupId}/oceny', [\App\Http\Controllers\Teacher\GradeController::class, 'store'])->name('grades.store');
-    });
+        Route::get('/{group}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'index'])->name('attendances.index');
+        Route::get('/{group}/frekwencja/edytuj', [\App\Http\Controllers\Teacher\AttendanceController::class, 'edit'])->name('attendances.edit');
+        Route::put('/{group}/frekwencja', [\App\Http\Controllers\Teacher\AttendanceController::class, 'update'])->name('attendances.update');
 
-    Route::prefix('lekcje')->name('lessons.')->group(function () {
-        Route::get('/{lessonId}', [\App\Http\Controllers\Teacher\LessonController::class, 'show'])->name('show');
-        Route::get('/{lessonId}/edytuj', [\App\Http\Controllers\Teacher\LessonController::class, 'edit'])->name('edit');
-        Route::put('/{lessonId}', [\App\Http\Controllers\Teacher\LessonController::class, 'update'])->name('update');
-    });
-
-    Route::prefix('sekcje')->name('sections.')->group(function () {
-        Route::get('/{sectionId}', [\App\Http\Controllers\Teacher\SectionController::class, 'show'])->name('show');
-        Route::get('/{sectionId}/edytuj', [\App\Http\Controllers\Teacher\SectionController::class, 'edit'])->name('edit');
-        Route::put('/{sectionId}', [\App\Http\Controllers\Teacher\SectionController::class, 'update'])->name('update');
-        Route::delete('/{sectionId}', [\App\Http\Controllers\Teacher\SectionController::class, 'destroy'])->name('destroy');
-
-        Route::get('/{sectionId}/pliki/{fileId}/{fileName}', [\App\Http\Controllers\SectionFileController::class, 'show'])->name('files.show');
-        Route::delete('/{sectionId}/pliki/{fileId}', [\App\Http\Controllers\SectionFileController::class, 'destroy'])->name('files.destroy');
-    });
-
-    Route::prefix('ogloszenia')->name('announcements.')->group(function () {
-        Route::get('/{announcementId}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'show'])->name('show');
-        Route::get('/{announcementId}/edytuj', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'edit'])->name('edit');
-        Route::put('/{announcementId}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'update'])->name('update');
-        Route::delete('/{announcementId}', [\App\Http\Controllers\Teacher\AnnouncementController::class, 'destroy'])->name('destroy');
-    });
-
-    Route::prefix('oceny')->name('grades.')->group(function () {
-        Route::get('/{gradeItemId}/edytuj', [\App\Http\Controllers\Teacher\GradeController::class, 'edit'])->name('edit');
-        Route::put('/{gradeItemId}', [\App\Http\Controllers\Teacher\GradeController::class, 'update'])->name('update');
-        Route::delete('/{gradeItemId}', [\App\Http\Controllers\Teacher\GradeController::class, 'destroy'])->name('destroy');
+        Route::get('/{group}/oceny', [\App\Http\Controllers\Teacher\GradeController::class, 'index'])->name('grades.index');
+        Route::get('/{group}/oceny/dodaj', [\App\Http\Controllers\Teacher\GradeController::class, 'create'])->name('grades.create');
+        Route::post('/{group}/oceny', [\App\Http\Controllers\Teacher\GradeController::class, 'store'])->name('grades.store');
+        Route::get('/{group}/oceny/{gradeItem}/edytuj', [\App\Http\Controllers\Teacher\GradeController::class, 'edit'])->name('grades.edit');
+        Route::put('/{group}/oceny/{gradeItem}', [\App\Http\Controllers\Teacher\GradeController::class, 'update'])->name('grades.update');
+        Route::delete('/{group}/oceny/{gradeItem}', [\App\Http\Controllers\Teacher\GradeController::class, 'destroy'])->name('grades.destroy');
     });
 });
 
 Route::middleware(['auth', 'can:beStudent'])->prefix('student')->name('student.')->group(function () {
     Route::get('/', [\App\Http\Controllers\Student\IndexController::class, 'index'])->name('index');
+});
+
+Route::middleware(['auth'])->prefix('wiadomosci')->name('messenger.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Messenger\ThreadController::class, 'index'])->name('index');
+    Route::get('/nowa', [\App\Http\Controllers\Messenger\ThreadController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\Messenger\ThreadController::class, 'store'])->name('store');
+    Route::get('/{thread}', [\App\Http\Controllers\Messenger\ThreadController::class, 'show'])->name('show');
+    Route::post('/{thread}', [\App\Http\Controllers\Messenger\ThreadController::class, 'update'])->name('update');
 });

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperSection
+ */
 class Section extends Model
 {
     use HasFactory;
@@ -20,6 +23,7 @@ class Section extends Model
         'state_type',
         'name',
         'description',
+        'published_at'
     ];
 
     protected $casts = [

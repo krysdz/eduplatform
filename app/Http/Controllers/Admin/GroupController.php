@@ -2,22 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\DayOfWeekType;
-use App\Enums\GroupTypeEnum;
+use App\Enums\GroupMemberType;
+use App\Enums\GroupType;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Group;
-use App\Models\Lesson;
-use App\Models\Student;
-use App\Models\Teacher;
 use App\Models\Term;
-
+use App\Models\User;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use function Sodium\add;
+use Throwable;
 
 
 class GroupController extends Controller
@@ -34,11 +29,10 @@ class GroupController extends Controller
     {
         return view('admin.groups.create', [
             'courses' => Course::all(),
-            'types' => GroupTypeEnum::toArray(),
-            'days' => DayOfWeekType::toArray(),
-            'teachers' => Teacher::all(),
+            'types' => GroupType::asArray(),
+            'teachers' => User::getTeachers(),
             'terms' => Term::all(),
-            'students' => Student::all()
+            'students' => User::getStudents(),
         ]);
     }
 
@@ -49,161 +43,111 @@ class GroupController extends Controller
             'course_id' => 'required|integer|exists:courses,id',
             'number' => 'required|integer',
             'type' => 'required|integer',
-            'teacher_id' => 'required|integer|exists:teachers,id',
             'term_id' => 'required|integer|exists:terms,id',
-            'day_of_classes' => 'required|integer'
+            'teachers' => 'required|array',
+            'students' => 'required|array'
         ]);
 
-        $validatedData['type'] = GroupTypeEnum::makeFromId($validatedData['type']);
-        $validatedData['day_of_classes'] = DayOfWeekType::makeFromId($validatedData['day_of_classes']);
         DB::beginTransaction();
 
         try {
-            $group = Group::create($validatedData);
-            $group->students()->attach(Student::find($request->input('students')));
 
-            $this->generateLessons($group);
+            if(array_intersect($validatedData['students'], $validatedData['teachers'])) {
+                throw new Exception('Użytkownik nie może posiadać ról Student i Teacher w tej samej grupie.');
+            }
+
+            $group = Group::create($validatedData);
+            $group->groupMembers()->attach(User::find($validatedData['students']), ['type' => GroupMemberType::Student]);
+            $group->groupMembers()->attach(User::find($validatedData['teachers']), ['type' => GroupMemberType::Teacher]);
 
             DB::commit();
-            flash('Tworzenie grupy powiodło się')->success();
-            return redirect()->route('admin.groups.index');
+
+            return redirect()->route('admin.groups.index')->with('success', 'Tworzenie grupy powiodło się.');
         } catch (Exception $e) {
+            report($e);
+
             DB::rollback();
-            flash('Tworzenie grupy nie powiodło się - rollback')->error();
-            return redirect()->route('admin.groups.index');
+            return back()->with('error', $e->getMessage())->withInput();
         }
     }
 
-
-    public function show(int $id)
+    public function show(Group $group)
     {
         return view('admin.groups.show', [
-            'group' => Group::findOrFail($id)
+            'group' => $group
         ]);
     }
 
 
-    public function edit(int $id)
+    public function edit(Group $group)
     {
         return view('admin.groups.edit', [
-            'group' => Group::findOrFail($id),
+            'group' => $group,
             'courses' => Course::all(),
-            'types' => GroupTypeEnum::toArray(),
-            'days' => DayOfWeekType::toArray(),
-            'teachers' => Teacher::all(),
+            'types' => GroupType::asArray(),
+            'teachers' => User::getTeachers(),
             'terms' => Term::all(),
-            'students' => Student::all()
+            'students' => User::getStudents(),
         ]);
     }
 
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, Group $group)
     {
-        $currentGroup = Group::findOrFail($id);
 
         $validatedData = $request->validate([
             'course_id' => 'required|integer|exists:courses,id',
             'number' => 'required|integer',
             'type' => 'required|integer',
-            'teacher_id' => 'required|integer|exists:teachers,id',
             'term_id' => 'required|integer|exists:terms,id',
-            'day_of_classes' => 'required|integer',
-            'start_update_date' => 'nullable|date'
+            'teachers' => 'required|array',
+            'students' => 'required|array'
         ]);
-
-        $validatedData['type'] = GroupTypeEnum::makeFromId($validatedData['type']);
-        $validatedData['day_of_classes'] = DayOfWeekType::makeFromId($validatedData['day_of_classes']);
-
-        if ($validatedData['day_of_classes']->value != $currentGroup->day_of_classes->value) {
-            $startUpdateDate = $validatedData['start_update_date'];
-
-            $this->updateLessons($currentGroup, $startUpdateDate, $validatedData['day_of_classes']);
-        }
 
         DB::beginTransaction();
 
         try {
-            $currentGroup->update($validatedData);
-//            $currentGroup->students()->detach();
-            $currentGroup->students()->sync(Student::find($request->input('students')));
-            DB::commit();
-            flash('Aktualizacja grupy powiodła się')->success();
-            return redirect()->route('admin.groups.index');
-        } catch (Exception $e) {
-            DB::rollback();
-            flash('Aktualizacja grupy nie powiodła się - rollback')->error();
-            return redirect()->route('admin.groups.index');
-        }
+            $group->update($validatedData);
 
-    }
+            $students = array_fill_keys($validatedData['students'],
+                ['type' => GroupMemberType::Student]);
 
-    public function destroy($id)
-    {
-        if (!Group::findOrFail($id)->delete()) {
-            flash('Usuwanie grupy nie powiodło się')->error();
-        }
+            $teachers = array_fill_keys($validatedData['teachers'],
+                ['type' => GroupMemberType::Teacher]);
 
-        flash('Usuwanie grupy powiodło się')->success();
-        return redirect()->route('admin.groups.index');
-    }
-
-    public function generateLessons($group)
-    {
-        $start_date = Carbon::createFromFormat('Y-m-d', $group->term->start_date);
-        $end_date = Carbon::createFromFormat('Y-m-d', $group->term->end_classes_date);
-
-        while ($start_date->dayOfWeek != $group->day_of_classes->value) {
-            $start_date->addDay();
-        }
-
-        $lessonNumber = 1;
-
-        while ($start_date <= $end_date) {
-            Lesson::create([
-                'group_id' => $group->id,
-                'date' => $start_date,
-                'number' => $lessonNumber++,
-                'is_active' => false
-            ]);
-
-            $start_date->addWeek();
-        }
-    }
-
-    public function updateLessons(Group $group, string $startUpdateDate, $dayOfClasses)
-    {
-        $lessonsToUpdate = $group->lessons()->where('date', '>=', $startUpdateDate)->orderBy('date')->get();
-//        $lessonsToUpdate = $lessonsToUpdate instanceof Collection ? $lessonsToUpdate : collect($lessonsToUpdate);
-
-        $start_date = !empty($startUpdateDate) ? Carbon::createFromFormat('Y-m-d', $startUpdateDate) : Carbon::today();
-        $end_date = Carbon::createFromFormat('Y-m-d', $group->term->end_classes_date);
-
-        while ($start_date->dayOfWeek != $dayOfClasses->value) {
-            $start_date->addDay();
-        }
-
-        $newLessonsDate = [];
-        while ($start_date <= $end_date) {
-            array_push($newLessonsDate, $start_date->toImmutable());
-            $start_date->addWeek();
-        }
-
-        $lessonNumber = $lessonsToUpdate->first()->number;
-        for ($i = 0; $i < max($lessonsToUpdate->count(), count($newLessonsDate)); $i++) {
-            if ($i < $lessonsToUpdate->count()) {
-                if (isset($newLessonsDate[$i])) {
-                    $lessonsToUpdate->get($i)->update(['date' => $newLessonsDate[$i], 'number' => $lessonNumber + $i]);
-                } else {
-                    $lessonsToUpdate->get($i)->delete();
-                }
-            } else {
-                Lesson::create([
-                    'group_id' => $group->id,
-                    'date' => $newLessonsDate[$i],
-                    'number' => $lessonNumber + $i,
-                    'is_active' => false
-                ]);
+            if(array_intersect_key($students, $teachers)) {
+                throw new Exception('Użytkownik nie może posiadać ról Student i Teacher w tej samej grupie.');
             }
+
+            $members = $students + $teachers;
+
+            $group->groupMembers()->sync($members);
+            DB::commit();
+
+            return redirect()->route('admin.groups.index')
+                ->with('success', 'Aktualizacja grupy powiodła się.');
+        } catch (Throwable $e) {
+            DB::rollback();
+            report($e);
+
+            return back()->with('error', $e->getMessage())->withInput();
         }
+
+    }
+
+    public function destroy(Group $group)
+    {
+        try {
+            if (!$group->delete()) {
+                throw new Exception( "Usuwanie grupy $group nie powiodło się.");
+            }
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', $e->getMessage());
+        }
+
+
+        return redirect()->route('admin.groups.index')->with('success', "Usuwanie grupy $group powiodło się.");
     }
 }

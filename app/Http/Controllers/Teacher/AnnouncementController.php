@@ -6,87 +6,113 @@ use App\Enums\AnnouncementType;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\Group;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class AnnouncementController extends Controller
 {
-    public function index(int $groupId)
+    public function index(Group $group)
     {
         return view('teacher.announcements.index', [
-            'group' => Group::findOrFail($groupId),
-            'announcements' => Announcement::where(['group_id' => $groupId])->get(),
+            'group' => $group,
+            'announcements' => Announcement::where(['group_id' => $group->id])->get(),
         ]);
     }
 
-    public function create(int $groupId)
+    public function create(Group $group)
     {
         return view('teacher.announcements.create', [
-            'group' => Group::findOrFail($groupId),
-            'types' => AnnouncementType::toArray()
+            'group' => $group,
+            'types' => AnnouncementType::asArray()
         ]);
     }
 
-    public function store(Request $request, int $groupId)
+    public function store(Request $request, Group $group)
     {
         $validatedData = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
             'date' => 'required|date',
-            'time' => 'required',
+            'time' => 'required|date_format:H:i',
             'type' => 'required|integer'
         ]);
-        $deadline = $validatedData['date'].' '.$validatedData['time'];
-        $validatedData['type'] = AnnouncementType::makeFromId($validatedData['type']);
+        $markAt = $validatedData['date'].' '.$validatedData['time'];
 
-        Announcement::create(array_merge($validatedData, ['group_id' => $groupId, 'deadline' => $deadline]));
-        flash('Tworzenie ogloszenia powiodło się')->success();
-        return redirect()->route('teacher.groups.announcements.index', $groupId);
+        DB::beginTransaction();
+
+        try {
+            Announcement::create(array_merge($validatedData, ['group_id' => $group->id, 'mark_at' => $markAt]));
+            DB::commit();
+
+            return redirect()->route('teacher.groups.announcements.index', $group)->with('success', 'Tworzenie ogłoszenia powiodło się.');
+        } catch (Exception $e) {
+            report($e);
+
+            DB::rollback();
+            return back()->with('error', $e->getMessage())->withInput();
+        }
     }
 
-    public function show(int $announcementId)
+    public function show(Group $group, Announcement $announcement)
     {
-        $announcement = Announcement::findOrFail($announcementId);
         return view('teacher.announcements.show', [
-            'group' => $announcement->group,
+            'group' => $group,
             'announcement' => $announcement,
         ]);
     }
 
-    public function edit(int $announcementId)
+    public function edit(Group $group, Announcement $announcement)
     {
-        $announcement = Announcement::findOrFail($announcementId);
         return view('teacher.announcements.edit', [
-            'group' => $announcement->group,
+            'group' => $group,
             'announcement' => $announcement,
-            'types' => AnnouncementType::toArray()
+            'types' => AnnouncementType::asArray()
         ]);
     }
 
-    public function update(Request $request, int $announcementId)
+    public function update(Request $request, Group $group, Announcement $announcement)
     {
-        $currentAnnouncement = Announcement::findOrFail($announcementId);
-
         $validatedData = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
             'date' => 'required|date',
-            'time' => 'required',
+            'time' => 'required|date_format:H:i:s',
             'type' => 'required|integer'
         ]);
-        $deadline = $validatedData['date'].' '.$validatedData['time'];
-        $validatedData['type'] = AnnouncementType::makeFromId($validatedData['type']);
 
-        $currentAnnouncement->update(array_merge($validatedData, ['deadline' => $deadline]));
-        flash('Aktualizacja ogłoszenia powiodła się')->success();
-        return redirect()->route('teacher.groups.announcements.index', $currentAnnouncement->group_id);
+        $markAt = $validatedData['date'].' '.$validatedData['time'];
+
+        DB::beginTransaction();
+
+        try {
+            $announcement->update(array_merge($validatedData, ['mark_at' => $markAt]));
+            DB::commit();
+
+            return redirect()->route('teacher.groups.announcements.index', $group)->with('success', 'Aktualizacja ogłoszenia powiodło się.');
+        } catch (Exception $e) {
+            report($e);
+
+            DB::rollback();
+            return back()->with('error', $e->getMessage())->withInput();
+        }
     }
 
-    public function destroy(int $announcementId)
+    public function destroy(Group $group, Announcement $announcement)
     {
-        $announcement = Announcement::findOrFail($announcementId);
-        $announcement->delete();
-        flash('Usuwanie ogłoszenia powiodło się')->success();
-        return redirect()->back();
+        try {
+            if (!$announcement->delete()) {
+                throw new Exception("Usuwanie ogłoszenia $announcement nie powiodło się.");
+            }
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+
+        return redirect()->route('teacher.groups.announcements.index', $group)->with('success', "Usuwanie ogłoszenia $announcement powiodło się.");
+
     }
 }

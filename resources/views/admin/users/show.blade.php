@@ -1,61 +1,56 @@
-@extends('admin.index')
+@extends('admin.layout')
+@section('title', "$user - Eduplatform.pl")
 
 @section('content')
-<h1>{{$user->first_name}} {{$user->last_name}}</h1>
-<h2>{{$user->type}}</h2>
-<p>{{$user->email}}</p>
-<p>{{$user->phone}}</p>
-<p>{{$user->created_at}}</p>
-<p>{{$user->updated_at}}</p>
-@if($user->type == 'student')
-    <p>{{$user->student->code}}</p>
+    <div class="content">
+        <h1 class="title mt-4">Informacje o użytkowniku</h1>
+        <h2 class="subtitle is-1 pb-5">{{$user}}</h2>
 
-    <h2>Grupy:</h2>
-    <table class="table">
-        <tr>
-            <th>Id</th>
-            <th>Nazwa</th>
-            <th>Nr grupy</th>
-            <th>Typ</th>
-            <th>Nauczyciel prowadzący</th>
-            <th>Ilość uczestników</th>
-        </tr>
-        @foreach($user->student->groups as $group)
-            <tr>
-                <td>{{$group->id}}</td>
-                <td>{{$group->course->name}}</td>
-                <td>{{$group->number}}</td>
-                <td>{{$group->type->label}}</td>
-                <td>{{$group->teacher->user->fullName}}</td>
-                <td>{{$group->students->count()}}</td>
-            </tr>
-        @endforeach
-    </table>
-@elseif($user->type == 'teacher')
-    <p>{{$user->teacher->degree}}</p>
-    <p>{{$user->teacher->website}}</p>
+        <p class="title is-4">Akcje:</p>
 
-    <h2>Grupy:</h2>
-    <table class="table">
-        <tr>
-            <th>Id</th>
-            <th>Nazwa</th>
-            <th>Nr grupy</th>
-            <th>Typ</th>
-            <th>Nauczyciel prowadzący</th>
-            <th>Ilość uczestników</th>
-        </tr>
-        @foreach($user->teacher->groups as $group)
-            <tr>
-                <td>{{$group->id}}</td>
-                <td>{{$group->course->name}}</td>
-                <td>{{$group->number}}</td>
-                <td>{{$group->type->label}}</td>
-                <td>{{$group->teacher->user->fullName}}</td>
-                <td>{{$group->students->count()}}</td>
-            </tr>
-        @endforeach
-    </table>
-@endif
+        <div class="buttons">
+            <a class="button is-success is-normal" href="{{route('admin.users.edit', $user->id)}}">Edytuj</a>
+            <form class="is-inline" action="{{route('admin.users.destroy', $user->id)}}" method="POST">
+                @method('DELETE')
+                @csrf
+                <button class="button is-danger" type="submit">Usuń</button>
+            </form>
+        </div>
 
+        <p class="title is-4">Role użytkownika:</p>
+        <div class="tags are-medium">
+            @forelse($user->roles as $role)
+                <span class="tag">{{\App\Enums\UserRoleType::getDescription($role->type)}}</span>
+            @empty
+                <p>Brak ról przypisanych do użytkownika.</p>
+            @endforelse
+        </div>
+
+        <p class="title is-4">Dane kontaktowe:</p>
+        <p>Email: <a href="mailto:{{$user->email}}">{{$user->email}}</a></p>
+        <p>Numer tel.: <a href="tel:{{$user->phone}}">{{$user->phone}}</a></p>
+        <p>Strona internetowa: <a href="http://{{$user->website}}">{{$user->website}}</a></p>
+
+        <p class="title is-4">Informacje o wykształceniu:</p>
+        <p>Nr indeksu: {{$user->code}}</p>
+        <p>Uzyskany stopień naukowy: {{$user->degree}}</p>
+
+        <p class="title is-4">Grupy do których należy użytkownik:</p>
+        <ul>
+            @forelse($user->groups()->withPivot('type')->get() as $group)
+                <li>
+                    <a href="{{ route('admin.groups.show', $group) }}">{{ $group }} </a>
+                    <span class="tag">{{ \App\Enums\GroupMemberType::getDescription($group->pivot->type) }}</span>
+                    <span class="tag is-dark">{{ $group->term }}</span>
+                </li>
+            @empty
+                <p>Brak grup przypisanych do użytkownika.</p>
+            @endforelse
+        </ul>
+
+        <p class="title is-4">Inne informacje:</p>
+        <p>Data utworzenia: {{$user->created_at}}</p>
+        <p>Data ostatniej aktualizacji: {{$user->updated_at}}</p>
+
+    </div>
 @endsection

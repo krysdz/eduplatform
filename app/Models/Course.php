@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperCourse
+ */
 class Course extends Model
 {
     use HasFactory;
@@ -19,6 +22,15 @@ class Course extends Model
         'name',
         'description',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::deleting(function (Course $course) {
+            $course->groups()->delete();
+        });
+    }
 
     public function __toString()
     {

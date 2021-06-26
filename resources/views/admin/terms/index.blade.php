@@ -1,42 +1,45 @@
-@extends('admin.index')
+@extends('admin.layout')
+@section('title', 'Semestry - Eduplatform.pl')
 
 @section('content')
-<h1>Semestry</h1>
-<button><a href="{{route('admin.terms.create')}}">Dodaj semestr</a></button>
-<table class="table">
-    <tr>
-        <th>Id</th>
-        <th>Nazwa</th>
-        <th>Kod</th>
-        <th>Data rozpoczęcia</th>
-        <th>Ostani dzień zajęć</th>
-        <th>Data zakończenia</th>
-        <th>Aktywny?</th>
-        <th>Data stworzenia</th>
-        <th>Data aktualizacji</th>
-    </tr>
-    @foreach($terms as $term)
-        <tr>
-            <td><a href="{{route('admin.terms.show', [$term->id])}}">{{$term->id}}</a></td>
-            <td>{{$term->name}}</td>
-            <td>{{$term->code}}</td>
-            <td>{{$term->start_date}}</td>
-            <td>{{$term->end_classes_date}}</td>
-            <td>{{$term->end_date}}</td>
-            <td>{{$term->is_active}}</td>
-            <td>{{$term->created_at}}</td>
-            <td>{{$term->updated_at}}</td>
-            <td>
-                <button><a href="{{route('admin.terms.edit', $term->id)}}">Edytuj</a></button>
-            </td>
-            <td>
-                <form action="{{route('admin.terms.destroy', $term->id)}}" method="POST">
-                    @method('DELETE')
-                    @csrf
-                    <button type="submit">Usuń</button>
-                </form>
-            </td>
-        </tr>
-    @endforeach
-</table>
+
+    <div class="is-flex mt-4">
+        <h1 class="title">Semestry</h1>
+        <a class="button is-normal ml-5" href="{{route('admin.terms.create')}}">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-plus"></i>
+              </span>
+              <span>Dodaj semestr</span>
+            </span>
+        </a>
+    </div>
+
+    <table class="table is-hoverable is-fullwidth">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nazwa</th>
+                <th>Kod</th>
+                <th>Data rozpoczęcia</th>
+                <th>Ostani dzień zajęć</th>
+                <th>Data zakończenia</th>
+                <th>Bieżący semestr</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach($terms as $term)
+            <tr>
+                <td><a href="{{route('admin.terms.show', $term)}}">{{$term->id}}</a></td>
+                <td>{{$term->name}}</td>
+                <td>{{$term->code}}</td>
+                <td>{{$term->start_date}}</td>
+                <td>{{$term->end_classes_date}}</td>
+                <td>{{$term->end_date}}</td>
+                <td>@if($term->checkIsActive()) <span class="tag is-success">Tak</span> @else <span class="tag is-danger">Nie</span> @endif</td>
+            </tr>
+        @endforeach
+        </tbody>
+
+    </table>
 @endsection

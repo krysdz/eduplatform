@@ -1,42 +1,45 @@
-@extends('admin.index')
+@extends('admin.layout')
+
+@section('title', 'Grupy - Eduplatform.pl')
 
 @section('content')
-    <button><a href="{{route('admin.groups.create')}}">Dodaj grupę</a></button>
-    <h2>Grupy:</h2>
-    <table class="table">
-        <tr>
+
+    <div class="is-flex mt-4">
+        <h1 class="title">Grupy</h1>
+        <a class="button is-normal ml-5" href="{{route('admin.groups.create')}}">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-plus"></i>
+              </span>
+              <span>Dodaj grupę</span>
+            </span>
+        </a>
+    </div>
+
+    <table class="table is-hoverable is-fullwidth">
+        <thead>
             <th>Id</th>
-            <th>Przedmiot</th>
+            <th>Kurs</th>
             <th>Nr grupy</th>
             <th>Typ</th>
             <th>Semestr</th>
-            <th>Dzień tygodnia</th>
             <th>Wydział</th>
-            <th>Nauczyciel prowadzący</th>
-            <th>Ilość uczestników</th>
-        </tr>
+            <th>Liczba nauczycieli</th>
+            <th>Liczba studentów</th>
+        </thead>
+        <tbody>
         @foreach($groups as $group)
             <tr>
                 <td><a href="{{route('admin.groups.show', $group->id)}}">{{$group->id}}</a></td>
-                <td>{{$group->course->name}}</td>
+                <td>{{$group->course}}</td>
                 <td>{{$group->number}}</td>
-                <td>{{$group->type->label}}</td>
+                <td>{{\App\Enums\GroupType::getDescription($group->type)}}</td>
                 <td>{{$group->term->code}}</td>
-                <td>{{$group->day_of_classes->label}}</td>
                 <td>{{$group->course->faculty->code}}</td>
-                <td>{{$group->teacher->user->fullName}}</td>
-                <td>{{$group->students->count()}}</td>
-                <td>
-                    <button><a href="{{route('admin.groups.edit', $group->id)}}">Edytuj</a></button>
-                </td>
-                <td>
-                    <form action="{{route('admin.groups.destroy', $group->id)}}" method="POST">
-                        @method('DELETE')
-                        @csrf
-                        <button type="submit">Usuń</button>
-                    </form>
-                </td>
+                <td>{{$group->teachers()->count()}}</td>
+                <td>{{$group->students()->count()}}</td>
             </tr>
         @endforeach
+        </tbody>
     </table>
 @endsection

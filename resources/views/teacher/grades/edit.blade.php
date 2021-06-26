@@ -1,8 +1,13 @@
 @extends('teacher.group_layout')
 
-@section('content')
-    <h3 class="title is-3">Edytuj ocenę</h3>
-    <form action="{{route('teacher.grades.update', $gradeItem->id)}}" method="POST">
+@section('title', "Edytuj ocenę $gradeItem - Eduplatform.pl")
+
+@section('group_content')
+
+    <h1 class="title">Edytuj ocenę</h1>
+    <h2 class="subtitle">{{$gradeItem}}</h2>
+
+    <form action="{{route('teacher.groups.grades.update', [$group, $gradeItem])}}" method="POST">
         @method('PUT')
         @csrf
 
@@ -20,25 +25,27 @@
             </div>
         </div>
 
+        <label class="label" for="color">Kolor:</label>
+        <div class="select">
+            <select name="color" id="color">
+                @foreach($colors as $color => $name)
+                    <option @if($gradeItem->color === $color) selected @endif value="{{$color}}">{{$name}}</option>
+            @endforeach
+            </select>
+        </div>
+
         <div class="field">
-            <label class="label" for="color">Kolor: </label>
+            <label class="label" for="weight">Waga: </label>
             <div class="control">
-                <input class="input" type="text" id="color" name="color" value="{{$gradeItem->color}}">
+                <input class="input" type="number" id="weight" name="weight"
+                       value="{{$gradeItem->weight}}">
             </div>
         </div>
 
         <div class="field">
-            <label class="label" for="mark_weight">Waga: </label>
+            <label class="label" for="maxscore">Maksymalna liczba punktów: </label>
             <div class="control">
-                <input class="input" type="number" id="mark_weight" name="mark_weight"
-                       value="{{$gradeItem->mark_weight}}">
-            </div>
-        </div>
-
-        <div class="field">
-            <label class="label" for="max_score">Maksymalna liczba punktów: </label>
-            <div class="control">
-                <input class="input" type="number" id="max_score" name="max_score" value="{{$gradeItem->max_score}}">
+                <input class="input" type="number" id="maxscore" name="maxscore" value="{{$gradeItem->maxscore}}">
             </div>
         </div>
 
@@ -47,10 +54,10 @@
             <thead>
             <tr>
                 <th></th>
-                <th style="min-width: 220px">Lista studentów</th>
-                <th style="min-width: 220px">Ocena</th>
-                <th style="min-width: 220px">Liczba punktów</th>
-                <th style="min-width: 220px">Komentarz</th>
+                <th>Lista studentów</th>
+                <th>Ocena</th>
+                <th>Liczba punktów</th>
+                <th>Komentarz</th>
             </tr>
             </thead>
             <tbody>
@@ -67,7 +74,7 @@
                                 <select name="{{$studentId}}-grade_value" id="">
                                     <option hidden selected></option>
                                     @foreach($gradeValues as $key => $value)
-                                        <option @if($value == $grade->grade_value) selected
+                                        <option @if($value == $grade->grade) selected
                                                 @endif value="{{$value}}">{{$value}}</option>
                                     @endforeach
                                 </select>

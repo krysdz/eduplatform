@@ -1,36 +1,34 @@
 @extends('teacher.layout')
 
+@section('title', 'Grupy - Eduplatform.pl')
+
 @section('content')
-    <form action="{{route('teacher.groups.index')}}" method="GET">
-    @if(!$archived)
-            <button name="archived" value="true" type="submit">Archiwalne grupy</button>
-    @else
-            <button name="archived" value="false" type="submit">Aktualne grupy</button>
-    @endif
-    </form>
-    <h2>Grupy:</h2>
-    <table class="table">
-        <tr>
+    <div class="is-flex mt-4 mb-5">
+        <h1 class="title">Moje grupy</h1>
+    </div>
+
+    <table class="table is-hoverable is-fullwidth">
+        <thead>
             <th>Id</th>
-            <th>Przedmiot</th>
+            <th>Kurs</th>
             <th>Nr grupy</th>
             <th>Typ</th>
             <th>Semestr</th>
-            <th>Dzień tygodnia</th>
             <th>Wydział</th>
             <th>Ilość uczestników</th>
-        </tr>
+        </thead>
+        <tbody>
         @foreach($groups as $group)
             <tr>
-                <td><a href="{{route('teacher.groups.show', $group->id)}}">{{$group->id}}</a></td>
-                <td>{{$group->course->name}}</td>
+                <td><a href="{{route('teacher.groups.show', $group)}}">{{$group->id}}</a></td>
+                <td>{{$group->course}}</td>
                 <td>{{$group->number}}</td>
-                <td>{{$group->type->label}}</td>
+                <td>{{\App\Enums\GroupType::getDescription($group->type)}}</td>
                 <td>{{$group->term->code}}</td>
-                <td>{{$group->day_of_classes->label}}</td>
                 <td>{{$group->course->faculty->code}}</td>
-                <td>{{$group->students->count()}}</td>
+                <td>{{$group->students()->count()}}</td>
             </tr>
         @endforeach
+        </tbody>
     </table>
 @endsection

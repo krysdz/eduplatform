@@ -5,88 +5,99 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Models\Group;
 use App\Models\Lesson;
+use App\Models\ScheduledLesson;
 use App\Models\Section;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LessonController extends Controller
 {
-    public function index(int $groupId)
+    public function index(Group $group)
     {
         return view('teacher.lessons.index', [
-            'group' => Group::findOrFail($groupId),
-            'lessons' => Lesson::where(['group_id' => $groupId])->get(),
+            'group' => $group,
+            'scheduledLesson' => ScheduledLesson::where(['group_id' => $group->id])->orderBy('date')->get(),
         ]);
     }
 
-    public function show(int $lessonId)
+    public function create(Group $group)
     {
-        $lesson = Lesson::findOrFail($lessonId);
+        $scheduledLesson = ScheduledLesson::findOrFail(request()->query('scheduledLesson'));
+
+        return view('teacher.lessons.create', [
+            'group' => $group,
+            'scheduledLesson' => $scheduledLesson
+        ]);
+    }
+
+    public function store(Request $request, Group $group)
+    {
+        $validatedData = $request->validate([
+            'scheduled_lesson_id' => 'required|integer|exists:scheduled_lessons,id',
+            'number' => 'required|integer',
+            'name' => 'required|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            if (Lesson::where('scheduled_lesson_id', '=', $validatedData['scheduled_lesson_id'])->exists()) {
+                throw new Exception('Lekcja została już stworzona.');
+            }
+
+            Lesson::create($validatedData);
+
+            DB::commit();
+
+            return redirect()->route('teacher.groups.lessons.index', $group)->with('success', 'Tworzenie lekcji powiodło się.');
+        } catch (Exception $e) {
+            report($e);
+
+            DB::rollback();
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+
+    }
+
+    public function show(Group $group, Lesson $lesson)
+    {
         return view('teacher.lessons.show', [
-            'group' => $lesson->group,
+            'group' => $group,
+            'scheduledLesson' => $lesson->scheduleLesson,
+            'lesson' => $lesson
+        ]);
+    }
+
+    public function edit(Request $request, Group $group, Lesson $lesson)
+    {
+      return view('teacher.lessons.edit', [
+            'group' => $group,
             'lesson' => $lesson
         ]);
     }
 
 
-    public function edit(Request $request, int $lessonId)
+    public function update(Request $request, Group $group, Lesson $lesson)
     {
-        $lesson = Lesson::findOrFail($lessonId);
-        $action = $request->input('action');
-
-        if (!in_array($action, ['edit', 'plan', 'create'])) {
-            flash('Nie możesz wykonać żądanej akcji')->error();
-            return redirect()->back();
-        }
-
-        return view('teacher.lessons.edit', [
-            'group' => $lesson->group,
-            'lesson' => $lesson,
-            'action' => $action
+        $validatedData = $request->validate([
+            'number' => 'required|integer',
+            'name' => 'required|string',
         ]);
-    }
 
+        DB::beginTransaction();
 
-    public function update(Request $request, int $lessonId)
-    {
-        $currentLesson = Lesson::findOrFail($lessonId);
-        $action = $request->input('action');
-        $validatedData = [];
+        try {
+            $lesson->update($validatedData);
 
-        switch ($action) {
-            case 'publish':
-                $validatedData['is_active'] = true;
-                break;
-            case 'clear':
-                $validatedData = [
-                    'title' => null,
-                    'description' => null,
-                    'is_active' => false
-                ];
-                break;
-            default:
-                $validatedData = $request->validate([
-                    'title' => 'required|string',
-                    'date' => 'required|date',
-                    'number' => 'required|integer',
-                    'is_active' => 'sometimes|string'
-                ]);
-                $validatedData['is_active'] = (($validatedData['is_active'] ?? '') == 'is_active');
-                break;
+            DB::commit();
+
+            return redirect()->route('teacher.groups.lessons.index', $group)->with('success', 'Aktualizacja lekcji powiodła się.');
+        } catch (Exception $e) {
+            report($e);
+
+            DB::rollback();
+            return back()->with('error', $e->getMessage())->withInput();
         }
-
-        $currentLesson->update($validatedData);
-
-        if($currentLesson->is_active && Section::where(['lesson_id' => $currentLesson->id])->doesntExist()) {
-            Section::create([
-                'title' => $currentLesson->title,
-                'lesson_id' => $currentLesson->id,
-                'group_id' => $currentLesson->group_id,
-                'is_active' => false,
-                'position' => $currentLesson->id * 10
-            ]);
-        }
-
-        flash('Tworzenie lekcji powiodło się')->success();
-        return redirect()->route('teacher.groups.lessons.index', $currentLesson->group_id);
     }
 }

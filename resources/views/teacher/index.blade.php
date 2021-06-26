@@ -1,15 +1,19 @@
 @extends('teacher.layout')
 
+@section('title', "Moduł nauczyciela - Eduplatform.pl")
+
 @section('content')
-    <div>
-    <h2 class="title is-2">Sekcja nauczyciela</h2>
-    <h3 class="title is-3">Zajęcia ({{$today}})</h3>
+    <div class="content">
+        <h1 class="title mt-4">Moduł nauczyciela</h1>
 
-        @foreach($lessons as $lesson)
-            <h3>
-                <a href="{{route('teacher.lessons.show', $lesson->id)}}">{{$loop->iteration}}. {{$lesson->group->course->name}} gr.{{$lesson->group->number}} ({{$lesson->group->type->label}}</a>)
-            </h3>
-        @endforeach
+        <p class="title is-4">Plan zajęć ({{$today}}):</p>
 
+            @foreach($scheduledLessons as $scheduledLesson)
+                <div class="box">
+                    <div><a href="{{route('teacher.groups.lessons.index', $scheduledLesson->group)}}">{{$loop->iteration}}. {{$scheduledLesson->group}}</a></div>
+                    <div>{{$scheduledLesson->start_time}} - {{$scheduledLesson->end_time}} </div>
+                    <div>sala {{$scheduledLesson->room_name}}</div>
+                </div>
+            @endforeach
     </div>
 @endsection

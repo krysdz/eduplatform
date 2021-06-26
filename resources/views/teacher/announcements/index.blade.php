@@ -1,32 +1,37 @@
 @extends('teacher.group_layout')
 
-@section('content')
-    <button><a href="{{route('teacher.groups.announcements.create', $group->id)}}">Dodaj ogłoszenie</a></button>
-    <p class="title-3">Ogłoszenia</p>
-    <table class="table">
-        <tr>
-            <th>Id</th>
+@section('title', "Ogłoszenia $group - Eduplatform.pl")
+
+@section('group_content')
+    <div class="is-flex">
+        <h1 class="title">Ogłoszenia</h1>
+        <a class="button is-normal ml-5" href="{{route('teacher.groups.announcements.create', $group)}}">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-plus"></i>
+              </span>
+              <span>Dodaj ogłoszenie</span>
+            </span>
+        </a>
+    </div>
+
+    <table class="table is-hoverable is-fullwidth">
+        <thead>
             <th>Tytuł</th>
             <th>Opis</th>
             <th>Data</th>
-            <th>Type</th>
-        </tr>
+            <th>Typ</th>
+        </thead>
+        <tbody>
         @foreach($announcements as $announcement)
             <tr>
-                <td><a href="{{route('teacher.announcements.show', $announcement->id)}}">{{$announcement->id}}</a></td>
-                <td>{{$announcement->title}}</td>
+                <td><a href="{{route('teacher.groups.announcements.show', [$group, $announcement])}}">{{$announcement->title}}</a></td>
                 <td>{!! $announcement->description !!}</td>
-                <td>{{$announcement->deadline}}</td>
-                <td>{{$announcement->type->label}}</td>
-                <td>
-                    <button><a href="{{route('teacher.announcements.edit', $announcement->id)}}">Edytuj</a></button>
-                    <form action="{{route('teacher.announcements.destroy', $announcement->id)}}" method="POST">
-                        @method('DELETE')
-                        @csrf
-                        <button type="submit">Usuń</button>
-                    </form>
-                </td>
+                <td>{{$announcement->mark_at}}</td>
+                <td>{{\App\Enums\AnnouncementType::getDescription($announcement->type)}}</td>
             </tr>
         @endforeach
+        </tbody>
+
     </table>
 @endsection

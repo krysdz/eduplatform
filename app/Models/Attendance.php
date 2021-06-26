@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperAttendance
+ */
 class Attendance extends Model
 {
     use HasFactory;
@@ -15,7 +18,7 @@ class Attendance extends Model
 
     protected $fillable = [
         'student_id',
-        'lesson_id',
+        'scheduled_lesson_id',
         'type',
     ];
 
@@ -28,9 +31,9 @@ class Attendance extends Model
         return $this->type->description;
     }
 
-    public function lesson(): Relation
+    public function scheduledLesson(): Relation
     {
-        return $this->belongsTo(Lesson::class);
+        return $this->belongsTo(ScheduledLesson::class);
     }
 
     public function student(): Relation

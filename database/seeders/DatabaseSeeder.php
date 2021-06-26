@@ -2,20 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Enums\DayOfWeekType;
 use App\Enums\GroupMemberType;
 use App\Enums\GroupType;
-use App\Enums\GroupTypeEnum;
 use App\Enums\UserRoleType;
 use App\Models\Course;
 use App\Models\Faculty;
 use App\Models\Group;
-use App\Models\GroupMember;
 use App\Models\GroupSchedule;
-use App\Models\Student;
-use App\Models\Teacher;
 use App\Models\Term;
-use App\Models\User;
 use App\Models\UserRole;
 use Faker\Generator;
 use Illuminate\Container\Container;
@@ -94,8 +88,8 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Semestr letni 2020/2021',
                 'code' => '20/21L',
                 'start_date' => Date::create(2021, 2, 25),
-                'end_classes_date' => Date::create(2020, 6, 15),
-                'end_date' => Date::create(2020, 9, 30),
+                'end_classes_date' => Date::create(2021, 6, 15),
+                'end_date' => Date::create(2021, 9, 30),
             ]
         ];
 
@@ -176,6 +170,7 @@ class DatabaseSeeder extends Seeder
 
             GroupSchedule::factory(rand(1,3))->create([
                 'group_id' => $currentGroup,
+                'teacher_id' => $currentGroup->teachers()->first()->id,
                 'first_date' => $this->faker->dateTimeInInterval($currentGroup->term->start_date, '+'.rand(0,30).'days'),
                 'last_date' => $this->faker->dateTimeInInterval($currentGroup->term->end_classes_date, '-'.rand(0,30).'days'),
             ]);

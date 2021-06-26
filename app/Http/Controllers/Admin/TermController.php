@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Term;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Throwable;
 
 class TermController extends Controller
 {
     public function index()
     {
-        $terms = Term::all();
-
         return view('admin.terms.index', [
-            'terms' => $terms,
+            'terms' => Term::all(),
         ]);
     }
 
@@ -29,75 +29,74 @@ class TermController extends Controller
             'start_date' => 'required|date',
             'end_classes_date' => 'required|date|after:start_date',
             'end_date' => 'required|date|after_or_equal:end_classes_date',
-            'is_active' => 'sometimes|string'
         ]);
-        $validatedData['is_active'] = (($validatedData['is_active'] ?? '') == 'is_active');
 
-        $termInfo = $this->getTermNameAndCode();
+        try {
+            $validatedData = array_merge($validatedData, $this->getTermNameAndCode());
 
-        if ($termInfo['name'] == null || $termInfo['code'] == null || Term::where(['code' => $termInfo['code']])->exists()) {
-            flash('Tworzenie semestru nie powiodło się 1')->error();
-            return redirect()->route('admin.terms.index');
+            if (Term::where(['code' => $validatedData['code']])->orWhere(['name' => $validatedData['name']])->exists()) {
+                throw new Exception('Semestr o podanych datach już istnieje.');
+            }
+
+            if ($validatedData['name'] == null || $validatedData['code'] == null) {
+                throw new Exception('Podano błędne daty.');
+            }
+
+            Term::create($validatedData);
+
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', $e->getMessage())->withInput();
         }
 
-        if (!Term::create(array_merge($validatedData, $termInfo))) {
-            flash('Tworzenie semestru nie powiodło się 2')->error();
-            return redirect()->route('admin.terms.index');
-        }
-
-        if ($validatedData['is_active']) {
-            $this->setIsActiveFalseInOtherTerm();
-        }
-
-        flash('Tworzenie semestru powiodło się')->success();
-        return redirect()->route('admin.terms.index');
+        return redirect()->route('admin.terms.index')->with('success', 'Tworzenie semestru powiodło się.');
     }
 
-    public function show(Request $request, int $id)
+    public function show( Term $term)
     {
-        $term = Term::findOrFail($id);
         return view('admin.terms.show', ['term' => $term]);
     }
 
-    public function edit(Request $request, int $id)
+    public function edit( Term $term)
     {
-        $term = Term::findOrFail($id);
         return view('admin.terms.edit', ['term' => $term]);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, Term $term)
     {
-        $currentTerm = Term::findOrFail($id);
-
         $validatedData = $request->validate([
-            'name' => 'required|unique:terms,name,'. $currentTerm->id,
-            'code' => 'required|unique:terms,code,'. $currentTerm->id,
+            'name' => 'required|unique:terms,name,' . $term->id,
+            'code' => 'required|unique:terms,code,' . $term->id,
             'start_date' => 'required|date',
             'end_classes_date' => 'required|date|after:start_date',
             'end_date' => 'required|date|after_or_equal:end_classes_date',
-            'is_active' => 'sometimes|string'
         ]);
 
-        $validatedData['is_active'] = (($validatedData['is_active'] ?? '') == 'is_active');
+        try {
+            $term->update($validatedData);
+        } catch (Throwable $e) {
+            report($e);
 
-        if ($validatedData['is_active']) {
-            $this->setIsActiveFalseInOtherTerm();
+            return back()->with('error', $e->getMessage())->withInput();
         }
 
-        $currentTerm->update($validatedData);
-
-        flash('Aktualizacja semestru powiodła się')->success();
-        return redirect()->route('admin.terms.index');
+        return redirect()->route('admin.terms.index')->with('success', 'Aktualizacja semestru powiodła się.');
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Term $term)
     {
-        if (!Term::findOrFail($id)->delete()) {
-            flash('Usuwanie semestru nie powiodło się')->error();
+        try {
+            if (!$term->delete()) {
+                throw new Exception("Usuwanie semestru $term nie powiodło się.");
+            }
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', $e->getMessage())->withInput();
         }
 
-        flash('Usuwanie semestru powiodło się')->success();
-        return redirect()->route('admin.terms.index');
+        return redirect()->route('admin.terms.index')->with('success', "Usuwanie semestru $term powiodło się.");
     }
 
     private function getTermNameAndCode(): array
@@ -114,20 +113,11 @@ class TermController extends Controller
         } elseif (($start_date->year == $end_date->year) && $start_date->month == 2 && $end_date->month == 9) {
             $name = 'Semestr letni ' . ($start_date->year - 1) . '/' . $end_date->year;
             $code = ($start_date->format('y') - 1) . '/' . $end_date->format('y') . 'L';
-        } elseif (($start_date->year == ($end_date->year - 1)) && $start_date->month == 10 && $end_date->month == 9) {
-            $name = 'Rok akademicki ' . $start_date->year . '/' . $end_date->year;
-            $code = $start_date->format('y') . '/' . $end_date->format('y');
         }
 
         return ['name' => $name, 'code' => $code];
     }
 
-    private function setIsActiveFalseInOtherTerm(): void
-    {
-        $terms = Term::all();
-        foreach ($terms as $term) {
-            $term->update(['is_active' => false]);
-        }
-    }
+
 
 }

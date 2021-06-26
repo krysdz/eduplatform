@@ -11,4 +11,12 @@ final class UserRoleType extends Enum implements LocalizedEnum
     const Administrator = 2;
     const Teacher = 3;
     const Student = 4;
+
+    public static function asArrayWithoutSuper(): array
+    {
+        $array = UserRoleType::getConstants();
+        unset($array['SuperAdministrator']);
+
+        return $array;
+    }
 }

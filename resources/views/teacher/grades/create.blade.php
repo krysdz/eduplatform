@@ -1,8 +1,12 @@
 @extends('teacher.group_layout')
 
-@section('content')
-    <h3 class="title is-3">Dodaj ocenę</h3>
-    <form action="{{route('teacher.groups.grades.store', $group->id)}}" method="POST">
+@section('title', "Dodaj ocenę - Eduplatform.pl")
+
+@section('group_content')
+
+    <h1 class="title">Dodaj ocenę</h1>
+
+    <form action="{{route('teacher.groups.grades.store', $group)}}" method="POST">
         @csrf
 
         <div class="field">
@@ -19,24 +23,26 @@
             </div>
         </div>
 
+        <label class="label" for="color">Kolor:</label>
+        <div class="select">
+            <select name="color" id="color">
+                @foreach($colors as $color => $name)
+                    <option value="{{$color}}">{{$name}}</option>
+                @endforeach
+            </select>
+        </div>
+
         <div class="field">
-            <label class="label" for="color">Kolor: </label>
+            <label class="label" for="weight">Waga: </label>
             <div class="control">
-                <input class="input" type="text" id="color" name="color" placeholder="#0000000">
+                <input class="input" type="number" id="weight" name="weight" value="1">
             </div>
         </div>
 
         <div class="field">
-            <label class="label" for="mark_weight">Waga: </label>
+            <label class="label" for="maxscore">Maksymalna liczba punktów: </label>
             <div class="control">
-                <input class="input" type="number" id="mark_weight" name="mark_weight" placeholder="1">
-            </div>
-        </div>
-
-        <div class="field">
-            <label class="label" for="max_score">Maksymalna liczba punktów: </label>
-            <div class="control">
-                <input class="input" type="number" id="max_score" name="max_score">
+                <input class="input" type="number" id="maxscore" name="maxscore">
             </div>
         </div>
 
@@ -45,22 +51,20 @@
             <thead>
             <tr>
                 <th></th>
-                <th style="min-width: 220px">Lista studentów</th>
-                <th style="min-width: 220px">Ocena</th>
-                <th style="min-width: 220px">Liczba punktów</th>
-                <th style="min-width: 220px">Komentarz</th>
+                <th>Lista studentów</th>
+                <th>Ocena</th>
+                <th>Liczba punktów</th>
+                <th>Komentarz</th>
             </tr>
             </thead>
             <tbody>
             @foreach($students as $student)
                 <tr>
                     <td>{{$loop->iteration}}</td>
-                    <td>{{$student->first_name}}
-                        {{$student->last_name}}
-                    </td>
+                    <td>{{$student}}</td>
                     <td>
                         <div class="select">
-                            <select name="{{$student->id}}-grade_value" id="">
+                            <select name="{{$student->id}}-grade_value" id="{{$student->id}}-grade_value">
                                 <option hidden selected></option>
                                 @foreach($gradeValues as $key => $value)
                                     <option value="{{$value}}">{{$value}}</option>
@@ -87,18 +91,13 @@
             </tbody>
         </table>
 
-
         <div class="field is-grouped">
-            <p class="control">
-                <button class="button is-primary">
-                    Dodaj
-                </button>
-            </p>
-            <p class="control">
-                <a class="button is-light" href="{{url()->previous()}}">
-                    Powrót
-                </a>
-            </p>
+            <div class="control">
+                <button class="button is-link" type="submit">Zapisz</button>
+            </div>
+            <div class="control">
+                <button class="button is-link is-light"><a href="{{url()->previous()}}">Anuluj</a></button>
+            </div>
         </div>
     </form>
 @endsection

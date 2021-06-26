@@ -1,13 +1,13 @@
-@if(session('success'))
+@if(Session::has('success'))
     <div class="notification is-success my-3">
         <button class="delete"></button>
-        {!! session('success') !!}
+        {!! Session::get('success') !!}
     </div>
 @endif
 
-@if(session('error'))
+@if(Session::has('error'))
     <div class="notification is-danger my-3">
         <button class="delete"></button>
-        {!! session('error') !!}
+        {!! Session::get('error') !!}
     </div>
 @endif

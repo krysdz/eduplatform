@@ -1,42 +1,46 @@
-@extends('admin.index')
+@extends('admin.layout')
+@section('title', "Użytkownicy - Eduplatform.pl")
 
 @section('content')
 
-<h1>Użytkownicy</h1>
-<button><a href="{{route('admin.users.create')}}?type=administrator">Dodaj administratora</a></button>
-<button><a href="{{route('admin.users.create')}}?type=nauczyciel">Dodaj nauczyciela</a></button>
-<button><a href="{{route('admin.users.create')}}?type=student">Dodaj studenta</a></button>
-<table class="table">
-    <tr>
-        <th>Id</th>
-        <th>Imię</th>
-        <th>Nazwisko</th>
-        <th>Type</th>
-        <th>E-mail</th>
-        <th>Data stworzenia</th>
-        <th>Data aktualizacji</th>
-    </tr>
-    @foreach($users as $user)
-        <tr>
-            <td><a href="{{route('admin.users.show', [$user->id])}}">{{$user->id}}</a></td>
-            <td>{{$user->first_name}}</td>
-            <td>{{$user->last_name}}</td>
-            <td>{{$user->type}}</td>
-            <td>{{$user->email}}</td>
-            <td>{{$user->created_at}}</td>
-            <td>{{$user->updated_at}}</td>
-            <td>
-                <button><a href="{{route('admin.users.edit', $user->id)}}">Edytuj</a></button>
-            </td>
-            <td>
-                <form action="{{route('admin.users.destroy', $user->id)}}" method="POST">
-                    @method('DELETE')
-                    @csrf
-                    <button type="submit">Usuń</button>
-                </form>
-            </td>
-        </tr>
-    @endforeach
-</table>
+    <div class="is-flex mt-4">
+        <h1 class="title">Użytkownicy</h1>
+        <a class="button is-normal ml-5" href="{{route('admin.users.create')}}">
+            <span class="icon-text">
+              <span class="icon">
+                <i class="fas fa-user-plus"></i>
+              </span>
+              <span>Dodaj użytkownika</span>
+            </span>
+        </a>
+    </div>
 
+    <table class="table is-hoverable is-fullwidth">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>E-mail</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach($users as $user)
+            <tr>
+                <td><a href="{{route('admin.users.show', [$user->id])}}">{{$user->id}}</a></td>
+                <td>{{$user->first_name}}</td>
+                <td>{{$user->last_name}}</td>
+                <td>{{$user->email}}</td>
+                <td>
+                    <div class="tags">
+                        @foreach($user->roles as $role)
+                            <span class="tag">{{\App\Enums\UserRoleType::getDescription($role->type)}}</span>
+                        @endforeach
+                    </div>
+                </td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
 @endsection

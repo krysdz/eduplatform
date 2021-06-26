@@ -20,7 +20,7 @@ class CreateGradeItemsTable extends Migration
 
             $table->string('code');
             $table->string('name');
-            $table->unsignedTinyInteger('color_type');
+            $table->string('color');
             $table->unsignedInteger('weight');
             $table->unsignedInteger('maxscore')->nullable();
 

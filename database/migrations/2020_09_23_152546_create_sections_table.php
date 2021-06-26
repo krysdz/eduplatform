@@ -21,9 +21,8 @@ class CreateSectionsTable extends Migration
             $table->foreignIdFor(Lesson::class)->nullable()->constrained();
 
             $table->unsignedSmallInteger('order');
-            $table->unsignedTinyInteger('state_type');
-
-            $table->string('name')->nullable();
+            $table->dateTime('published_at')->nullable();
+            $table->string('name');
             $table->text('description')->nullable();
 
             $table->timestamps();

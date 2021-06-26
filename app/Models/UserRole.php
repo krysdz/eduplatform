@@ -8,10 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperUserRole
+ */
 class UserRole extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected $fillable = [
+        'type',
+    ];
 
     protected $casts = [
         'type' => UserRoleType::class,

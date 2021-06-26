@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperSectionFile
+ */
 class SectionFile extends Model
 {
     use HasFactory;
@@ -15,7 +18,7 @@ class SectionFile extends Model
     protected $fillable = [
         'section_id',
         'file_id',
-        'name',
+        'title',
     ];
 
     public function __toString()

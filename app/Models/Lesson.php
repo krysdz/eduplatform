@@ -8,17 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperLesson
+ */
 class Lesson extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
-        'group_id',
-        'start_by',
         'number',
         'name',
-        'start_at',
+        'scheduled_lesson_id',
     ];
 
     protected $casts = [
@@ -30,10 +31,10 @@ class Lesson extends Model
         return parent::__toString();
     }
 
-    public function group(): Relation
-    {
-        return $this->belongsTo(Group::class);
-    }
+//    public function group(): Relation
+//    {
+//        return $this->belongsTo(Group::class);
+//    }
 
     public function section(): Relation
     {
@@ -43,5 +44,10 @@ class Lesson extends Model
     public function attendances(): Relation
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function scheduledLesson(): Relation
+    {
+        return $this->belongsTo(ScheduledLesson::class);
     }
 }

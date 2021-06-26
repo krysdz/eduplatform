@@ -1,11 +1,11 @@
 @extends('teacher.group_layout')
 
-@section('content')
+@section('group_content')
 
     <h2>Studenci:</h2>
     <ul>
-        @foreach($group->students as $student)
-            <li>User_id {{$student->user->id}} {{$student->user->fullName}}</li>
+        @foreach($group->students() as $student)
+            <li>User_id {{$student}} {{$student}}</li>
         @endforeach
     </ul>
 

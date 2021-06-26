@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserRoleType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserRole;
 use DB;
-use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\Request;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -19,155 +22,134 @@ class UserController extends Controller
         ]);
     }
 
-    public function create(Request $request)
+    public function create()
     {
-        $type = $request->query('type');
-        if (!in_array($type, ['administrator', 'nauczyciel', 'student'])) {
-            return redirect()->route('admin.users.index');
-        }
-        return view('admin.users.create', ['type' => $type]);
+        $userRoleType = UserRoleType::asArrayWithoutSuper();
+
+        return view('admin.users.create', [
+            'userRoleType' => $userRoleType,
+        ]);
     }
 
-    public function store(Request $request)
+    public function store()
     {
-        $type = $request->input('type');
-
-        $validatedData = $this->validateData($type);
+        $validatedData = $this->validateData();
 
         DB::beginTransaction();
 
         try {
-
             $user = User::create($validatedData);
 
-            switch ($type) {
-                case 'administrator':
-                    $user->admin()->create([
-                        'is_super_admin' => 0,
-                        'is_active' => 1
-                    ]);
-                    break;
-                case 'nauczyciel':
-                    $user->teacher()->create([
-                        'website' => $validatedData['website'],
-                        'degree' => $validatedData['degree'],
-                        'is_active' => 1,
-                    ]);
-                    break;
-                case 'student':
-                    $user->student()->create([
-                        'code' => $validatedData['code'],
-                        'is_active' => 1,
-                    ]);
-                    break;
-            }
+            $user->roles()->createMany(array_map(
+                fn($role) => ['type' => $role],
+                $validatedData['roles']
+            ));
 
             DB::commit();
-            flash('Dodano użytkownika')->success();
-            return redirect()->route('admin.users.index');
+            return redirect()->route('admin.users.index')->with('success', 'Dodano użytkownika.');
 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            report($e);
+
             DB::rollback();
-            return redirect()->route('admin.users.index');
+            return back()->with('error', $e->getMessage())->withInput();
         }
     }
 
-    public function show(Request $request, int $id)
+    public function show(User $user)
     {
-        return view('admin.users.show', ['user' => User::findOrFail($id)]);
+        return view('admin.users.show', ['user' => $user]);
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(User $user)
     {
-        $user = User::findOrFail($id);
-        return view('admin.users.edit', ['user' => $user]);
+        $userRoleType = UserRoleType::asArrayWithoutSuper();
+
+        return view('admin.users.edit', [
+            'user' => $user,
+            'userRoleType' => $userRoleType,
+        ]);
     }
 
-    public function update(Request $request, int $id)
+    public function update(User $user)
     {
-        $user = User::findOrFail($id);
-
-        $validatedData = $this->validateData($user->type, $user);
+        $validatedData = $this->validateData($user);
 
         DB::beginTransaction();
 
         try {
-
             $user->update($validatedData);
 
-            switch ($user->type) {
-                case 'admin':
-                    $user->admin()->update([]);
-                    break;
-                case 'teacher':
-                    $user->teacher()->update([
-                        'website' => $validatedData['website'],
-                        'degree' => $validatedData['degree']
-                    ]);
-                    break;
-                case 'student':
-                    $user->student()->update([
-                        'code' => $validatedData['code'],
-                    ]);
-                    break;
+            $currentRoles = $user->roles->pluck('type.value')->all();
+
+            if (($key = array_search(UserRoleType::SuperAdministrator, $currentRoles)) !== false) {
+                unset($currentRoles[$key]);
             }
+
+            $removeRoles = array_diff($currentRoles, $validatedData['roles']);
+            $insertRoles = array_diff($validatedData['roles'], $currentRoles);
+
+            foreach ($removeRoles as $role) {
+                UserRole::where([
+                    'user_id' => $user->id,
+                    'type' => $role
+                ])->delete();
+            }
+
+            $user->roles()->createMany(array_map(
+                fn($role) => ['type' => $role],
+                $insertRoles
+            ));
 
             DB::commit();
 
-            return redirect()->route('admin.users.index');
+            return redirect()->route('admin.users.index')->with('success', 'Aktualizacja użytkownika powiodła się.');
 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            report($e);
+
             DB::rollback();
-            return redirect()->route('admin.users.index');
+            return back()->with('error', $e->getMessage())->withInput();
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(User $user)
     {
-        User::findOrFail($id)->delete();
+        try {
+            if (!$user->delete()) {
+                throw new Exception("Usuwanie użytkownika $user nie powiodło się.");
+            }
+        } catch (Throwable $e) {
+            report($e);
 
-        return redirect()->route('admin.users.index');
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+
+        return redirect()->route('admin.users.index')->with('success', "Usuwanie użytkownika $user powiodło się.");
     }
 
-    private function validateData(string $type, ?User $updatedUser = null): ?array
+    private function validateData(?User $updatedUser = null): ?array
     {
         $validators = [
             'first_name' => 'required',
             'last_name' => 'required',
-            'email' => "required|email|unique:users",
+            'email' => 'required|email|unique:users',
             'phone' => 'nullable',
+            'website' => 'nullable',
+            'degree' => 'nullable',
+            'code' => 'nullable|unique:users',
+            'roles' => 'required',
         ];
 
         if (!$updatedUser) {
             $validators = array_merge($validators, [
                 'password' => 'required',
-                'type' => 'required',
             ]);
         } else {
             $validators = array_merge($validators, [
                 'email' => "required|email|unique:users,email,$updatedUser->id",
+                'code' => "nullable|unique:users,code,$updatedUser->id",
             ]);
-        }
-
-        switch ($type) {
-            case 'administrator':
-            case 'admin':
-                $validators = array_merge($validators, []);
-                break;
-            case 'nauczyciel':
-            case 'teacher':
-                $validators = array_merge($validators, [
-                    'website' => 'nullable',
-                    'degree' => 'required'
-                ]);
-                break;
-            case 'student':
-                $validators = array_merge($validators, [
-                    'code' => 'required|unique:students'
-                ]);
-                break;
-            default:
-                return null;
         }
 
         return request()->validate($validators);

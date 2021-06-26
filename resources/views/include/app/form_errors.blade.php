@@ -1,5 +1,6 @@
 @if ($errors->any())
-    <div class="alert alert-danger">
+    <div class="notification is-danger my-3">
+        <button class="delete"></button>
         <ul>
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>

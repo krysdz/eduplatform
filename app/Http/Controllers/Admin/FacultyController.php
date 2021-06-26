@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Faculty;
+use Exception;
 use Illuminate\Http\Request;
+use Throwable;
 
 class FacultyController extends Controller
 {
@@ -24,47 +26,65 @@ class FacultyController extends Controller
         $validatedData = $request->validate(
             [
                 'name' => 'required|string',
-                'code' => 'required|string|unique:faculties'
+                'code' => 'required|string|unique:faculties',
+                'description' => 'nullable|string'
             ]);
 
-        Faculty::create($validatedData);
-        flash('Tworzenie wydziału powiodło się')->success();
-        return redirect()->route('admin.faculties.index');
+        try {
+            Faculty::create($validatedData);
+        } catch (Throwable $e) {
+            report($e);
 
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+
+        return redirect()->route('admin.faculties.index')->with('success', 'Tworzenie wydziału powiodło się');
     }
 
-    public function show(int $id)
+    public function show(Faculty $faculty)
     {
-        return view('admin.faculties.show', ['faculty' => Faculty::findOrFail($id)]);
+        return view('admin.faculties.show', ['faculty' => $faculty]);
     }
 
-    public function edit(int $id)
+    public function edit(Faculty $faculty)
     {
-        return view('admin.faculties.edit', ['faculty' => Faculty::findOrFail($id)]);
+        return view('admin.faculties.edit', ['faculty' => $faculty]);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, Faculty $faculty)
     {
-        $currentFaculty = Faculty::findOrFail($id);
-
         $validatedData = $request->validate(
             [
                 'name' => 'required|string',
-                'code' => 'required|string|unique:faculties,code,'.$currentFaculty->id
+                'code' => 'required|string|unique:faculties,code,' . $faculty->id,
+                'description' => 'nullable|string'
+
             ]);
 
-        $currentFaculty->update($validatedData);
-        flash('Aktualizacja wydziału powiodła się')->success();
-        return redirect()->route('admin.faculties.index');
-    }
+        try {
+            $faculty->update($validatedData);
+        } catch (Throwable $e) {
+            report($e);
 
-    public function destroy(int $id)
-    {
-        if (!Faculty::findOrFail($id)->delete()) {
-            flash('Usuwanie wydziału nie powiodło się')->error();
+            return back()->with('error', $e->getMessage())->withInput();
         }
 
-        flash('Usuwanie wydziału powiodło się')->success();
-        return redirect()->route('admin.faculties.index');
+        return redirect()->route('admin.faculties.index')->with('success', 'Aktualizacja wydziału powiodła się');
+    }
+
+    public function destroy(Faculty $faculty)
+    {
+        try {
+            if (!$faculty->delete()) {
+                throw new Exception("Usuwanie wydziału $faculty nie powiodło się.");
+            }
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+
+        return redirect()->route('admin.faculties.index')->with('success', "Usuwanie wydziału $faculty powiodło się.");
+
     }
 }

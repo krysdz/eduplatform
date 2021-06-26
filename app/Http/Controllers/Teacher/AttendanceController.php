@@ -6,99 +6,133 @@ use App\Enums\AttendanceType;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\Group;
-use App\Models\Student;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
-    public function index(int $groupId)
+    public function index(Group $group)
     {
-        list($group, $students, $lessons, $studentsAttendanceList) = $this->getStudentsAttendanceList($groupId);
+        list($students, $scheduledLessons, $studentsAttendanceList) = $this->getStudentsAttendanceList($group);
 
         return view('teacher.attendances.index', [
             'group' => $group,
             'students' => $students,
-            'lessons' => $lessons,
-            'studentsAttendanceList' => $studentsAttendanceList
+            'scheduledLessons' => $scheduledLessons,
+            'studentsAttendanceList' => $studentsAttendanceList,
+            'attendanceTypes' => AttendanceType::asArray()
         ]);
     }
 
-    public function edit(int $groupId)
+    public function edit(Group $group)
     {
-        list($group, $students, $lessons, $studentsAttendanceList) = $this->getStudentsAttendanceList($groupId);
+        list($students, $scheduledLessons, $studentsAttendanceList) = $this->getStudentsAttendanceList($group);
 
         return view('teacher.attendances.edit', [
             'group' => $group,
             'students' => $students,
-            'lessons' => $lessons,
+            'scheduledLessons' => $scheduledLessons,
             'studentsAttendanceList' => $studentsAttendanceList,
-            'types' => AttendanceType::toArray(),
+            'attendanceTypes' => AttendanceType::asArray()
         ]);
     }
 
-    public function update(Request $request, int $groupId)
+    public function update(Request $request, Group $group)
     {
-        $group = Group::findOrFail($groupId);
-        $students = $group->students()->select(['students.id', 'user_id', 'users.first_name', 'users.last_name'])
-            ->join('users', 'user_id', '=', 'users.id')
-            ->orderBy('users.last_name')->orderBy('users.first_name')->get();
-        $lessons = $group->lessons()->select(['id', 'date'])->where('is_active', '=', 1)->orderBy('date')->get();
+        list($students, $scheduledLessons, $studentsAttendanceList) = $this->getStudentsAttendanceList($group);
 
         DB::beginTransaction();
+
         try {
-            foreach ($lessons as $lesson) {
+            foreach ($scheduledLessons as $lesson) {
+                $hasScheduledLessonUpdated = false;
+                $attendancesToUpdate = [];
+
                 foreach ($students as $student) {
-                    // studentId-lessonId
                     $fieldInputName = $student->id . '-' . $lesson->id;
-                    $validatedData = $request->validate([
-                        $fieldInputName => 'nullable|integer'
-                    ]);
+                    $validatedData = $request->validate([$fieldInputName => 'nullable|integer']);
 
-                    if ($validatedData[$fieldInputName]) {
-                        $validatedData[$fieldInputName] = AttendanceType::makeFromId($validatedData[$fieldInputName]);
+                    if (!empty($validatedData[$fieldInputName])) {
+                        $hasScheduledLessonUpdated = true;
+                    }
 
-                        Attendance::updateOrCreate([
-                            'lesson_id' => $lesson->id,
-                            'student_id' => $student->id],
-                            ['type' => $validatedData[$fieldInputName]]);
+                    $selectedAttendanceType = $validatedData[$fieldInputName] ?? AttendanceType::Presence;
+                    $studentAttendance = $studentsAttendanceList[$student->id]['items'][$lesson->id];
+
+                    if (is_null($studentAttendance)) {
+                        $studentAttendance = new Attendance();
+                        $studentAttendance->fill([
+                            'student_id' => $student->id,
+                            'scheduled_lesson_id' => $lesson->id,
+                        ]);
+                    }
+
+                    if ($studentAttendance->type !== $selectedAttendanceType) {
+                        $studentAttendance->type = $selectedAttendanceType;
+
+                        $attendancesToUpdate[] = $studentAttendance;
                     }
                 }
+
+                if (!$hasScheduledLessonUpdated) {
+                    continue;
+                }
+
+                foreach ($attendancesToUpdate as $attendance) {
+                    $attendance->save();
+                }
             }
+
             DB::commit();
-//            flash('Edycja frekwencji powiodła się')->success();
-            return redirect()->route('teacher.groups.attendances.index', $groupId)->with('success', 'Edycja frekwencji powiodła się');
+
+            return redirect()->route('teacher.groups.attendances.index', $group)->with('success', 'Edycja frekwencji powiodła się');
         } catch (Exception $e) {
+            report($e);
+
             DB::rollback();
-            flash('Edycja frekwencji nie powiodła się')->error();
-            return redirect()->route('teacher.groups.attendances.index', $groupId);
+            return back()->with('error', $e->getMessage())->withInput();
         }
     }
 
-    private function getStudentsAttendanceList(int $groupId): array
+    private function getStudentsAttendanceList(Group $group): array
     {
-        $group = Group::findOrFail($groupId);
-        $students = $group->students()->select(['students.id', 'user_id', 'users.first_name', 'users.last_name'])
-            ->join('users', 'user_id', '=', 'users.id')
-            ->orderBy('users.last_name')->orderBy('users.first_name')->get();
-        $lessons = $group->lessons()->select(['id', 'date'])->where('is_active', '=', 1)->orderBy('date')->get();
-        $groupAttendance = Attendance::select(['attendances.created_at', 'attendances.updated_at',
-            'attendances.lesson_id', 'attendances.student_id', 'lessons.group_id', 'attendances.type'])
-            ->join('lessons', 'lesson_id', '=', 'lessons.id')
-            ->where(['lessons.group_id' => $groupId])->get();
+        $students = $group->students()->sortBy(function ($student) {
+            return $student->last_name . ' ' . $student->first_name;
+        });
+
+        $scheduledLessons = $group->scheduledLessons()->orderBy('date')->get();
+        $groupAttendance = Attendance::whereHas('scheduledLesson', function ($q) use ($group) {
+            $q->where('group_id', '=', $group->id);
+        })->get();
 
         $studentsAttendanceList = [];
         foreach ($students as $student) {
-            $attendanceList = [];
-            foreach ($lessons as $lesson) {
-                $attendance = $groupAttendance->where('lesson_id', '=', $lesson->id)
+            $attendanceList = [
+                'items' => [],
+                'total' => [
+                    AttendanceType::Presence => 0,
+                    AttendanceType::Absence => 0,
+                    AttendanceType::Excused => 0,
+                    AttendanceType::Late => 0,
+                ],
+            ];
+
+            foreach ($scheduledLessons as $scheduledLesson) {
+                $attendance = $groupAttendance
+                    ->where('scheduled_lesson_id', '=', $scheduledLesson->id)
                     ->where('student_id', '=', $student->id)->first();
-                $attendanceList[$lesson->id] = $attendance;
+
+                $attendanceList['items'][$scheduledLesson->id] = $attendance;
+
+                if (!empty($attendance)) {
+                    $attendanceList['total'][$attendance->type->value]++;
+                }
             }
+
             $studentsAttendanceList[$student->id] = $attendanceList;
         }
-        return array($group, $students, $lessons, $studentsAttendanceList);
+
+        return array($students, $scheduledLessons, $studentsAttendanceList);
     }
 }

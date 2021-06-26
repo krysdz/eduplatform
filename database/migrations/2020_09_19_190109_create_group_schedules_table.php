@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Group;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,7 @@ class CreateGroupSchedulesTable extends Migration
         Schema::create('group_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Group::class)->constrained();
+            $table->foreignIdFor(User::class, 'teacher_id')->constrained('users');
 
             $table->unsignedTinyInteger('day_of_week_type');
             $table->unsignedTinyInteger('interval_days');

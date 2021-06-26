@@ -30,7 +30,7 @@ class AuthServiceProvider extends ServiceProvider
     private function registerMiddlewareGates(): void
     {
         Gate::define('beSuperAdmin', function(User $user) {
-            return $user->roles()->whereIn('type', UserRoleType::SuperAdministrator)->exists();
+            return $user->roles()->where(['type' => UserRoleType::SuperAdministrator])->exists();
         });
 
         Gate::define('beAdmin', function(User $user) {
@@ -41,11 +41,11 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('beTeacher', function(User $user) {
-            return $user->roles()->whereIn('type', UserRoleType::SuperAdministrator)->exists();
+            return $user->roles()->where(['type' => UserRoleType::Teacher])->exists();
         });
 
         Gate::define('beStudent', function(User $user) {
-            return $user->roles()->whereIn('type', UserRoleType::SuperAdministrator)->exists();
+            return $user->roles()->where(['type' => UserRoleType::Student])->exists();
         });
     }
 }

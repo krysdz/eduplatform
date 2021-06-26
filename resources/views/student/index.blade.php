@@ -16,7 +16,7 @@
                     <div class="message-body">
                         <p>Nazwa: {{$gradeItem->name}}</p>
                         <p>Ocena: {{$notification->data['grade']}}</p>
-                        <p>Nauczyciel: {{$gradeItem->group->teacher->user->getFullNameAttribute()}}</p>
+                        <p>Nauczyciel: {{$gradeItem->group->teachers()}}</p>
                         <p>Data: {{$notification->created_at}}</p>
                     </div>
                 </article>

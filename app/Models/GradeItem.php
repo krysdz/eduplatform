@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperGradeItem
+ */
 class GradeItem extends Model
 {
     use HasFactory;
@@ -16,7 +19,7 @@ class GradeItem extends Model
         'group_id',
         'code',
         'name',
-        'color_type',
+        'color',
         'weight',
         'maxscore',
     ];
