@@ -9,15 +9,21 @@ class IndexController extends Controller
 {
     public function index()
     {
-        if (!auth()->user()) {
+        if (!Auth::user()) {
             return view('index');
         }
 
         $roles = Auth::user()->roles->pluck('type.value')->all();
-        $hasOnlyOneRole = 1 === count($roles);
 
-        if ($hasOnlyOneRole) {
-            $routePrefix = strtolower(UserRoleType::fromValue($roles[0])->key);
+        if (in_array(UserRoleType::SuperAdministrator, $roles)) {
+            $roles[] = UserRoleType::Administrator;
+        }
+
+        $allowedRoles = array_values(UserRoleType::asArrayWithoutSuper());
+        $roles = array_intersect($allowedRoles, $roles);
+
+        if (1 === count($roles)) {
+            $routePrefix = strtolower(UserRoleType::fromValue(array_values($roles)[0])->key);
             return redirect()->route($routePrefix . '.index');
         }
 
