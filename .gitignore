@@ -9,8 +9,13 @@
 .phpunit.result.cache
 npm-debug.log
 yarn-error.log
-/public/node_modules/
-/public/fonts/
+
 /_ide_helper_models.php
 /_ide_helper.php
 /.phpstorm.meta.php
+
+/public/css
+/public/js
+/public/fonts
+/public/modules
+/public/mix-manifest.json

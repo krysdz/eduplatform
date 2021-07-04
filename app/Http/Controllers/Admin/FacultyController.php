@@ -13,12 +13,12 @@ class FacultyController extends Controller
 
     public function index()
     {
-        return view('admin.faculties.index', ['faculties' => Faculty::all()]);
+        return view('modules.administrator.faculties.index', ['faculties' => Faculty::orderBy('name')->get()]);
     }
 
     public function create()
     {
-        return view('admin.faculties.create');
+        return view('modules.administrator.faculties.create');
     }
 
     public function store(Request $request)
@@ -38,17 +38,17 @@ class FacultyController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.faculties.index')->with('success', 'Tworzenie wydziału powiodło się');
+        return redirect()->route('administrator.faculties.index')->with('success', 'Tworzenie wydziału powiodło się');
     }
 
     public function show(Faculty $faculty)
     {
-        return view('admin.faculties.show', ['faculty' => $faculty]);
+        return view('modules.administrator.faculties.show', ['faculty' => $faculty]);
     }
 
     public function edit(Faculty $faculty)
     {
-        return view('admin.faculties.edit', ['faculty' => $faculty]);
+        return view('modules.administrator.faculties.edit', ['faculty' => $faculty]);
     }
 
     public function update(Request $request, Faculty $faculty)
@@ -69,7 +69,7 @@ class FacultyController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.faculties.index')->with('success', 'Aktualizacja wydziału powiodła się');
+        return redirect()->route('administrator.faculties.index')->with('success', 'Aktualizacja wydziału powiodła się');
     }
 
     public function destroy(Faculty $faculty)
@@ -84,7 +84,7 @@ class FacultyController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.faculties.index')->with('success', "Usuwanie wydziału $faculty powiodło się.");
+        return redirect()->route('administrator.faculties.index')->with('success', "Usuwanie wydziału $faculty powiodło się.");
 
     }
 }

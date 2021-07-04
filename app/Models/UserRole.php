@@ -24,6 +24,12 @@ class UserRole extends Model
         'type' => UserRoleType::class,
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     public function __toString()
     {
         return parent::__toString();

@@ -17,6 +17,16 @@ class GroupMember extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $casts = [
+        'type' => GroupMemberType::class,
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     public function __toString()
     {
         return $this->user->type->description;

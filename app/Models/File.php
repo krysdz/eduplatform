@@ -22,6 +22,15 @@ class File extends Model
         'mimetype',
         'path',
         'size',
+        'title',
+        'fileable_id',
+        'fileable_type'
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     public function __toString()
@@ -34,8 +43,8 @@ class File extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function sectionFile(): Relation
+    public function fileable(): Relation
     {
-        return $this->hasOne(SectionFile::class);
+        return $this->morphTo();
     }
 }

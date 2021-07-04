@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\AttendanceType;
+use App\Notifications\AttendanceNotification;
+use App\Notifications\GradeNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Notification;
 
 /**
  * @mixin IdeHelperAttendance
@@ -21,6 +24,23 @@ class Attendance extends Model
         'scheduled_lesson_id',
         'type',
     ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    protected static function booted()
+    {
+        static::created(function ($attendance) {
+            Notification::send($attendance->student, new AttendanceNotification((string) $attendance->scheduledLesson->group, $attendance->scheduledLesson->date, $attendance->type->description));
+        });
+
+        static::updated(function ($attendance) {
+            Notification::send($attendance->student, new AttendanceNotification((string) $attendance->scheduledLesson->group, $attendance->scheduledLesson->date, $attendance->type->description, $attendance->getChanges()));
+        });
+    }
 
     protected $casts = [
         'type' => AttendanceType::class,

@@ -22,11 +22,6 @@ class User extends Authenticatable
     use SoftDeletes;
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'email',
         'password',
@@ -40,23 +35,17 @@ class User extends Authenticatable
         'website',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+
+        'email_verified_at',
     ];
 
     protected static function boot()
@@ -95,7 +84,7 @@ class User extends Authenticatable
 
     public function grades(): HasMany
     {
-        return $this->hasMany(Grade::class);
+        return $this->hasMany(Grade::class, 'student_id');
     }
 
     public function groupsMember(): HasMany

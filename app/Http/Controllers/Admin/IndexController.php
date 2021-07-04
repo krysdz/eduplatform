@@ -10,8 +10,8 @@ class IndexController extends Controller
 {
     public function index(Request $request)
     {
-        return view('admin.index', [
-            'lastUpdatedUsers' => User::orderBy('updated_at')->limit(5)->get(),
+        return view('modules.administrator.index', [
+            'lastCreatedUsers' => User::orderByDesc('created_at')->limit(5)->get(),
         ]);
     }
 }

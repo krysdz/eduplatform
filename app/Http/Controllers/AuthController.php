@@ -9,7 +9,7 @@ class AuthController extends Controller
 {
     public function login()
     {
-        return view('auth.login');
+        return view('shared.auth.login');
     }
 
     public function logout(Request $request)

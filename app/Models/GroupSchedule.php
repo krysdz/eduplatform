@@ -32,6 +32,12 @@ class GroupSchedule extends Model
         'day_of_week_type' => DayOfWeekType::class,
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     public function __toString()
     {
         return parent::__toString();

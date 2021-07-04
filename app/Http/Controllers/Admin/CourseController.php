@@ -15,17 +15,17 @@ class CourseController extends Controller
 
     public function index()
     {
-        return view('admin.courses.index', [
-            'courses' => Course::all()
+        return view('modules.administrator.courses.index', [
+            'courses' => Course::orderBy('name')->get()
         ]);
     }
 
 
     public function create()
     {
-        return view('admin.courses.create', [
-            'faculties' => Faculty::all(),
-            'teachers' => User::getTeachers()
+        return view('modules.administrator.courses.create', [
+            'faculties' => Faculty::orderBy('name')->get(),
+            'teachers' => User::getTeachers()->sortBy(['last_name'], ['first_name'])
         ]);
     }
 
@@ -48,13 +48,13 @@ class CourseController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.courses.index')->with('success', 'Tworzenie kursu powiodło się.');
+        return redirect()->route('administrator.courses.index')->with('success', 'Tworzenie kursu powiodło się.');
     }
 
 
     public function show(Course $course)
     {
-        return view('admin.courses.show', [
+        return view('modules.administrator.courses.show', [
             'course' => $course
         ]);
     }
@@ -62,10 +62,10 @@ class CourseController extends Controller
 
     public function edit(Course $course)
     {
-        return view('admin.courses.edit', [
+        return view('modules.administrator.courses.edit', [
             'course' => $course,
-            'faculties' => Faculty::all(),
-            'teachers' => User::getTeachers()
+            'faculties' => Faculty::orderBy('name')->get(),
+            'teachers' => User::getTeachers()->sortBy(['last_name'], ['first_name'])
         ]);
     }
 
@@ -88,7 +88,7 @@ class CourseController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.courses.index')->with('success', 'Aktualizacja kursu powiodło się.');
+        return redirect()->route('administrator.courses.index')->with('success', 'Aktualizacja kursu powiodło się.');
     }
 
     public function destroy(Course $course)
@@ -103,6 +103,6 @@ class CourseController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.courses.index')->with('success', "Usuwanie kursu $course powiodło się");
+        return redirect()->route('administrator.courses.index')->with('success', "Usuwanie kursu $course powiodło się");
     }
 }

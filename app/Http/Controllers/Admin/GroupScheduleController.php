@@ -20,18 +20,18 @@ class GroupScheduleController extends Controller
 {
     public function index(Group $group)
     {
-        return view('admin.group_schedules.index', [
+        return view('modules.administrator.group_schedules.index', [
             'group' => $group,
-            'group_schedules' => GroupSchedule::where(['group_id' => $group->id])->get()
+            'group_schedules' => GroupSchedule::where(['group_id' => $group->id])->orderBy('first_date')->get()
         ]);
     }
 
     public function create(Group $group)
     {
-        return view('admin.group_schedules.create', [
+        return view('modules.administrator.group_schedules.create', [
             'group' => $group,
             'day_of_week_type' => DayOfWeekType::asArray(),
-            'teachers' => $group->teachers(),
+            'teachers' => $group->teachers()->sortBy(['last_name'], ['first_name']),
         ]);
     }
 
@@ -40,8 +40,8 @@ class GroupScheduleController extends Controller
         $validatedData = $request->validate([
             'day_of_week_type' => 'required|integer',
             'interval_days' => 'required|integer',
-            'first_date' => 'required|date',
-            'last_date' => 'required|date|after_or_equal:first_date',
+            'first_date' => 'required|date|after_or_equal:'.$group->term->start_date,
+            'last_date' => 'required|date|after_or_equal:first_date|before_or_equal:'.$group->term->end_date,
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'teacher_id' => 'required|integer|exists:users,id',
@@ -56,25 +56,17 @@ class GroupScheduleController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.groups.group_schedules.index', $group)->with('success', "Tworzenie harmonogramu dla grupy $group powiodło się.");
-    }
-
-    public function show(Group $group, GroupSchedule $groupSchedule)
-    {
-        return view('admin.group_schedules.show', [
-            'group_schedule' => $groupSchedule,
-            'group' => $group
-        ]);
+        return redirect()->route('administrator.groups.group_schedules.index', $group)->with('success', "Tworzenie harmonogramu dla grupy $group powiodło się.");
     }
 
 
     public function edit(Group $group, GroupSchedule $groupSchedule)
     {
-        return view('admin.group_schedules.edit', [
+        return view('modules.administrator.group_schedules.edit', [
             'group_schedule' => $groupSchedule,
             'group' => $group,
             'day_of_week_type' => DayOfWeekType::asArray(),
-            'teachers' => $group->teachers()
+            'teachers' => $group->teachers()->sortBy(['last_name'], ['first_name'])
         ]);
     }
 
@@ -85,10 +77,10 @@ class GroupScheduleController extends Controller
         $validatedData = $request->validate([
             'day_of_week_type' => 'required|integer',
             'interval_days' => 'required|integer',
-            'first_date' => 'required|date',
-            'last_date' => 'required|date|after_or_equal:first_date',
-            'start_time' => 'required|date_format:H:i:s',
-            'end_time' => 'required|date_format:H:i:s|after:start_time',
+            'first_date' => 'required|date|after_or_equal:'.$group->term->start_date,
+            'last_date' => 'required|date|after_or_equal:first_date|before_or_equal:'.$group->term->end_date,
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'teacher_id' => 'required|integer|exists:users,id',
             'room_name' => 'required|string'
         ]);
@@ -101,7 +93,7 @@ class GroupScheduleController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.groups.group_schedules.index', $group)->with('success', "Aktualizacja harmonogramu dla grupy $group powiodło się.");
+        return redirect()->route('administrator.groups.group_schedules.index', $group)->with('success', "Aktualizacja harmonogramu dla grupy $group powiodło się.");
 
     }
 
@@ -117,7 +109,7 @@ class GroupScheduleController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.groups.group_schedules.index', $group)->with('success', "Usuwanie harmonogramu dla $group powiodło się.");
+        return redirect()->route('administrator.groups.group_schedules.index', $group)->with('success', "Usuwanie harmonogramu dla $group powiodło się.");
     }
 
 }

@@ -19,10 +19,14 @@ class CreateFilesTable extends Migration
             $table->foreignIdFor(User::class)->constrained();
 
             $table->string('filename');
+            $table->string('title');
             $table->string('extension');
             $table->string('mimetype');
             $table->string('path');
             $table->unsignedInteger('size');
+
+            $table->integer('fileable_id');
+            $table->string('fileable_type');
 
             $table->timestamps();
             $table->softDeletes();

@@ -21,7 +21,7 @@ class TimetableController extends Controller
                 return $item->day_of_week_type->value;
             });
 
-        return view('teacher.timetable', [
+        return view('shared.timetable', [
             'daysOfWeek' => DayOfWeekType::asArray(),
             'term' => $term,
             'groupsSchedules' => $groupsSchedules,

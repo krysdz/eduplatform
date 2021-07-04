@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\GroupMemberType;
 use App\Enums\GroupType;
+use App\Enums\UserRoleType;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,12 @@ class Group extends Model
 
     protected $casts = [
         'type' => GroupType::class,
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     protected static function boot()
@@ -65,14 +72,24 @@ class Group extends Model
 
     public function teachers(): Collection
     {
+        return $this->teachersRelation()->get();
+    }
+
+    public function teachersRelation(): BelongsToMany
+    {
         return $this->belongsToMany(User::class, 'group_members')->withTimestamps()
-            ->where('type', '=', GroupMemberType::Teacher)->get();
+            ->where('type', '=', GroupMemberType::Teacher);
     }
 
     public function students(): Collection
     {
+        return $this->studentsRelation()->get();
+    }
+
+    public function studentsRelation(): BelongsToMany
+    {
         return $this->belongsToMany(User::class, 'group_members')->withTimestamps()
-            ->where('type', '=',GroupMemberType::Student)->get();
+            ->where('type', '=',GroupMemberType::Student);
     }
 
     public function groupSchedules(): Relation
@@ -103,5 +120,17 @@ class Group extends Model
     public function gradeItems(): Relation
     {
         return $this->hasMany(GradeItem::class);
+    }
+
+    public function canCurrentUserAccess(int $roleTypeValue): bool
+    {
+        switch ($roleTypeValue) {
+            case UserRoleType::Teacher:
+                return $this->teachers()->contains(auth()->user());
+            case UserRoleType::Student:
+                return $this->students()->contains(auth()->user());
+        }
+
+        return false;
     }
 }

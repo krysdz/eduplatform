@@ -24,6 +24,12 @@ class GradeItem extends Model
         'maxscore',
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     public function __toString()
     {
         return $this->name;

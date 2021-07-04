@@ -21,7 +21,7 @@ class GradeController extends Controller
     {
         list($students, $gradeItems, $studentsGradeList) = $this->getStudentsGrades($group);
 
-        return view('teacher.grades.index', [
+        return view('modules.teacher.grades.index', [
             'group' => $group,
             'students' => $students,
             'gradeItems' => $gradeItems,
@@ -40,7 +40,7 @@ class GradeController extends Controller
             '#4CAF50' => 'Zielony'
         ];
 
-        return view('teacher.grades.create', [
+        return view('modules.teacher.grades.create', [
             'group' => $group,
             'students' => $students,
             'gradeValues' => $gradeValues,
@@ -88,7 +88,6 @@ class GradeController extends Controller
                         'comment' => $validatedGradeData[$studentCommentFieldName],
                     ]);
                 }
-                $student->notify(new \App\Notifications\Grade($gradeItem->id, $validatedGradeData[$studentGradeFieldName]));
 
             }
 
@@ -113,7 +112,7 @@ class GradeController extends Controller
             '#4CAF50' => 'Zielony'
         ];
 
-        return view('teacher.grades.edit', [
+        return view('modules.teacher.grades.edit', [
             'gradeItem' => $gradeItem,
             'studentsGradeList' => $this->getStudentsGradeByGradeItemId($group, $gradeItem, $students),
             'group' => $group,
@@ -160,7 +159,7 @@ class GradeController extends Controller
                     if(!is_null($validatedGradeData[$studentGradeFieldName]) || !is_null($validatedGradeData[$studentScoreFieldName])) {
                         Grade::updateOrCreate([
                             'student_id' => $student->id,
-                            'grade_item_id' => $gradeItem->id
+                            'grade_item_id' => $gradeItem->id,
                         ], [
                             'grade' => $validatedGradeData[$studentGradeFieldName],
                             'score' => $validatedGradeData[$studentScoreFieldName],

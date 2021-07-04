@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\LessonStateType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -22,8 +21,10 @@ class Lesson extends Model
         'scheduled_lesson_id',
     ];
 
-    protected $casts = [
-        'state_type' => LessonStateType::class,
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     public function __toString()

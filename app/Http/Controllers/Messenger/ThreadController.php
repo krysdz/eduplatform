@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Messenger;
 
 use App\Http\Controllers\Controller;
+use App\Models\File;
 use App\Models\Message;
+use App\Models\SectionFile;
 use App\Models\Thread;
-use App\Models\ThreadUser;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -16,16 +17,16 @@ class ThreadController extends Controller
 {
     public function index()
     {
-        return view('messenger.index', [
-            'threads' => $this->getThreads()
+        return view('shared.messenger.index', [
+            'threads' => Thread::getOwnThreads()
         ]);
     }
 
     public function create()
     {
-        return view('messenger.create', [
+        return view('shared.messenger.create', [
             'users' => User::orderBy('last_name')->orderBy('first_name')->get(),
-            'threads' => $this->getThreads()
+            'threads' => Thread::getOwnThreads()
         ]);
     }
 
@@ -42,20 +43,36 @@ class ThreadController extends Controller
         try {
             $userId = Auth::user()->id;
 
-            if(empty($validatedData['name'])) {
-                $validatedData['name'] = User::find($validatedData['users'][0]). " + ". (count($validatedData['users']) - 1). " użytkowników";
-            }
-
             $validatedData['users'][] = $userId;
 
             $thread = Thread::create(['name' => $validatedData['name']]);
             $thread->threadUsers()->attach(User::find($validatedData['users']));
 
-            Message::create([
+            $message = Message::create([
                 'thread_id' => $thread->id,
                 'user_id' => $userId,
                 'content' => $validatedData['content']
             ]);
+
+            if ($request->hasFile('message_files')) {
+                $validatedFiles = $request->validate([
+                    'message_files.*' => 'nullable|file|mimes:jpeg,png,gif,webp,doc,docx,pdf,txt,odt,pptx,ppt,odp|max:5120'
+                ]);
+
+                foreach ($validatedFiles['message_files'] as $sectionFile) {
+                    $filename = $sectionFile->getClientOriginalName();
+
+                    $message->files()->create([
+                        'filename' => $filename,
+                        'extension' => $sectionFile->getClientOriginalExtension(),
+                        'path' =>  $sectionFile->storeAs('files/thread_' . $thread->id . '/message_' . $message->id, $filename, 'local'),
+                        'mimetype' => $sectionFile->getClientMimeType(),
+                        'size' => $sectionFile->getSize(),
+                        'user_id' => $request->user()->id,
+                        'title' => $filename,
+                    ]);
+                }
+            }
 
             DB::commit();
 
@@ -70,14 +87,25 @@ class ThreadController extends Controller
 
     public function show(Thread $thread)
     {
-        return view('messenger.show', [
+        if (!$thread->threadUsers->contains(auth()->user())) {
+            return redirect()->route('messenger.index')
+                ->with('error', 'Nie należysz do tej konwersacji.');
+        }
+
+        return view('shared.messenger.show', [
             'thread' => $thread,
-            'threads' => $this->getThreads()
+            'threads' => Thread::getOwnThreads(),
+            'name' => Thread::getDynamicThreadName($thread)
         ]);
     }
 
     public function update(Request $request, Thread $thread)
     {
+        if (!$thread->threadUsers->contains(auth()->user())) {
+            return redirect()->route('messenger.index')
+                ->with('error', 'Nie należysz do tej konwersacji.');
+        }
+
         $validatedData = $request->validate([
             'content' => 'required|string'
         ]);
@@ -87,11 +115,31 @@ class ThreadController extends Controller
         try {
             $userId = Auth::user()->id;
 
-            Message::create([
+            $message = Message::create([
                 'thread_id' => $thread->id,
                 'user_id' => $userId,
                 'content' => $validatedData['content']
             ]);
+
+            if ($request->hasFile('message_files')) {
+                $validatedFiles = $request->validate([
+                    'message_files.*' => 'nullable|file|mimes:jpeg,png,gif,webp,doc,docx,pdf,txt,odt,pptx,ppt,odp|max:5120'
+                ]);
+
+                foreach ($validatedFiles['message_files'] as $sectionFile) {
+                    $filename = $sectionFile->getClientOriginalName();
+
+                    $message->files()->create([
+                        'filename' => $filename,
+                        'extension' => $sectionFile->getClientOriginalExtension(),
+                        'path' =>  $sectionFile->storeAs('files/thread_' . $thread->id . '/message_' . $message->id, $filename, 'local'),
+                        'mimetype' => $sectionFile->getClientMimeType(),
+                        'size' => $sectionFile->getSize(),
+                        'user_id' => $request->user()->id,
+                        'title' => $filename,
+                    ]);
+                }
+            }
 
             DB::commit();
 
@@ -102,13 +150,6 @@ class ThreadController extends Controller
             DB::rollback();
             return back()->with('error', $e->getMessage())->withInput();
         }
-    }
-
-    public function getThreads()
-    {
-        return Thread::whereHas('threadUsers', function ($q) {
-            $q->where('user_id', '=', Auth::user()->id);
-        })->orderByDesc('updated_at')->get();
     }
 
 }

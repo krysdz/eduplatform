@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Enums\AnnouncementType;
+use App\Enums\UserRoleType;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\Group;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +18,7 @@ class AnnouncementController extends Controller
 {
     public function index(Group $group)
     {
-        return view('teacher.announcements.index', [
+        return view('modules.teacher.announcements.index', [
             'group' => $group,
             'announcements' => Announcement::where(['group_id' => $group->id])->get(),
         ]);
@@ -24,7 +26,7 @@ class AnnouncementController extends Controller
 
     public function create(Group $group)
     {
-        return view('teacher.announcements.create', [
+        return view('modules.teacher.announcements.create', [
             'group' => $group,
             'types' => AnnouncementType::asArray()
         ]);
@@ -58,7 +60,7 @@ class AnnouncementController extends Controller
 
     public function show(Group $group, Announcement $announcement)
     {
-        return view('teacher.announcements.show', [
+        return view('modules.teacher.announcements.show', [
             'group' => $group,
             'announcement' => $announcement,
         ]);
@@ -66,7 +68,7 @@ class AnnouncementController extends Controller
 
     public function edit(Group $group, Announcement $announcement)
     {
-        return view('teacher.announcements.edit', [
+        return view('modules.teacher.announcements.edit', [
             'group' => $group,
             'announcement' => $announcement,
             'types' => AnnouncementType::asArray()
@@ -113,6 +115,5 @@ class AnnouncementController extends Controller
         }
 
         return redirect()->route('teacher.groups.announcements.index', $group)->with('success', "Usuwanie ogłoszenia $announcement powiodło się.");
-
     }
 }

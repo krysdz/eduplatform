@@ -20,7 +20,7 @@ class SectionController extends Controller
 {
     public function index(Group $group)
     {
-        return view('teacher.sections.index', [
+        return view('modules.teacher.sections.index', [
             'sections' => Section::where(['group_id' => $group->id])->orderBy('order')->get(),
             'group' => $group,
         ]);
@@ -28,7 +28,7 @@ class SectionController extends Controller
 
     public function create(Group $group)
     {
-        return view('teacher.sections.create', [
+        return view('modules.teacher.sections.create', [
             'group' => $group,
             'lessons' => Lesson::whereHas('scheduledLesson', function(Builder $q) use ($group) {
                 $q->where('group_id', '=', $group->id);
@@ -58,19 +58,14 @@ class SectionController extends Controller
 
                 foreach ($validatedFiles['section_files'] as $sectionFile) {
                     $filename = $sectionFile->getClientOriginalName();
-                    $createdFile = File::create([
+                    $section->files()->create([
                         'filename' => $filename,
                         'extension' => $sectionFile->getClientOriginalExtension(),
                         'path' =>  $sectionFile->storeAs('files/group_' . $group->id . '/section_' . $section->id, $filename, 'local'),
                         'mimetype' => $sectionFile->getClientMimeType(),
                         'size' => $sectionFile->getSize(),
                         'user_id' => $request->user()->id,
-                    ]);
-
-                    SectionFile::create([
                         'title' => $filename,
-                        'file_id' => $createdFile->id,
-                        'section_id' => $section->id
                     ]);
                 }
             }
@@ -88,7 +83,7 @@ class SectionController extends Controller
 
     public function show(Group $group, Section $section)
     {
-        return view('teacher.sections.show', [
+        return view('modules.teacher.sections.show', [
             'section' => $section,
             'group' => $group,
         ]);
@@ -96,7 +91,7 @@ class SectionController extends Controller
 
     public function edit(Group $group, Section $section)
     {
-        return view('teacher.sections.edit', [
+        return view('modules.teacher.sections.edit', [
             'section' => $section,
             'group' => $group,
             'lessons' => Lesson::whereHas('scheduledLesson', function(Builder $q) use ($group) {
@@ -126,18 +121,14 @@ class SectionController extends Controller
 
                 foreach ($validatedFiles['section_files'] as $sectionFile) {
                     $filename = $sectionFile->getClientOriginalName();
-                    $createdFile = File::create([
+                    $section->files()->create([
                         'filename' => $filename,
                         'extension' => $sectionFile->getClientOriginalExtension(),
-                        'path' => $sectionFile->storeAs('files/group_' . $section->group_id . '/section_' . $section, $filename, 'local'),
+                        'path' => $sectionFile->storeAs('files/group_' . $section->group_id . '/section_' . $section->id, $filename, 'local'),
                         'mimetype' => $sectionFile->getClientMimeType(),
                         'size' => $sectionFile->getSize(),
                         'user_id' => $request->user()->id,
-                    ]);
-
-                    SectionFile::create([
-                        'file_id' => $createdFile->id,
-                        'section_id' => $section->id
+                        'title' => $filename,
                     ]);
                 }
             }
@@ -156,7 +147,7 @@ class SectionController extends Controller
     public function destroy(Group $group, Section $section)
     {
         try {
-            foreach ($section->sectionFiles as $sectionFile) {
+            foreach ($section->files as $sectionFile) {
                 if(Storage::delete($sectionFile->file->path)) {
                     $sectionFile->file()->delete();
                 }

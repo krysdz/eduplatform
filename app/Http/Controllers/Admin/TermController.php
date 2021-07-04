@@ -13,14 +13,14 @@ class TermController extends Controller
 {
     public function index()
     {
-        return view('admin.terms.index', [
-            'terms' => Term::all(),
+        return view('modules.administrator.terms.index', [
+            'terms' => Term::orderByDesc('start_date')->get(),
         ]);
     }
 
     public function create()
     {
-        return view('admin.terms.create');
+        return view('modules.administrator.terms.create');
     }
 
     public function store(Request $request)
@@ -50,17 +50,17 @@ class TermController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.terms.index')->with('success', 'Tworzenie semestru powiodło się.');
+        return redirect()->route('administrator.terms.index')->with('success', 'Tworzenie semestru powiodło się.');
     }
 
     public function show( Term $term)
     {
-        return view('admin.terms.show', ['term' => $term]);
+        return view('modules.administrator.terms.show', ['term' => $term]);
     }
 
     public function edit( Term $term)
     {
-        return view('admin.terms.edit', ['term' => $term]);
+        return view('modules.administrator.terms.edit', ['term' => $term]);
     }
 
     public function update(Request $request, Term $term)
@@ -81,7 +81,7 @@ class TermController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.terms.index')->with('success', 'Aktualizacja semestru powiodła się.');
+        return redirect()->route('administrator.terms.index')->with('success', 'Aktualizacja semestru powiodła się.');
     }
 
     public function destroy(Term $term)
@@ -96,7 +96,7 @@ class TermController extends Controller
             return back()->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('admin.terms.index')->with('success', "Usuwanie semestru $term powiodło się.");
+        return redirect()->route('administrator.terms.index')->with('success', "Usuwanie semestru $term powiodło się.");
     }
 
     private function getTermNameAndCode(): array

@@ -6,21 +6,21 @@
     "require": {
         "php": "^7.4",
         "ext-fileinfo": "*",
-        "bensampo/laravel-enum": "^3.3",
+        "bensampo/laravel-enum": "^3.4",
         "fideloper/proxy": "^4.4",
         "guzzlehttp/guzzle": "^7.3",
         "laracasts/flash": "^3.2",
         "laravel/fortify": "^1.7",
-        "laravel/framework": "^8.40",
+        "laravel/framework": "^8.49",
         "laravel/tinker": "^2.6"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.5",
-        "facade/ignition": "^2.8",
+        "barryvdh/laravel-debugbar": "^3.6",
+        "facade/ignition": "^2.10",
         "fakerphp/faker": "^1.14",
-        "laravel/sail": "^1.5",
+        "laravel/sail": "^1.8",
         "mockery/mockery": "^1.4",
-        "nunomaduro/collision": "^5.4",
+        "nunomaduro/collision": "^5.5",
         "phpunit/phpunit": "^9.5"
     },
     "config": {

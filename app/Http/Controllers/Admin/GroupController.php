@@ -19,20 +19,30 @@ class GroupController extends Controller
 {
     public function index()
     {
-        return view('admin.groups.index', [
-            'groups' => Group::all()
+        $groups = Group::join('terms', 'groups.term_id', '=', 'terms.id')
+            ->join('courses', 'groups.course_id', '=', 'courses.id')
+            ->orderByDesc('terms.start_date')
+            ->orderBy('courses.name')
+            ->orderBy('number')
+            ->select('groups.*')
+            ->with(['term', 'course', 'course.faculty'])
+            ->withCount(['teachersRelation', 'studentsRelation'])
+            ->get();
+
+        return view('modules.administrator.groups.index', [
+            'groups' => $groups,
         ]);
     }
 
 
     public function create()
     {
-        return view('admin.groups.create', [
-            'courses' => Course::all(),
+        return view('modules.administrator.groups.create', [
+            'courses' => Course::orderBy('name')->get(),
             'types' => GroupType::asArray(),
-            'teachers' => User::getTeachers(),
-            'terms' => Term::all(),
-            'students' => User::getStudents(),
+            'teachers' => User::getTeachers()->sortBy(['last_name'], ['first_name']),
+            'terms' => Term::orderByDesc('start_date')->get(),
+            'students' => User::getStudents()->sortBy(['last_name'], ['first_name']),
         ]);
     }
 
@@ -62,7 +72,7 @@ class GroupController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.groups.index')->with('success', 'Tworzenie grupy powiodło się.');
+            return redirect()->route('administrator.groups.index')->with('success', 'Tworzenie grupy powiodło się.');
         } catch (Exception $e) {
             report($e);
 
@@ -73,21 +83,21 @@ class GroupController extends Controller
 
     public function show(Group $group)
     {
-        return view('admin.groups.show', [
-            'group' => $group
+        return view('modules.administrator.groups.show', [
+            'group' => $group,
         ]);
     }
 
 
     public function edit(Group $group)
     {
-        return view('admin.groups.edit', [
+        return view('modules.administrator.groups.edit', [
             'group' => $group,
-            'courses' => Course::all(),
+            'courses' => Course::orderBy('name')->get(),
             'types' => GroupType::asArray(),
-            'teachers' => User::getTeachers(),
-            'terms' => Term::all(),
-            'students' => User::getStudents(),
+            'teachers' => User::getTeachers()->sortBy(['last_name'], ['first_name']),
+            'terms' => Term::orderByDesc('start_date')->get(),
+            'students' => User::getStudents()->sortBy(['last_name'], ['first_name']),
         ]);
     }
 
@@ -124,7 +134,7 @@ class GroupController extends Controller
             $group->groupMembers()->sync($members);
             DB::commit();
 
-            return redirect()->route('admin.groups.index')
+            return redirect()->route('administrator.groups.index')
                 ->with('success', 'Aktualizacja grupy powiodła się.');
         } catch (Throwable $e) {
             DB::rollback();
@@ -148,6 +158,6 @@ class GroupController extends Controller
         }
 
 
-        return redirect()->route('admin.groups.index')->with('success', "Usuwanie grupy $group powiodło się.");
+        return redirect()->route('administrator.groups.index')->with('success', "Usuwanie grupy $group powiodło się.");
     }
 }

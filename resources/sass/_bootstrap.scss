@@ -1,0 +1,146 @@
+@import "~bootstrap/scss/functions";
+
+$enable-important-utilities: false;
+
+$min-contrast-ratio: 4;
+
+$alert-bg-scale: 10%;
+$alert-border-scale: 30%;
+$alert-color-scale: 0%;
+
+@import "~bootstrap/scss/variables";
+
+$theme-colors: map-merge($theme-colors, (
+    "success":     #388E3C,
+    "warning-100": #FFF9C4,
+    'warning':     #FFEE58,
+    "light":       $gray-200,
+    "gray":        $gray-400,
+));
+
+$spacers: map-merge($spacers, (
+    5: $spacer * 2.5,
+    6: $spacer * 3.5,
+    7: $spacer * 5.5,
+    8: $spacer * 7.5,
+));
+
+$font-sizes: map-merge($font-sizes, (
+    7: $font-size-base * 0.875,
+    8: $font-size-base * 0.75,
+));
+
+@import "~bootstrap/scss/mixins";
+
+// Temporary override of grid mixins due to .col-prefix bug.
+// Fixes #34341 in 5.0.2 until 5.1.0 (https://github.com/twbs/bootstrap/pull/34341/files).
+@mixin make-grid-columns($columns: $grid-columns, $gutter: $grid-gutter-width, $breakpoints: $grid-breakpoints) {
+    @each $breakpoint in map-keys($breakpoints) {
+        // .row-cols defaults must all appear before .col overrides so they can be overridden.
+        $infix: breakpoint-infix($breakpoint, $breakpoints);
+        @include media-breakpoint-up($breakpoint, $breakpoints) {
+            .row-cols#{$infix}-auto > * {
+                @include make-col-auto();
+            }
+
+            @if $grid-row-columns > 0 {
+                @for $i from 1 through $grid-row-columns {
+                    .row-cols#{$infix}-#{$i} {
+                        @include row-cols($i);
+                    }
+                }
+            }
+        }
+    }
+
+    @each $breakpoint in map-keys($breakpoints) {
+        $infix: breakpoint-infix($breakpoint, $breakpoints);
+
+        @include media-breakpoint-up($breakpoint, $breakpoints) {
+            // Provide basic `.col-{bp}` classes for equal-width flexbox columns
+            .col#{$infix} {
+                flex: 1 0 0%; // Flexbugs #4: https://github.com/philipwalton/flexbugs#flexbug-4
+            }
+
+            .col#{$infix}-auto {
+                @include make-col-auto();
+            }
+
+            @if $columns > 0 {
+                @for $i from 1 through $columns {
+                    .col#{$infix}-#{$i} {
+                        @include make-col($i, $columns);
+                    }
+                }
+
+                // `$columns - 1` because offsetting by the width of an entire row isn't possible
+                @for $i from 0 through ($columns - 1) {
+                    @if not ($infix == "" and $i == 0) { // Avoid emitting useless .offset-0
+                        .offset#{$infix}-#{$i} {
+                            @include make-col-offset($i, $columns);
+                        }
+                    }
+                }
+            }
+
+            // Gutters
+            //
+            // Make use of `.g-*`, `.gx-*` or `.gy-*` utilities to change spacing between the columns.
+            @each $key, $value in $gutters {
+                .g#{$infix}-#{$key},
+                .gx#{$infix}-#{$key} {
+                    --#{$variable-prefix}gutter-x: #{$value};
+                }
+
+                .g#{$infix}-#{$key},
+                .gy#{$infix}-#{$key} {
+                    --#{$variable-prefix}gutter-y: #{$value};
+                }
+            }
+        }
+    }
+}
+
+@import "~bootstrap/scss/utilities";
+
+// Bootstrap: Layout & components
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/tables";
+@import "~bootstrap/scss/forms";
+@import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/transitions";
+@import "~bootstrap/scss/dropdown";
+@import "~bootstrap/scss/button-group";
+@import "~bootstrap/scss/nav";
+@import "~bootstrap/scss/navbar";
+@import "~bootstrap/scss/card";
+@import "~bootstrap/scss/accordion";
+@import "~bootstrap/scss/breadcrumb";
+@import "~bootstrap/scss/pagination";
+@import "~bootstrap/scss/badge";
+@import "~bootstrap/scss/alert";
+@import "~bootstrap/scss/progress";
+@import "~bootstrap/scss/list-group";
+@import "~bootstrap/scss/close";
+@import "~bootstrap/scss/toasts";
+@import "~bootstrap/scss/modal";
+@import "~bootstrap/scss/tooltip";
+@import "~bootstrap/scss/popover";
+@import "~bootstrap/scss/carousel";
+@import "~bootstrap/scss/spinners";
+@import "~bootstrap/scss/offcanvas";
+
+// Bootstrap: Helpers
+@import "~bootstrap/scss/helpers";
+
+// Bootstrap: Utilities
+@import "~bootstrap/scss/utilities/api";
+
+.table-responsive .table {
+    margin-bottom: 0;
+}

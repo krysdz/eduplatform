@@ -15,7 +15,7 @@ class LessonController extends Controller
 {
     public function index(Group $group)
     {
-        return view('teacher.lessons.index', [
+        return view('modules.teacher.lessons.index', [
             'group' => $group,
             'scheduledLesson' => ScheduledLesson::where(['group_id' => $group->id])->orderBy('date')->get(),
         ]);
@@ -25,7 +25,7 @@ class LessonController extends Controller
     {
         $scheduledLesson = ScheduledLesson::findOrFail(request()->query('scheduledLesson'));
 
-        return view('teacher.lessons.create', [
+        return view('modules.teacher.lessons.create', [
             'group' => $group,
             'scheduledLesson' => $scheduledLesson
         ]);
@@ -62,7 +62,7 @@ class LessonController extends Controller
 
     public function show(Group $group, Lesson $lesson)
     {
-        return view('teacher.lessons.show', [
+        return view('modules.teacher.lessons.show', [
             'group' => $group,
             'scheduledLesson' => $lesson->scheduleLesson,
             'lesson' => $lesson
@@ -71,7 +71,7 @@ class LessonController extends Controller
 
     public function edit(Request $request, Group $group, Lesson $lesson)
     {
-      return view('teacher.lessons.edit', [
+      return view('modules.teacher.lessons.edit', [
             'group' => $group,
             'lesson' => $lesson
         ]);

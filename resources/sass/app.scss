@@ -1,19 +1,24 @@
-@charset "utf-8";
-
-$primary: #1976D2;
-
-@import "~bulma/bulma";
+@import 'bootstrap';
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 
-.is-flex-full {
-    flex: 1 0 auto;
+.title {
+    margin-bottom: 0;
 }
 
-.is-content-box {
-    box-sizing: content-box;
+.subtitle {
+    margin-bottom: map-get($spacers, 4);
 }
 
-.min-vh-100 {
-    min-height: 100vh;
+.subtitle-sm {
+    margin-bottom: map-get($spacers, 4);
 }
+
+.section {
+    margin: map-get($spacers, 5) 0;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
 

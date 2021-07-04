@@ -16,7 +16,7 @@ class AttendanceController extends Controller
     {
         list($students, $scheduledLessons, $studentsAttendanceList) = $this->getStudentsAttendanceList($group);
 
-        return view('teacher.attendances.index', [
+        return view('modules.teacher.attendances.index', [
             'group' => $group,
             'students' => $students,
             'scheduledLessons' => $scheduledLessons,
@@ -29,7 +29,7 @@ class AttendanceController extends Controller
     {
         list($students, $scheduledLessons, $studentsAttendanceList) = $this->getStudentsAttendanceList($group);
 
-        return view('teacher.attendances.edit', [
+        return view('modules.teacher.attendances.edit', [
             'group' => $group,
             'students' => $students,
             'scheduledLessons' => $scheduledLessons,
