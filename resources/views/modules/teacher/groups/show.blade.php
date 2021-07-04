@@ -1,4 +1,4 @@
-@extends('modules.teacher.group_layout')
+@extends('modules.teacher.group-layout')
 
 @section('content')
     <h1 class="title mb-1">Informacje o grupie</h1>

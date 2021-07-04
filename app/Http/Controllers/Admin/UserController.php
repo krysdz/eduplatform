@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\UserRoleType;
 use App\Http\Controllers\Controller;
-use App\Mail\AccessToEduplatform;
+use App\Mail\InitialAccess;
 use App\Models\User;
 use App\Models\UserRole;
 use DB;
@@ -70,7 +70,7 @@ class UserController extends Controller
                 $validatedData['roles']
             ));
 
-            Mail::to($user->email)->send(new AccessToEduplatform($user, $password));
+            Mail::to($user->email)->send(new InitialAccess($user, $password));
 
             DB::commit();
             return redirect()->route('administrator.users.index')->with('success', 'Dodano użytkownika.');

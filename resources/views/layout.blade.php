@@ -11,8 +11,8 @@
     @include('include.header')
 
     <div class="container">
-        @include('include.flash_messages')
-        @include('include.form_errors')
+        @include('include.flash-messages')
+        @include('include.form-errors')
     </div>
 
     @yield('pre_content')

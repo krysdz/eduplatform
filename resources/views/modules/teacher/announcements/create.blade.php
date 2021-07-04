@@ -1,4 +1,4 @@
-@extends('modules.teacher.group_layout')
+@extends('modules.teacher.group-layout')
 
 @section('title', "Dodaj ogłoszenie - Eduplatform.pl")
 

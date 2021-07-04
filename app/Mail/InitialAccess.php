@@ -7,31 +7,23 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class AccessToEduplatform extends Mailable
+class InitialAccess extends Mailable
 {
-    use Queueable, SerializesModels;
-    public $user;
-    public $password;
+    use Queueable;
+    use SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
+    public User $user;
+    public string $password;
+
     public function __construct(User $user, string $password)
     {
         $this->user = $user;
         $this->password = $password;
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
+    public function build(): InitialAccess
     {
-        return $this->view('emails.accessToEduplatform')
+        return $this->view('emails.initial-access')
             ->subject('Dostęp do Eduplatform');
     }
 }
