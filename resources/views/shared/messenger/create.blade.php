@@ -29,8 +29,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="section_files" class="form-label">Dodaj pliki</label>
-                <input class="form-control" type="file" id="message_files" name="message_files[]" multiple>
+                <label for="files" class="form-label">Dodaj pliki</label>
+                <input class="form-control" type="file" id="files" name="files[]" multiple>
             </div>
 
             <div class="d-grid gap-2 d-lg-flex">

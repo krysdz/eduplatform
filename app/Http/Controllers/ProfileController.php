@@ -22,19 +22,23 @@ class ProfileController extends Controller
     {
         $validatedData = $request->validate([
             'current_password' => 'required|current_password:web',
-            'new_password' => ['required', 'string', Password::min( 8 )->letters()->mixedCase()->numbers()->symbols()->uncompromised()],
-            'new_password2' => 'required|string|same:new_password',
+            'new_password' => [
+                'required',
+                'string',
+                Password::min(8)->letters()->mixedCase()->numbers()->symbols()->uncompromised(),
+            ],
+            'repeat_password' => 'required|string|same:new_password',
         ]);
 
         try {
             Auth::user()->update(['password' => \Hash::make($validatedData['new_password'])]);
-
         } catch (Throwable $e) {
             report($e);
-
-            return back()->with('error', $e->getMessage())->withInput();
+            return redirect()->back()
+                ->with('error', $e->getMessage())->withInput();
         }
 
-        return redirect()->route('profile.index')->with('success', 'Zmiana hasła powiodła się.');
+        return redirect()->route('profile.index')
+            ->with('success', 'Hasło zostało zmienione.');
     }
 }

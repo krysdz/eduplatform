@@ -19,13 +19,17 @@ class Message extends Model
     protected $fillable = [
         'thread_id',
         'user_id',
-        'content'
+        'content',
     ];
 
     protected $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    protected $touches = [
+        'thread',
     ];
 
     public function thread(): BelongsTo

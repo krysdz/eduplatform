@@ -27,7 +27,10 @@
                 @if($message->user->id === Auth::user()->id)
                     <div class="align-self-end" style="max-width: 400px;">
                         <small>ja</small>
-                        <div class="alert p-2 mb-0 alert-secondary">{{$message->content}}</div>
+                        @if(!empty($message->content))
+                            <div class="alert p-2 mb-0 alert-secondary">{{$message->content}}</div>
+                        @endif
+
                         @forelse($message->files as $file)
                             <div class="alert p-2 mb-0 alert-secondary">
                                 <a class='link-light' href="{{route('file.show', [$file, $file->filename])}}" target="_blank">{{$file}}</a>
@@ -39,7 +42,10 @@
                 @else
                     <div class="align-self-start" style="max-width: 400px;">
                         <small>{{$message->user}}</small>
-                        <div class="alert p-2 mb-0 alert-primary">{{$message->content}}</div>
+                        @if(!empty($message->content))
+                            <div class="alert p-2 mb-0 alert-primary">{{$message->content}}</div>
+                        @endif
+
                         @forelse($message->files as $file)
                             <div class="alert p-2 mb-0 alert-primary">
                                 <a class='link-light' href="{{route('file.show', [$file, $file->filename])}}" target="_blank">{{$file}}</a>
@@ -59,14 +65,14 @@
             @csrf
             <div class="input-group mt-3 mb-3">
                 <input type="text" class="form-control" id="content" name="content">
-                <input type="file" class="form-control" id="message_files" name="message_files[]" style="max-width: 300px" multiple>
+                <input type="file" class="form-control" id="files" name="files[]" style="max-width: 300px" multiple>
                 <button type="submit" class="btn btn-outline-dark"><i class="far fa-paper-plane"></i></button>
             </div>
         </form>
     </div>
 
     <script>
-        window.onload = function(e) {
+        window.onload = function() {
             let element = document.getElementById('message_box');
             element.scrollTo(0,element.scrollHeight);
             element.classList.remove('invisible');

@@ -3,52 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
-use App\Models\Group;
-use App\Models\Message;
-use App\Models\Section;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Builder;
+use App\Service\FileService;
+use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FileController extends Controller
 {
-    public function show(File $file, $fileName)
+    private FileService $fileService;
+
+    public function __construct(FileService $fileService)
     {
-        switch (get_class(($file->fileable))) {
-            case Message::class:
-                $threadUsers = $file->fileable->thread->threadUsers;
+        $this->fileService = $fileService;
+    }
 
-                if (!$threadUsers->contains(auth()->user())) {
-                    abort(403);
-                }
-                break;
-            case Section::class:
-                $group = $file->fileable->group;
-                $isUnpublished = is_null($file->fileable->published_at);
-
-                if ($isUnpublished) {
-                    $isAuthorized = $group->teachers()->contains(auth()->user());
-                } else {
-                    $isAuthorized = $group->groupMembers->contains(auth()->user());
-                }
-
-                if (!$isAuthorized) {
-                    abort(403);
-                }
-                break;
-            default:
-                abort(404);
-        }
-
-        return response()->download(storage_path('app/'.$file->path), $fileName, [
-            'Content-Type' => $file->mime_type,
+    public function show(File $file, $fileName): BinaryFileResponse
+    {
+        return response()->download(storage_path('app' . $file->path . $file->filename), $fileName, [
+            'Content-Type' => $file->mimetype,
         ], 'inline');
     }
 
-    public function destroy(File $file)
+    public function destroy(File $file): RedirectResponse
     {
-        Storage::delete($file->path);
-        $file->delete();
+        try {
+            $this->fileService->handleFileDeletion($file);
+        } catch (\Exception $e) {
+            report('Wystąpił błąd podczas usuwania danych o pliku.');
 
-        return redirect()->back()->with('success', "Usuwanie pliku powiodło się");
+            return redirect()->back()
+                ->with('error', $e->getMessage());
+        }
+
+        return redirect()->back()
+            ->with('success', 'Plik został usunięty.');
     }
 }

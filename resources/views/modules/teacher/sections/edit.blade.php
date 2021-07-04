@@ -47,8 +47,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="section_files" class="form-label">Dodaj nowe pliki</label>
-                <input class="form-control" type="file" id="section_files" name="section_files[]" multiple>
+                <label for="files" class="form-label">Dodaj nowe pliki</label>
+                <input class="form-control" type="file" id="files" name="files[]" multiple>
             </div>
 
             <div class="d-grid gap-2 d-lg-flex">

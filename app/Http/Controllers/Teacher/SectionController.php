@@ -3,21 +3,25 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Models\File;
 use App\Models\Group;
 use App\Models\Lesson;
 use App\Models\Section;
-use App\Models\SectionFile;
+use App\Service\FileService;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Throwable;
-
 
 class SectionController extends Controller
 {
+    private FileService $fileService;
+
+    public function __construct(FileService $fileService)
+    {
+        $this->fileService = $fileService;
+    }
+
     public function index(Group $group)
     {
         return view('modules.teacher.sections.index', [
@@ -30,7 +34,7 @@ class SectionController extends Controller
     {
         return view('modules.teacher.sections.create', [
             'group' => $group,
-            'lessons' => Lesson::whereHas('scheduledLesson', function(Builder $q) use ($group) {
+            'lessons' => Lesson::whereHas('scheduledLesson', function (Builder $q) use ($group) {
                 $q->where('group_id', '=', $group->id);
             })->get(),
         ]);
@@ -49,30 +53,15 @@ class SectionController extends Controller
         DB::beginTransaction();
 
         try {
-            $section = Section::create(array_merge($validatedData, ['group_id' => $group->id]));
-
-            if ($request->hasFile('section_files')) {
-                $validatedFiles = $request->validate([
-                    'section_files.*' => 'nullable|file|mimes:jpeg,png,gif,webp,doc,docx,pdf,txt,odt,pptx,ppt,odp|max:5120'
-                ]);
-
-                foreach ($validatedFiles['section_files'] as $sectionFile) {
-                    $filename = $sectionFile->getClientOriginalName();
-                    $section->files()->create([
-                        'filename' => $filename,
-                        'extension' => $sectionFile->getClientOriginalExtension(),
-                        'path' =>  $sectionFile->storeAs('files/group_' . $group->id . '/section_' . $section->id, $filename, 'local'),
-                        'mimetype' => $sectionFile->getClientMimeType(),
-                        'size' => $sectionFile->getSize(),
-                        'user_id' => $request->user()->id,
-                        'title' => $filename,
-                    ]);
-                }
-            }
+            $section = Section::create(
+                array_merge($validatedData, ['group_id' => $group->id])
+            );
+            $this->fileService->handleRequestSectionFiles($request, $section);
 
             DB::commit();
 
-            return redirect()->route('teacher.groups.sections.index', $group)->with('success', 'Tworzenie sekcji powiodło się.');
+            return redirect()->route('teacher.groups.sections.index', $group)
+                ->with('success', 'Sekcja została dodana.');
         } catch (Exception $e) {
             report($e);
 
@@ -94,7 +83,7 @@ class SectionController extends Controller
         return view('modules.teacher.sections.edit', [
             'section' => $section,
             'group' => $group,
-            'lessons' => Lesson::whereHas('scheduledLesson', function(Builder $q) use ($group) {
+            'lessons' => Lesson::whereHas('scheduledLesson', function (Builder $q) use ($group) {
                 $q->where('group_id', '=', $group->id);
             })->get(),
         ]);
@@ -114,55 +103,32 @@ class SectionController extends Controller
 
         try {
             $section->update($validatedData);
-            if ($request->hasFile('section_files')) {
-                $validatedFiles = $request->validate([
-                    'section_files.*' => 'nullable|file|mimes:jpeg,png,gif,webp,doc,docx,pdf,txt,odt,pptx,ppt,odp|max:5120'
-                ]);
-
-                foreach ($validatedFiles['section_files'] as $sectionFile) {
-                    $filename = $sectionFile->getClientOriginalName();
-                    $section->files()->create([
-                        'filename' => $filename,
-                        'extension' => $sectionFile->getClientOriginalExtension(),
-                        'path' => $sectionFile->storeAs('files/group_' . $section->group_id . '/section_' . $section->id, $filename, 'local'),
-                        'mimetype' => $sectionFile->getClientMimeType(),
-                        'size' => $sectionFile->getSize(),
-                        'user_id' => $request->user()->id,
-                        'title' => $filename,
-                    ]);
-                }
-            }
+            $this->fileService->handleRequestSectionFiles($request, $section);
 
             DB::commit();
-
-            return redirect()->route('teacher.groups.sections.index', $group)->with('success', 'Aktualizacja sekcji powiodło się.');
         } catch (Exception $e) {
             report($e);
 
             DB::rollback();
             return back()->with('error', $e->getMessage())->withInput();
         }
+
+        return redirect()->route('teacher.groups.sections.index', $group)
+            ->with('success', 'Sekcja została zaktualizaowana.');
     }
 
     public function destroy(Group $group, Section $section)
     {
         try {
-            foreach ($section->files as $sectionFile) {
-                if(Storage::delete($sectionFile->file->path)) {
-                    $sectionFile->file()->delete();
-                }
-                Storage::deleteDirectory('files/group_' . $group->id . '/section_' . $section->id);
-            }
-
             if (!$section->delete()) {
-                throw new Exception( "Usuwanie sekcji $section nie powiodło się.");
+                throw new Exception("Usuwanie sekcji $section nie powiodło się.");
             }
         } catch (Throwable $e) {
             report($e);
-
             return back()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('teacher.groups.sections.index', $group)->with('success', "Usuwanie sekcji $section powiodło się.");
+        return redirect()->route('teacher.groups.sections.index', $group)
+            ->with('success', "Sekcja \"$section\" została usunięta.");
     }
 }

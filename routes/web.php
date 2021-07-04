@@ -4,7 +4,7 @@ use App\Enums\UserRoleType;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\IndexController;
-use App\Http\Controllers\Messenger\ThreadController;
+use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\FacultyController as AdminFacultyController;
@@ -44,11 +44,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ThreadController::class, 'index'])->name('index');
         Route::get('/nowa', [ThreadController::class, 'create'])->name('create');
         Route::post('/', [ThreadController::class, 'store'])->name('store');
-        Route::get('/{thread}', [ThreadController::class, 'show'])->name('show');
-        Route::post('/{thread}', [ThreadController::class, 'sendMessage'])->name('send_message');
+
+        Route::middleware('can:access_thread,thread')->group(function () {
+            Route::get('/{thread}', [ThreadController::class, 'show'])->name('show');
+            Route::post('/{thread}', [ThreadController::class, 'sendMessage'])->name('send_message');
+        });
     });
 
-    Route::prefix('pliki')->name('file.')->group(function () {
+    Route::prefix('pliki')->middleware('can:access_file,file')->name('file.')->group(function () {
         Route::get('/{file}/{file_name}', [FileController::class, 'show'])->name('show');
         Route::delete('/{file}', [FileController::class, 'destroy'])->name('destroy');
     });

@@ -21,7 +21,7 @@ class CreateMessagesTable extends Migration
             $table->foreignIdFor(Thread::class)->constrained();
             $table->foreignIdFor(User::class)->constrained();
 
-            $table->text('content');
+            $table->text('content')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

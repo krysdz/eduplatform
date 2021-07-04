@@ -91,8 +91,8 @@
             </div>
 
             <div class="form-floating mb-3">
-                <input type="password" name="new_password2" class="form-control" id="new_password2" placeholder="">
-                <label for="new_password2">Powtórz nowe hasło</label>
+                <input type="password" name="repeat_password" class="form-control" id="repeat_password" placeholder="">
+                <label for="repeat_password">Powtórz nowe hasło</label>
             </div>
 
             <div class="d-grid gap-2 d-lg-flex">
