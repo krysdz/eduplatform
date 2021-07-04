@@ -12,12 +12,13 @@ class Authorize extends \Illuminate\Auth\Middleware\Authorize
     {
         $response = $this->gate->authorize($ability, $this->getGateArguments($request, $models));
 
-        if ($response->allowed() && !in_array($ability, ['SuperAdministrator'])) {
+        if ($response->allowed() && !in_array($ability, ['super_administrator'])) {
             try {
-                $role = UserRoleType::fromKey($ability);
+                $role = UserRoleType::fromKey(ucfirst($ability));
                 $request->session()->put('current_role', $role);
                 $request->session()->put('current_role_index', strtolower($role->key) . '.index');
-            } catch (InvalidEnumKeyException $e) {}
+            } catch (InvalidEnumKeyException $e) {
+            }
         }
 
         return $next($request);

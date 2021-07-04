@@ -8,7 +8,7 @@
     <section class="section">
         <div class="list-group">
             @forelse($groups as $group)
-                <a href="{{route('student.group.show', $group)}}" class="list-group-item list-group-item-action">{{ $group }}</a>
+                <a href="{{route('student.groups.show', $group)}}" class="list-group-item list-group-item-action">{{ $group }}</a>
             @empty
                 <h5>Brak grup</h5>
             @endforelse

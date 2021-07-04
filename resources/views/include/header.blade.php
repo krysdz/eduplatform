@@ -23,12 +23,12 @@
                         @switch (session('current_role')->value)
                             @case (\App\Enums\UserRoleType::Student)
                             <li class="nav-item">
-                                <a href="{{ route('student.group.index') }}" class="nav-link">
+                                <a href="{{ route('student.groups.index') }}" class="nav-link">
                                     Grupy
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('student.grade.index') }}" class="nav-link">
+                                <a href="{{ route('student.grades.index') }}" class="nav-link">
                                     Oceny
                                 </a>
                             </li>
@@ -108,7 +108,12 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="{{ route('logout') }}">Wyloguj</a></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">Wyloguj</button>
+                                    </form>
+                                </li>
                             </ul>
                         </li>
 

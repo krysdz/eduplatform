@@ -99,7 +99,7 @@ class ThreadController extends Controller
         ]);
     }
 
-    public function update(Request $request, Thread $thread)
+    public function sendMessage(Request $request, Thread $thread)
     {
         if (!$thread->threadUsers->contains(auth()->user())) {
             return redirect()->route('messenger.index')

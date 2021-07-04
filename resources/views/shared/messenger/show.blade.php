@@ -54,7 +54,7 @@
     </div>
 
     <div>
-        <form action="{{route('messenger.update', $thread)}}" enctype="multipart/form-data" method="POST"
+        <form action="{{route('messenger.send_message', $thread)}}" enctype="multipart/form-data" method="POST"
               class="d-flex">
             @csrf
             <div class="input-group mt-3 mb-3">

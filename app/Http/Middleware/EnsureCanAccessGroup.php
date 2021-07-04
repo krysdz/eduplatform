@@ -25,7 +25,7 @@ class EnsureCanAccessGroup
                 $route = 'teacher.groups.index';
                 break;
             case UserRoleType::Student:
-                $route = 'student.group.index';
+                $route = 'student.groups.index';
                 break;
         }
 

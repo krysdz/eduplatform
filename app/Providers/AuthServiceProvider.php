@@ -29,22 +29,22 @@ class AuthServiceProvider extends ServiceProvider
 
     private function registerMiddlewareGates(): void
     {
-        Gate::define('SuperAdministrator', function(User $user) {
+        Gate::define('super_administrator', function (User $user) {
             return $user->roles()->where(['type' => UserRoleType::SuperAdministrator])->exists();
         });
 
-        Gate::define('Administrator', function(User $user) {
+        Gate::define('administrator', function (User $user) {
             return $user->roles()->whereIn('type', [
                 UserRoleType::SuperAdministrator,
                 UserRoleType::Administrator
             ])->exists();
         });
 
-        Gate::define('Teacher', function(User $user) {
+        Gate::define('teacher', function (User $user) {
             return $user->roles()->where(['type' => UserRoleType::Teacher])->exists();
         });
 
-        Gate::define('Student', function(User $user) {
+        Gate::define('student', function (User $user) {
             return $user->roles()->where(['type' => UserRoleType::Student])->exists();
         });
     }

@@ -76,7 +76,7 @@
             </ul>
         </div>
 
-        <form action="{{ route('profile.changePassword') }}" method="POST">
+        <form action="{{ route('profile.change_password') }}" method="POST">
             @method('PUT')
             @csrf
 
